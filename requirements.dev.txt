@@ -1,0 +1,15 @@
+
+mock
+ipdb
+pep8
+pytest
+pytest-cache
+pytest-cov
+pytest-flask
+pytest-mock
+pytest-mccabe
+pytest-pep8
+pytest-pylint
+pytest-timeout
+pytest-watch
+-r requirements.txt

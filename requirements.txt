@@ -1,5 +1,3 @@
-alembic==0.8.6
-Flask==0.10.1
-psycopg2==2.6.1
-pylint==1.5.5
-pytest==2.9.1
+alembic
+Flask
+psycopg2

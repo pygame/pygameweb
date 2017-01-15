@@ -7,26 +7,27 @@ Strategy is to bring in code one piece at a time, and clean it up as I go.
 The stack is something like: python 3.5, postgresql, Flask, py.test, sqlalchemy, alembic, gulp, ansible
 
 
-TODO for db migration
-=====================
+Set up the required packages::
 
-- db
-- set up test framework and some fixtures
-- add relations
-- port various queries to sqlalchemy
-	- latest news, latest projects, add user, add release, projects for tags, etc
-- generate db dump without private tables (user, etc)
+	virtualenv anenv
+	. ./anenv/bin/activate
+	pip install --upgrade pip
+	pip install -r requirements.dev.txt
 
 
 Db setup instructions
 =====================
 
-We use alembic for bb migrations. http://alembic.readthedocs.org/en/latest/
+postgresql 9.6
+
+We use alembic for db migrations. http://alembic.readthedocs.org/en/latest/
 
 
-createdb pygame
-psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
-psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
+Set up the postgresql database::
+
+	createdb pygame
+	psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
+	psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
 
 
 To upgrade to latest model changes do::
@@ -37,4 +38,13 @@ To upgrade to latest model changes do::
 When you change a model make an alembic revision::
 
     alembic revision --autogenerate -m "Added a field for these reasons."
+
+
+
+testing
+=======
+
+We use py.test for testing.
+
+http://docs.pytest.org/en/latest/
 
