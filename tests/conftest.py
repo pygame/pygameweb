@@ -10,17 +10,24 @@ To make testing databases easier we need a few fixtures for rolling back changes
 import os
 import pytest
 
+from sqlpytestflask import engine
 
 @pytest.fixture(scope='function')
-def app():
+def app(engine):
     """ a flask app fixture
     """
-    import pygameweb.config
     from pygameweb import create_app
-
-
-    pygameweb.config.Config.SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL_TEST')
-    pygameweb.config.Config.TESTING = True
-    test_app = create_app('pygameweb.config.Config')
+    test_app = create_app('pygameweb.config.Config', engine)
 
     return test_app
+
+@pytest.fixture(scope='session')
+def config():
+	""" here we create our config and make sure we are using the test database.
+	"""
+    import pygameweb.config
+    pygameweb.config.Config.SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL_TEST')
+    pygameweb.config.Config.TESTING = True
+
+    return pygameweb.config.Config
+

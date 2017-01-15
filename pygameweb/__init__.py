@@ -1,15 +1,19 @@
 __version__ = '0.0.0'
 
 
-def create_app(object_name='pygameweb.config.Config'):
+def create_app(object_name='pygameweb.config.Config',
+               engine=None):
     """returns a flask app.
 
     http://flask.pocoo.org/docs/patterns/appfactories/
+
+    :param engine: an sqlalchemy engine.
     """
 
     from flask import Flask
     app = Flask(__name__)
     app.config.from_object(object_name)
+    app.engine = engine
 
     return app
 
