@@ -10,9 +10,9 @@ The stack is something like: python 3.5, postgresql, Flask, py.test, sqlalchemy,
 TODO for db migration
 =====================
 
-- finish initial db migration from mysql to postgresql
-- models missing some indexes (on tags etc)
+- db
 - set up test framework and some fixtures
+- add relations
 - port various queries to sqlalchemy
 	- latest news, latest projects, add user, add release, projects for tags, etc
 - generate db dump without private tables (user, etc)
@@ -21,6 +21,20 @@ TODO for db migration
 Db setup instructions
 =====================
 
+We use alembic for bb migrations. http://alembic.readthedocs.org/en/latest/
+
+
 createdb pygame
 psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
 psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
+
+
+To upgrade to latest model changes do::
+
+	alembic upgrade head
+
+
+When you change a model make an alembic revision::
+
+    alembic revision --autogenerate -m "Added a field for these reasons."
+
