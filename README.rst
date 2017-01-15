@@ -29,6 +29,12 @@ Set up the postgresql database::
 	psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
 	psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
 
+We also create a database for running tests::
+
+	createdb pygame_test
+	psql pygame_test -c "CREATE USER pygame WITH PASSWORD 'password';"
+	psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
+
 
 To upgrade to latest model changes do::
 
