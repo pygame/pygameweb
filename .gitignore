@@ -1,0 +1,9 @@
+__pycache__
+.coverage*
+anenv
+coverage.xml
+docs/_build/
+junit.xml
+node_modules
+pygameweb.egg-info
+static
