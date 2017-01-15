@@ -6,11 +6,10 @@ To make testing databases easier we need a few fixtures for rolling back changes
 
 """
 
-
 import os
 import pytest
 
-from sqlpytestflask import engine
+from sqlpytestflask import engine, session, session_factory, connection
 
 @pytest.fixture(scope='function')
 def app(engine):
@@ -23,11 +22,24 @@ def app(engine):
 
 @pytest.fixture(scope='session')
 def config():
-	""" here we create our config and make sure we are using the test database.
-	"""
+    """ here we create our config and make sure we are using the test database.
+    """
     import pygameweb.config
     pygameweb.config.Config.SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL_TEST')
     pygameweb.config.Config.TESTING = True
 
     return pygameweb.config.Config
 
+@pytest.fixture(scope='session')
+def get_metadata():
+    """ returns a function which loads all the python models
+        and returns a Base.metadata object.
+    """
+    def load_models():
+        """ This is where we load all the models we want to test.
+        """
+        import pygameweb.models
+        import pygameweb.wiki.models
+        return pygameweb.models.metadata
+
+    return load_models
