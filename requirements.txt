@@ -1,3 +1,5 @@
 alembic
+feedparser
 Flask
+pygments
 psycopg2
