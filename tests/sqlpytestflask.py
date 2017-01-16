@@ -1,4 +1,19 @@
-""" Fixtures for flask and sqlalchemy with pytest.
+"""Fixtures for sqlalchemy, postgesql, flask with pytest.
+
+The benefits for these are they can::
+
+    * makes writing sql tests easy, fast, and robust.
+    * Run in parallel, in separate schemas per connection.
+    * Only create the tables once for each pytest session.
+
+Example::
+
+    >>> def test_bla(session):
+            from bla.models import Bla
+            bla = Bla(name="hell")
+            assert bla.name == 'hell'
+            session.add(bla)
+            session.commit()
 
 
 Here you can see the nesting of transactions and db code as it happens.
@@ -6,6 +21,7 @@ Here you can see the nesting of transactions and db code as it happens.
     Creates an engine per pytest.session.
     Creates a connection per pytest.session.
         transaction
+            create unique schema for these tests
             create tables
                 nested transaction
                     sqlalchemy.session
@@ -49,11 +65,25 @@ def get_metadata():
 
 
 @pytest.fixture(scope='session')
-def connection(request, engine, get_metadata):
+def schema_name():
+    """ Returns a schema name.
+    """
+    import uuid
+    return uuid.uuid4()
+
+
+@pytest.fixture(scope='session')
+def connection(request, engine, get_metadata, schema_name):
     """ returns a db connection inside a transaction which rollsback when done.
     """
     a_connection = engine.connect()
     a_transaction = a_connection.begin()
+
+    # Make a schema for tests to run in.
+    # We are in a transaction so this is rolled back too.
+    a_connection.execute('CREATE SCHEMA "%s"' % schema_name)
+    # Set the schema search_path, so we use the new schema.
+    a_connection.execute('SET search_path TO "%s"' % schema_name)
 
     metadata = get_metadata()
 
@@ -62,6 +92,7 @@ def connection(request, engine, get_metadata):
     except SQLAlchemyError:
         pass
 
+    # make all the tables
     metadata.create_all(a_connection)
 
     def teardown():

@@ -12,4 +12,5 @@ pytest-pep8
 pytest-pylint
 pytest-timeout
 pytest-watch
+pytest-xdist
 -r requirements.txt

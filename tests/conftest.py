@@ -9,7 +9,7 @@ To make testing databases easier we need a few fixtures for rolling back changes
 import os
 import pytest
 
-from sqlpytestflask import engine, session, session_factory, connection
+from sqlpytestflask import engine, session, session_factory, connection, schema_name
 
 @pytest.fixture(scope='function')
 def app(engine):
