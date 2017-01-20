@@ -4,7 +4,7 @@ Issues https://bitbucket.org/pygame/pygame/issues?component=website
 
 Strategy is to bring in code one piece at a time, and clean it up as I go.
 
-The stack is something like: python 3.6, postgresql, Flask, py.test, sqlalchemy, alembic, gulp, ansible
+The stack is something like: python 3.6, postgresql, Flask, py.test, sqlalchemy, alembic, gulp, ansible, node.
 
 
 Set up the required packages::
@@ -13,6 +13,14 @@ Set up the required packages::
 	. ./anenv/bin/activate
 	pip install --upgrade pip
 	pip install -r requirements.dev.txt
+	pip install -e .
+
+
+For now yuicompressor is needed for css compression::
+
+	brew install yuicompressor node
+	apt-get install yui-compressor node
+
 
 
 Db setup instructions
