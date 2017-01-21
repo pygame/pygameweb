@@ -1,5 +1,7 @@
 alembic
 feedparser
 Flask
+flask-bootstrap
+flask_sqlalchemy_session
 pygments
 psycopg2
