@@ -71,3 +71,14 @@ tests/conftest.py is for test configuration.
 tests/conftest.py is for test configuration.
 tests/sqlpytestflask.py are some fixtures for db testing.
 
+
+
+Templates
+=========
+
+We use::
+
+	* Jinja2 http://jinja.pocoo.org/
+	* Flask-Bootstrap https://pythonhosted.org/Flask-Bootstrap/basic-usage.html
+	* Bootstrap http://jinja.pocoo.org/
+
