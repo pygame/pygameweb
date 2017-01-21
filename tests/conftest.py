@@ -15,7 +15,7 @@ from sqlpytestflask import engine, session, session_factory, connection, schema_
 def app(engine):
     """ a flask app fixture
     """
-    from pygameweb import create_app
+    from pygameweb.app import create_app
     test_app = create_app('pygameweb.config.Config', engine)
 
     return test_app

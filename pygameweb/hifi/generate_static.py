@@ -1,4 +1,5 @@
-#!../binaries/python-2.7/bin/python
+"""For all the static parts of the website. css, js, html.
+"""
 
 import os, sys, glob, json, tempfile, argparse, subprocess
 import urllib.request
@@ -33,7 +34,6 @@ class Urls(object):
 
 
         self.temp_prefix = "tmpfile_"
-
 
         self.data = json.load(open(self.json_path))
 

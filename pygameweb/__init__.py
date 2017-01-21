@@ -1,22 +1,6 @@
 __version__ = '0.0.0'
 
 
-def create_app(object_name='pygameweb.config.Config',
-               engine=None):
-    """returns a flask app.
-
-    http://flask.pocoo.org/docs/patterns/appfactories/
-
-    :param engine: an sqlalchemy engine.
-    """
-
-    from flask import Flask
-    app = Flask(__name__)
-    app.config.from_object(object_name)
-    app.engine = engine
-
-    return app
-
 # So we can use environment variables to configure things.
 
 def load_into_environ(fname):
@@ -24,6 +8,8 @@ def load_into_environ(fname):
 
     Each line should have a key=value pair.
     There can be comments with #.
+
+    :param fname: name of the '.env' file.
     """
     import os
 

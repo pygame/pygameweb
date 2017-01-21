@@ -59,4 +59,11 @@ setup(
     url='https://bitbucket.org/pygame/pygameweb',
     install_requires=get_requirements(),
     version=get_version(),
+    entry_points={
+        'console_scripts': [
+            'pygameweb_front=pygameweb.run:run_front',
+        ],
+    },
+
+
 )
