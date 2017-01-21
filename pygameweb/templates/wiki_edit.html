@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+<h1>Wiki edit</h1>
+
+{% block content %}
+
+    <h1>{{ wiki.title }} - Edit</h1>
+
+    <form action="wiki/{{ wiki.link }}/edit" method="POST">
+        <textarea name="content" id="content">{{ wiki.content_sanitized | safe }}</textarea>
+        <input name="changes" type="text">
+        <input name="link" type="hidden" value="{{ wiki.link }}">
+        <input type="submit" value="save">
+    </form>
+
+{% endblock %}
