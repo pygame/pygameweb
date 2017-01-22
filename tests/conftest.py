@@ -8,15 +8,17 @@ To make testing databases easier we need a few fixtures for rolling back changes
 
 import os
 import pytest
+from flask_sqlalchemy_session import flask_scoped_session
 
 from sqlpytestflask import engine, session, session_factory, connection, schema_name
 
 @pytest.fixture(scope='function')
-def app(engine):
+def app(engine, session_factory):
     """ a flask app fixture
     """
     from pygameweb.app import create_app
-    test_app = create_app('pygameweb.config.Config', engine)
+
+    test_app = create_app('pygameweb.config.Config', engine, session_factory)
 
     return test_app
 

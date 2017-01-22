@@ -1,7 +1,11 @@
 """ wiki models
 """
 
+
 from sqlalchemy import Column, DateTime, Integer, String, Text
+from sqlalchemy.orm.session import make_transient
+
+
 import feedparser
 from pygameweb.models import Base
 
@@ -24,7 +28,7 @@ def sanitize_html(html):
 class Wiki(Base):
     __tablename__ = 'wiki'
 
-    id = Column(Integer, primary_key=True, default=0)
+    id = Column(Integer, primary_key=True)
     link = Column(String(255))
     summary = Column(Text)
     content = Column(Text)
@@ -37,6 +41,25 @@ class Wiki(Base):
     title = Column(String(255))
     parent = Column(String(255))
     keywords = Column(String(255))
+
+    def new_version(self, session):
+        """
+        """
+
+        session.begin_nested()
+
+
+        self.latest = 0
+        session.add(self)
+        session.commit()
+
+        session.expunge(self)  # expunge the object from session
+        make_transient(self)  # http://docs.sqlalchemy.org/en/rel_1_1/orm/session_api.html#sqlalchemy.orm.session.make_transient
+
+        del self.id
+        self.latest = 1
+        session.add(self)
+
 
     @property
     def content_rendered(self):
