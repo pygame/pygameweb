@@ -2,16 +2,7 @@
 """
 
 
-def test_a_wiki(session):
-
-    from pygameweb.wiki.models import Wiki
-    wiki_entry = Wiki()
-
-    session.add(wiki_entry)
-    session.commit()
-
-
-def test_new_wiki_page(session):
+def test_wiki_models_new_version(session):
     """ creates a new version of the existing page.
     """
 
@@ -21,7 +12,6 @@ def test_new_wiki_page(session):
 
     session.add(wiki_entry)
     session.commit()
-
 
     what_changed = 'changed some stuff'
     assert wiki_entry.id
@@ -51,15 +41,3 @@ def test_new_wiki_page(session):
     assert [p.id for p in pages].count(old_id) == 1
     assert [p.latest for p in pages].count(1) == 1
     assert [p.latest for p in pages].count(0) == 1, 'the old one is there too with latest set to 0'
-
-
-# for i in range(1000):
-#     print("""def test_a_wiki%s(session):
-
-#     from pygameweb.wiki.models import Wiki
-#     wiki_entry = Wiki()
-
-#     session.add(wiki_entry)
-#     session.commit()
-
-# """ % i)

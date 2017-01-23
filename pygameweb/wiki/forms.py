@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import StringField, HiddenField
+from wtforms.fields import StringField, HiddenField
 from wtforms.validators import DataRequired
+from wtforms.widgets import TextArea
 
 
-class WikiEditForm(FlaskForm):
-    content = StringField('content')
+class WikiForm(FlaskForm):
+    content = StringField('content', widget=TextArea())
     changes = StringField('changes')
     link = HiddenField('link')

@@ -4,12 +4,9 @@
 
 from sqlalchemy import Column, DateTime, Integer, String, Text
 from sqlalchemy.orm.session import make_transient
-
-
 import feedparser
+
 from pygameweb.models import Base
-
-
 from pygameweb.wiki.wiki import render
 
 
@@ -26,6 +23,8 @@ def sanitize_html(html):
 
 
 class Wiki(Base):
+    """ Each entry is a wiki page.
+    """
     __tablename__ = 'wiki'
 
     id = Column(Integer, primary_key=True)
@@ -42,19 +41,19 @@ class Wiki(Base):
     parent = Column(String(255))
     keywords = Column(String(255))
 
+
     def new_version(self, session):
+        """ Create a new version of this page. Leave the old on in the db.
         """
-        """
-
         session.begin_nested()
-
 
         self.latest = 0
         session.add(self)
         session.commit()
 
-        session.expunge(self)  # expunge the object from session
-        make_transient(self)  # http://docs.sqlalchemy.org/en/rel_1_1/orm/session_api.html#sqlalchemy.orm.session.make_transient
+        session.expunge(self)
+        # http://docs.sqlalchemy.org/en/rel_1_1/orm/session_api.html#sqlalchemy.orm.session.make_transient
+        make_transient(self)
 
         del self.id
         self.latest = 1

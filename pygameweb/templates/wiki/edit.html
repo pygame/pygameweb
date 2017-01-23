@@ -1,15 +1,21 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 <h1>Wiki edit</h1>
 
 {% block content %}
 
     <h1>{{ wiki.title }} - Edit</h1>
 
-    <form action="wiki/{{ wiki.link }}/edit" method="POST">
-        <textarea name="content" id="content">{{ wiki.content_sanitized | safe }}</textarea>
-        <input name="changes" type="text">
-        <input name="link" type="hidden" value="{{ wiki.link }}">
-        <input type="submit" value="save">
+    <form class="form" method="post" action="{{ url_for('wiki.edit', link=wiki.link) }}">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+
+        {{ wtf.form_field(form.content, rows=15) }}
+        {{ wtf.form_field(form.changes) }}
+
+        <button class="btn btn-lg btn-primary" type="submit">Continue</button>
     </form>
 
 {% endblock %}
