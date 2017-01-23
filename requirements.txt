@@ -4,5 +4,6 @@ feedparser
 Flask
 flask-bootstrap
 flask_sqlalchemy_session
+Flask-WTF
 pygments
 psycopg2
