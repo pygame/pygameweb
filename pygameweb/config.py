@@ -29,3 +29,4 @@ class Config(object):
     PORT = int(os.getenv('APP_PORT', '5000'))
     HOST = os.getenv('APP_HOST', 'localhost')
     DEBUG = truthy_config('APP_DEBUG')
+    SECRET_KEY = os.getenv('APP_SECRET_KEY')
