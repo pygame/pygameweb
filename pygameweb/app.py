@@ -12,9 +12,11 @@ def create_app(object_name='pygameweb.config.Config',
     """
 
     from flask import Flask
+    from flask_bootstrap import Bootstrap
     from pygameweb import db
     app = Flask(__name__)
     app.config.from_object(object_name)
+    Bootstrap(app)
 
     db.init(app, engine, session_factory)
 
@@ -26,8 +28,5 @@ def add_views_front(app):
 
     Kept separate from create_app so we can test individual views.
     """
-    from flask_bootstrap import Bootstrap
-    Bootstrap(app)
-
     from pygameweb.wiki.views import add_wiki_blueprint
     add_wiki_blueprint(app)
