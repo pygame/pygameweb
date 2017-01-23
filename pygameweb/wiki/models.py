@@ -51,6 +51,7 @@ class Wiki(Base):
         session.add(self)
         session.commit()
 
+        # this makes sqlalchemy forget about this object. In effect copying it.
         session.expunge(self)
         # http://docs.sqlalchemy.org/en/rel_1_1/orm/session_api.html#sqlalchemy.orm.session.make_transient
         make_transient(self)
