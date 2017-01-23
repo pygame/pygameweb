@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+<h1>Wiki</h1>
+
+{% block content %}
+
+  <h1>{{ wiki.title }}</h1>
+
+  <div>
+  {{ wiki.content_rendered | safe }}
+  </div>
+
+
+{% endblock %}

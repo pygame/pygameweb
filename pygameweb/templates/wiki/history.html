@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+<h1>History</h1>
+
+{% block content %}
+
+    <h1>{{ wiki.title }} - Revision History</h1>
+
+    <form action="{{ url_for('wiki.index', link=wiki.link) }}" method="get">
+        <input type="hidden" name="action" value="diff">
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>info</th>
+                <th>date</th>
+                <th><input type="submit" value="diff"></th>
+                <th>edited by</th>
+                <th>changes</th>
+                <th></th>
+            </tr>
+            {% for version in versions %}
+            <tr>
+                <td>
+                    {% if version.latest == 1 %}
+                    &gt;&gt;
+                    {% endif %}
+                </td>
+                <td>{% if version.content %}
+                        {{ (version.content|length / 1024)|round|int }} kb
+                    {% else %}
+                        0 kb
+                    {% endif %}
+                </td>
+                <td>{{ version.datetimeon }}</td>
+                <td>
+                    <input name="oldid" value="{{ version.id }}" type="radio" {% if loop.index == 2 %}checked{%endif%}>
+                    <input name="newid" value="{{ version.id }}" type="radio" {% if version.latest == 1 %}checked{%endif%}>
+                </td>
+                <td></td>
+                <td>
+                    {% if version.changes %}
+                        {{ version.changes }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('wiki.index', link=version.link, id=version.id) }}">view</a>
+                    <a href="{{ url_for('wiki.source', link=version.link, id=version.id) }}">source</a>
+                    <a href="{{ url_for('wiki.revert', link=version.link, latest=version.id) }}">revert</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+{% endblock %}

@@ -30,6 +30,9 @@ def config():
     pygameweb.config.Config.SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL_TEST')
     pygameweb.config.Config.TESTING = True
 
+    # to make testing easier
+    pygameweb.config.Config.WTF_CSRF_ENABLED = False
+
     return pygameweb.config.Config
 
 @pytest.fixture(scope='session')

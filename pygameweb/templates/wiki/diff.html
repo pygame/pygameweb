@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+<h1>Wiki</h1>
+
+{% block content %}
+
+  <h1>{{ wiki.title }} - difference</h1>
+
+  <div>
+  {{ html_diff | safe }}
+  </div>
+
+{% endblock %}
