@@ -1,4 +1,5 @@
 alembic
+bcrypt
 click
 feedparser
 Flask
@@ -6,5 +7,6 @@ flask-bootstrap
 flask_sqlalchemy_session
 Flask-WTF
 ghdiff
-pygments
 psycopg2
+pyquery
+pygments
