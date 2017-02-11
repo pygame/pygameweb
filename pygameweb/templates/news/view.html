@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>News</h1>
+    <div>
+    {% for new in news %}
+
+        <section>
+            <h3>{{ new.title_html }} - {{ new.datetimeon }}</h3>
+            {{ new.description_html|safe }}
+        </section>
+
+    {% endfor %}
+    </div>
+
+{% endblock %}
