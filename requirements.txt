@@ -3,7 +3,9 @@ bcrypt
 click
 feedparser
 Flask
+flask_admin
 flask-bootstrap
+flask-debugtoolbar
 flask_sqlalchemy_session
 Flask-WTF
 ghdiff
