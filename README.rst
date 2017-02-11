@@ -61,6 +61,9 @@ When you change a model make an alembic revision::
 
     alembic revision --autogenerate -m "Added a field for these reasons."
 
+Then you will need to apply the change to your db (and commit the version file)::
+
+    alembic upgrade head
 
 
 testing with py.test
@@ -102,4 +105,15 @@ We use click and setuptools entry points (in setup.py) for command line tools.
 * entry points https://packaging.python.org/distributing/#entry-points
 
 Note, when you add or change a command line tool, you need to `pip install -e .` again.
+
+
+
+User login with Flask-security-fork
+===================================
+
+https://flask-security-fork.readthedocs.io/en/latest/quickstart.html
+
+
+
+
 
