@@ -16,6 +16,7 @@ import pygameweb.doc.models
 import pygameweb.news.models
 import pygameweb.page.models
 import pygameweb.project.models
+import pygameweb.tasks.models
 import pygameweb.user.models
 import pygameweb.wiki.models
 

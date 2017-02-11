@@ -126,22 +126,6 @@ class Tags(Base):
 
 
 
-
-
-# $tags = tags_get($id);
-# $pre = "";
-# global $topurl;
-# if (count($tags)) {
-#     $qtags = array();
-#     foreach ($tags as $tag) { $qtags[] = $db->sqlstring($tag); }
-#     $r = $db->query("select *,count(*) as cnt from tags where value in (".implode(",",$qtags).") group by value order by cnt desc");
-#     tags_cloud($r, false);
-# }
-# echo "</div>";
-
-
-
-
 class Projectcomment(Base):
     __tablename__ = 'projectcomment'
 
@@ -175,7 +159,7 @@ class Release(Base):
     srcuri = Column(String(255))
     winuri = Column(String(255))
     macuri = Column(String(255))
-    title = Column(String(80))
+    version = Column(String(80))
 
     project = relationship(Project, backref='releases')
 
