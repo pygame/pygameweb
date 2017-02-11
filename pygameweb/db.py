@@ -20,3 +20,15 @@ def init(app, engine, session_factory):
     app.session_factory = (sessionmaker(bind=app.engine) if session_factory is None
                            else session_factory)
     app.scoped_session = flask_scoped_session(app.session_factory, app)
+
+
+
+def _get_session():
+    """For interactive experiments only. Probably shouldn't use this in app code.
+    """
+    from pygameweb.config import Config
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+    session = sessionmaker(bind=engine)()
+    return session
