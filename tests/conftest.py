@@ -30,6 +30,9 @@ def config():
     pygameweb.config.Config.SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL_TEST')
     pygameweb.config.Config.TESTING = True
 
+    # do not send emails with flask-mail
+    pygameweb.config.Config.MAIL_SUPPRESS_SEND = True
+
     # to make testing easier
     pygameweb.config.Config.WTF_CSRF_ENABLED = False
 
@@ -45,6 +48,11 @@ def get_metadata():
         """
         import pygameweb.models
         import pygameweb.wiki.models
+        import pygameweb.user.models
+        import pygameweb.project.models
+        import pygameweb.page.models
+        import pygameweb.news.models
+        import pygameweb.doc.models
         return pygameweb.models.metadata
 
     return load_models
