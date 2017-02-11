@@ -151,9 +151,19 @@ def test_tags(project_client, session, project, project2):
 
 
 
+def test_project_new(project_client, session):
+    """ adds a new project for the user.
+    """
 
+    from io import BytesIO
 
+    resp = project_client.get('/members/projects/new')
+    assert resp.status_code == 200
+    assert b'New Project' in resp.data
+    assert b'Windows URL' in resp.data
+    image = (BytesIO(b'my file contents'), 'hello world.png')
+    data = dict(image=image, title='title', version='1.0.2',
+                tags='tags', summary='summary',
+                description='description', url='url')
 
-
-
-
+    resp = project_client.post('/members/projects/new', data=data)

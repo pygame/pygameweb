@@ -1,10 +1,14 @@
+from pathlib import Path
+
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
+from werkzeug.utils import secure_filename
+
 
 from pygameweb.project.models import Project, Release, Tags, top_tags
-
+from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
 
 
 project_blueprint = Blueprint('project',
@@ -81,6 +85,30 @@ def tags(tag):
                            prev_start=prev_start,
                            next_start=next_start)
 
+# members/projects/
+# http://pygame.org/members/projects/new/new.php?&_id=7ac085095c01e07e633302581e829dfd
+
+
+@project_blueprint.route('/members/projects/new', methods=['GET', 'POST'])
+def new_project():
+    form = FirstReleaseForm()
+
+    if form.validate_on_submit():
+
+        www = Path(current_app.config['WWW'])
+
+        sec_fname = secure_filename(form.image.data.filename)
+        extension = os.path.splitext(sec_fname)[-1]
+        image_fname = f'{project.id}{extension}'
+        image_path = str(www / image_fname / 'shots')
+
+        project_form.image.data.save(image_path)
+
+        #TODO: save a Project, with a Release.
+
+        return redirect(url_for('index'))
+
+    return render_template('project/newproject.html', form=form)
 
 
 def add_project_blueprint(app):
