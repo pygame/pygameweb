@@ -5,17 +5,15 @@ sudo: required
 services:
   - postgresql
 before_script:
+  - cp example.env .env
   - psql -c 'create database pygame_test;' -U postgres
   - psql pygame_test -c "CREATE USER pygame_test WITH PASSWORD 'password';" -U postgres
   - psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;" -U postgres
-
 addons:
   postgresql: "9.6"
 test:
   adapter: postgresql
   database: pygame_test
-before_script:
-  - cp example.env .env
 
 language: python
 cache: pip
