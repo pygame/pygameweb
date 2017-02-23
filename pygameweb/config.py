@@ -17,7 +17,7 @@ def truthy_config(key, default=False):
     val = os.environ.get(key, default)
     if val is None or val is False:
         return False
-    if val.lower() in ['true', '1']:
+    if val is True or val.lower() in ['true', '1']:
         return True
     return False
 
