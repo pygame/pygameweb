@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <h1>{{ project.title }}{% if release and release.title %} - {{ release.title }}{% endif %}</h1>
+    <h1>{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}</h1>
     <h3>{{ project.user.title }}  ({{ project.user.name }})</h3>
 
     <h3>Tags:</h3>
@@ -46,7 +46,7 @@
 
     {% for arelease in project.releases %}
         <p>
-            <a href="{{ url_for('project.view', project_id=project.id, release_id=arelease.id) }}">{{ arelease.title }} - {{ arelease.datetimeon }}</a>
+            <a href="{{ url_for('project.view', project_id=project.id, release_id=arelease.id) }}">{{ arelease.version }} - {{ arelease.datetimeon }}</a>
         </p>
     {% endfor %}
 

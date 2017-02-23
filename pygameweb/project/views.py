@@ -1,6 +1,7 @@
+import os
 from pathlib import Path
 
-from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
+from flask import Blueprint, render_template, abort, redirect, url_for, request, Response, current_app
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
@@ -93,20 +94,21 @@ def tags(tag):
 def new_project():
     form = FirstReleaseForm()
 
-    if form.validate_on_submit():
+    # if form.validate_on_submit():
 
-        www = Path(current_app.config['WWW'])
+    #     www = Path(current_app.config['WWW'])
+    #     import pdb;pdb.set_trace()
+    #     sec_fname = secure_filename(form.image.data.filename)
+    #     extension = os.path.splitext(sec_fname)[-1]
+    #     #TODO: save a Project, with a Release.
 
-        sec_fname = secure_filename(form.image.data.filename)
-        extension = os.path.splitext(sec_fname)[-1]
-        image_fname = f'{project.id}{extension}'
-        image_path = str(www / image_fname / 'shots')
+    #     image_fname = f'{project.id}{extension}'
+    #     image_path = str(www / 'shots' / image_fname)
 
-        project_form.image.data.save(image_path)
+    #     project_form.image.data.save(image_path)
 
-        #TODO: save a Project, with a Release.
 
-        return redirect(url_for('index'))
+    #     return redirect(url_for('index'))
 
     return render_template('project/newproject.html', form=form)
 

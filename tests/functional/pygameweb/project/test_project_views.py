@@ -47,14 +47,14 @@ def project(session, user):
                        srcuri='http://example.com/source.tar.gz',
                        winuri='http://example.com/win.exe',
                        macuri='http://example.com/mac.dmg',
-                       title='A release title.')
+                       version='A release title.')
 
     release2 = Release(datetimeon=datetime.datetime(2017, 1, 6),
                        description='Some release with new things.',
                        srcuri='http://example.com/source.tar.gz',
                        winuri='http://example.com/win.exe',
                        macuri='http://example.com/mac.dmg',
-                       title='A second release title.')
+                       version='A second release title.')
 
     the_project.releases.append(release1)
     the_project.releases.append(release2)
