@@ -1,5 +1,5 @@
-Slumber |build-status| |coverage-status|
-========================================
+pygame.org website |build-status| |coverage-status|
+===================================================
 
 Pieces of the pygame website will be open sourced here.
 
@@ -94,7 +94,7 @@ We use::
 
     * Jinja2 http://jinja.pocoo.org/
     * Flask-Bootstrap https://pythonhosted.org/Flask-Bootstrap/basic-usage.html
-    * Bootstrap http://jinja.pocoo.org/
+    * Bootstrap http://getbootstrap.com/
 
 
 Command line tools with click
