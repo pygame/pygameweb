@@ -17,6 +17,7 @@ before_script:
   - cp example.env .env
 
 language: python
+cache: pip
 python:
   - "3.6"
 install:
