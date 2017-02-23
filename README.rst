@@ -1,6 +1,7 @@
-Pieces of the pygame website will be open sourced here.
+Slumber |build-status| |coverage-status|
+========================================
 
-Issues https://bitbucket.org/pygame/pygame/issues?component=website
+Pieces of the pygame website will be open sourced here.
 
 Strategy is to bring in code one piece at a time, and clean it up as I go.
 
@@ -117,3 +118,9 @@ https://flask-security-fork.readthedocs.io/en/latest/quickstart.html
 
 
 
+.. |build-status| image:: https://travis-ci.org/pygame/pygameweb.svg?branch=master
+   :target: https://travis-ci.org/pygame/pygameweb
+   :alt: Build status
+.. |coverage-status| image:: https://coveralls.io/repos/github/pygame/pygameweb/badge.svg?branch=master
+   :target: https://coveralls.io/github/pygame/pygameweb?branch=master
+   :alt: Test coverage percentage
