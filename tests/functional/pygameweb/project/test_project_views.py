@@ -167,17 +167,16 @@ def test_project_new(project_client, session, user):
     from io import BytesIO
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
 
+    session.commit()
+    with project_client.session_transaction() as sess:
+        sess['user_id'] = user.id
+        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+
     resp = project_client.get('/members/projects/new')
     assert resp.status_code == 200
     assert b'New Project' in resp.data
     assert b'Windows URL' in resp.data
 
-    session.commit()
-
-
-    with project_client.session_transaction() as sess:
-        sess['user_id'] = user.id
-        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
 
     png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02'
            b'\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT\x08\x99c```\x00\x00\x00\x04\x00'
