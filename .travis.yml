@@ -24,6 +24,9 @@ install:
 - pip install coveralls
 - pip install -e .
 
+env:
+- APP_SECRET_KEY=^,\xb0\xc2\x903|\x8f\x96duT\xda\xb4V\xeb@\xcc\xd2\xc0\xf7\xf5\x1a.
+
 script: pytest
 
 after_success:
