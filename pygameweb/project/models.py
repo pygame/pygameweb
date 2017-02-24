@@ -11,47 +11,7 @@ from pygameweb.models import Base, metadata
 from pygameweb.user.models import User
 from pygameweb.config import Config
 from pygameweb.thumb import image_thumb
-
 from pygameweb.sanitize import sanitize_html
-
-
-
-# t_tags = Table(
-#     'tags', metadata,
-#     Column('project_id', Integer, index=True),
-#     Column('value', String(32), index=True)
-# )
-
-# for the alembic upgrade.
-
-# Some projects are marked with 0, which means they have not been claimed yet.
-# Mark them with the administrator user instead.
-#    op.execute('UPDATE project SET users_id=1 where users_id=0')
-
-# Need an anonymous user to assign projectcomments against.
-#    op.execute('UPDATE projectcomment set users_id=1 where users_id is NULL')
-
-# These projects have been deleted. So we remove the comments too.
-#    op.execute('DELETE from projectcomment where projectcomment.project_id not in (select id as pid from project)')
-
-# Remove any comments where the user does not exist anymore.
-#    op.execute('DELETE from projectcomment WHERE projectcomment.users_id not in (select id from users)')
-
-# Remove the releases where the projects do not exist.
-#    op.execute('DELETE from release WHERE release.project_id not in (select id from project)')
-
-# TODO: need to generate the tags.id.
-
-# op.execute('ALTER table tags add column id integer')
-# table_sql = text("""SELECT id, project_id, value from tags""")
-# connection = op.get_bind()
-# rows = connection.execute(table_sql)
-# i = 1;
-# for row in rows:
-#     sql = """UPDATE tags SET id='%s' WHERE project_id=%s AND value="%s";""" % (i, row[1], row[2])
-#     op.execute(sql)
-#     i += 1
-
 
 
 
@@ -99,6 +59,7 @@ class Project(Base):
                       .order_by(cnt.desc())).all()
         return [(tag, cnt, (int(10+min(24, sqrt(cnt)*24/5)))) for tag, cnt in tag_counts]
 
+
 def top_tags(session):
     """
     """
@@ -123,7 +84,6 @@ class Tags(Base):
                         index=True)
     value = Column('value', String(32), index=True)
     project = relationship(Project, backref='tags')
-
 
 
 class Projectcomment(Base):

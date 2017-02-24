@@ -1,4 +1,5 @@
 import pytest
+import mock
 
 
 @pytest.fixture
@@ -6,15 +7,17 @@ def project_client(app, session, client):
     """Fixture for wiki tests.
     """
     from pygameweb.project.views import add_project_blueprint
-
+    from pygameweb.user.views import add_user_blueprint
+    add_user_blueprint(app)
     add_project_blueprint(app)
+
     return client
 
 
 @pytest.fixture
 def user(session):
     from pygameweb.user.models import User
-    user = User(name='joe')
+    user = User(name='joe', email='asdf@example.com')
     session.add(user)
     return user
 
@@ -119,6 +122,12 @@ def test_project_index(project_client, session, project, project2):
     print(resp.data.decode('utf-8'))
 
 
+    resp = project_client.get('/project/66')
+    assert resp.status_code == 404
+    resp = project_client.get('/project/1/66')
+    assert resp.status_code == 404
+
+
 
 def test_tags(project_client, session, project, project2):
     """ shows a list of projects for that tag.
@@ -151,19 +160,42 @@ def test_tags(project_client, session, project, project2):
 
 
 
-def test_project_new(project_client, session):
+def test_project_new(project_client, session, user):
     """ adds a new project for the user.
     """
 
     from io import BytesIO
+    from pygameweb.project.models import Project, Release, Projectcomment, Tags
 
     resp = project_client.get('/members/projects/new')
     assert resp.status_code == 200
     assert b'New Project' in resp.data
     assert b'Windows URL' in resp.data
-    image = (BytesIO(b'my file contents'), 'hello world.png')
+
+    session.commit()
+
+
+    with project_client.session_transaction() as sess:
+        sess['user_id'] = user.id
+        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+
+    png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02'
+           b'\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT\x08\x99c```\x00\x00\x00\x04\x00'
+           b'\x01\xa3\n\x15\xe3\x00\x00\x00\x00IEND\xaeB`\x82')
+
+    image = (BytesIO(png), 'helloworld.png')
     data = dict(image=image, title='title', version='1.0.2',
                 tags='tags', summary='summary',
-                description='description', url='url')
+                description='description', uri='http://example.com/')
 
-    resp = project_client.post('/members/projects/new', data=data)
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post('/members/projects/new', data=data, follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'title')
+                   .first())
+        assert save_image.call_args[0][1] == f'frontend/www/shots/{project.id}.png'
+
+    assert resp.status_code == 200
+    assert project.title == 'title'
+    assert project.releases[0].version == '1.0.2'

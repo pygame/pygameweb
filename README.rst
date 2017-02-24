@@ -29,6 +29,12 @@ Environment setup
 cp example.env .env
 
 
+Tool setup
+==========
+
+See setup.cfg for all tool config (pytest, coverage, etc).
+
+
 
 Db setup instructions
 =====================
@@ -67,14 +73,14 @@ Then you will need to apply the change to your db (and commit the version file):
     alembic upgrade head
 
 
-testing with py.test
-====================
+testing with pytest
+===================
 
 http://docs.pytest.org/en/latest/
 
 To run all unit tests and functional tests use::
 
-    py.test tests/functional/
+    pytest
 
 
 tests/unit/ are for unit tests.

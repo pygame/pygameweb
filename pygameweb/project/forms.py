@@ -12,7 +12,7 @@ class ProjectForm(FlaskForm):
     tags = StringField('Tags')
     summary = StringField('Summary', widget=TextArea(), validators=[DataRequired()])
     description = StringField('Description', widget=TextArea())
-    url = StringField('Home URL', validators=[DataRequired()])
+    uri = StringField('Home URL', validators=[DataRequired()])
 
     image = FileField('image', validators=[
         # FileRequired(),

@@ -1,13 +1,16 @@
 import os
 from pathlib import Path
+import datetime
 
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response, current_app
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
 from werkzeug.utils import secure_filename
+from flask_security import current_user, login_required, roles_required
 
 
+from pygameweb.user.models import User
 from pygameweb.project.models import Project, Release, Tags, top_tags
 from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
 
@@ -89,26 +92,52 @@ def tags(tag):
 # members/projects/
 # http://pygame.org/members/projects/new/new.php?&_id=7ac085095c01e07e633302581e829dfd
 
+def save_image(form_field, image_path):
+    """ A little helper to save images.
+    """
+    return form_field.data.save(image_path)
 
+
+@roles_required('member')
 @project_blueprint.route('/members/projects/new', methods=['GET', 'POST'])
 def new_project():
     form = FirstReleaseForm()
 
-    # if form.validate_on_submit():
+    if form.validate_on_submit():
 
-    #     www = Path(current_app.config['WWW'])
-    #     import pdb;pdb.set_trace()
-    #     sec_fname = secure_filename(form.image.data.filename)
-    #     extension = os.path.splitext(sec_fname)[-1]
-    #     #TODO: save a Project, with a Release.
+        www = Path(current_app.config['WWW'])
+        sec_fname = secure_filename(form.image.data.filename)
+        extension = os.path.splitext(sec_fname)[-1]
+        now = datetime.datetime.now()
 
-    #     image_fname = f'{project.id}{extension}'
-    #     image_path = str(www / 'shots' / image_fname)
+        user = current_user
+        project = Project(
+            title=form.title.data,
+            summary=form.summary.data,
+            description=form.description.data,
+            uri=form.uri.data,
+            datetimeon=now,
+            user=user
+        )
+        release = Release(datetimeon=now,
+                          description=form.description.data,
+                          srcuri=form.srcuri.data,
+                          winuri=form.winuri.data,
+                          macuri=form.macuri.data,
+                          version=form.version.data)
+        project.releases.append(release)
+        current_session.add(project)
+        current_session.commit()
 
-    #     project_form.image.data.save(image_path)
+        image_fname = f'{project.id}{extension}'
+        project.image = image_fname
+        current_session.add(project)
+        image_path = str(www / 'shots' / image_fname)
 
+        save_image(form.image, image_path)
+        current_session.commit()
 
-    #     return redirect(url_for('index'))
+        return redirect(url_for('project.view', project_id=project.id))
 
     return render_template('project/newproject.html', form=form)
 
