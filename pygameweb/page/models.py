@@ -20,3 +20,6 @@ class Page(Base):
     uri = Column(String(255))
     users_id = Column(Integer)
     groups_id = Column(Integer)
+    nav_group = Column(String(255))
+    """ A string if it is supposed to go in a navigation group.
+    """

@@ -2,8 +2,10 @@
 {% block title %}This is an example page{% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-fixed-top">
-  <!-- ... -->
-</div>
+
+{% if nav %}
+{{ nav.mynavbar.render() }}
+{% endif %}
+
 {% endblock %}
 

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>{{page.title}}</h1>
+
+
+    {{page.content | safe}}
+    {#page.keywords#}
+    {#page.summary#}
+
+
+{% endblock %}

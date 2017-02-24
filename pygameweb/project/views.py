@@ -44,6 +44,12 @@ def release_for(release_id):
     return result
 
 
+
+@project_blueprint.route('/projects', methods=['GET'])
+def projects():
+    return render_template('project/projects.html', projects=[])
+
+
 # @project_blueprint.route('/project/', methods=['GET'])
 @project_blueprint.route('/project/<int:project_id>', methods=['GET'])
 def view(project_id):

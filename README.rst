@@ -96,6 +96,8 @@ We use various fixtures to make writing the tests easier and faster.
 Templates with jinja2 and bootstrap
 ===================================
 
+pygameweb/templates/
+
 We use::
 
     * Jinja2 http://jinja.pocoo.org/
@@ -106,10 +108,10 @@ We use::
 Command line tools with click
 =============================
 
-We use click and setuptools entry points (in setup.py) for command line tools.
+We use click and setuptools entry points (in setup.py) for command line tools::
 
-* click http://click.pocoo.org/5/
-* entry points https://packaging.python.org/distributing/#entry-points
+    * click http://click.pocoo.org/5/
+    * entry points https://packaging.python.org/distributing/#entry-points
 
 Note, when you add or change a command line tool, you need to `pip install -e .` again.
 
@@ -118,8 +120,23 @@ Note, when you add or change a command line tool, you need to `pip install -e .`
 User login with Flask-security-fork
 ===================================
 
-https://flask-security-fork.readthedocs.io/en/latest/quickstart.html
+pygameweb.user
 
+Using::
+
+    * flask-security-fork https://flask-security-fork.readthedocs.io/en/latest/quickstart.html
+
+
+Navigation with flask-nav
+=========================
+
+pygameweb.nav
+pygameweb.page.models
+
+Using::
+
+    * flask-nav http://pythonhosted.org/flask-nav/
+    * flask-bootstrap https://pythonhosted.org/Flask-Bootstrap/nav.html
 
 
 

@@ -6,6 +6,7 @@ Flask
 flask_admin
 flask-bootstrap
 flask-debugtoolbar
+flask-nav
 Flask-Security-Fork==2.0.1
 flask_sqlalchemy_session
 Flask-WTF
