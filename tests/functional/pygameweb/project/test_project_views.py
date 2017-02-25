@@ -97,7 +97,6 @@ def project2(session, project, user):
     return the_project2
 
 
-
 def test_project_index(project_client, session, project, project2):
     """ is shown as the default.
     """
@@ -119,14 +118,12 @@ def test_project_index(project_client, session, project, project2):
     resp = project_client.get('/project/1/1')
     assert resp.status_code == 200
     assert b'A release title.' in resp.data
-    print(resp.data.decode('utf-8'))
 
 
     resp = project_client.get('/project/66')
     assert resp.status_code == 404
     resp = project_client.get('/project/1/66')
     assert resp.status_code == 404
-
 
 
 def test_tags(project_client, session, project, project2):
@@ -156,8 +153,6 @@ def test_tags(project_client, session, project, project2):
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
     assert project2.title.encode('utf-8') in resp.data, 'both are in arcade'
-
-
 
 
 def test_project_new(project_client, session, user):

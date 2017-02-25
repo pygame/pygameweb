@@ -7,10 +7,14 @@ from flask import Blueprint, render_template, request, make_response
 from flask_sqlalchemy_session import current_session
 
 from pygameweb.news.models import News
+from pygameweb.project.models import top_tags, Project, Release
+from pygameweb.user.models import User
+
 
 news_blueprint = Blueprint('news',
                            __name__,
                            template_folder='../templates/')
+
 
 def latest_news(session, per_page=10):
     return (session
@@ -24,7 +28,19 @@ def latest_news(session, per_page=10):
 def index():
     """ of the news page.
     """
-    return render_template('news/view.html', news=latest_news(current_session))
+    top_tag_counts = top_tags(current_session)
+
+    recent_releases = (current_session.query(User, Project, Release)
+                       .filter(Release.project_id == Project.id)
+                       .filter(User.id == Project.users_id)
+                       .limit(10)
+                       .all())
+
+    return render_template('news/view.html',
+                           top_tag_counts=top_tag_counts,
+                           recent_releases=recent_releases,
+                           news=latest_news(current_session))
+
 
 @news_blueprint.route('/feed/atom', methods=['GET'])
 def atom():
