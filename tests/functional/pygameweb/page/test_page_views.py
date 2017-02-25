@@ -1,4 +1,4 @@
-"""
+""" Do the pages and navigation system work? Probably.
 """
 
 import pytest
@@ -27,54 +27,68 @@ def pages(session):
 
     page1 = Page(name='pagename1',
                  title='pagetitle1',
-                 keywords='',
-                 content='',
-                 summary='',
+                 content='Some great content.',
                  orders=1,
-                 link='',
+                 link='content.html',
+                 hidden=0)
+
+    page2 = Page(name='Download Redirect',
+                 orders=2,
+                 link='redirect.html',
                  hidden=0,
-                 uri='',
-                 users_id=1,
-                 groups_id=1,
-                 nav_group='')
+                 uri='/redirected_to.html')
 
-    session.add(page1)
+    page3 = Page(name='Hidden page',
+                 title='pagetitle1',
+                 content='hidden content',
+                 orders=3,
+                 link='hidden.html',
+                 hidden=1)
 
-    return [page1]
+    page4 = Page(name='Page Group1',
+                 content='Second best content.',
+                 orders=4,
+                 link='group1.html',
+                 hidden=0,
+                 nav_group='Can We Be')
 
+    page5 = Page(name='Page Group2',
+                 content='More Second best content.',
+                 orders=5,
+                 link='group2.html',
+                 hidden=0,
+                 nav_group='Can We Be')
+
+    the_pages = [page1, page2, page3, page4, page5]
+    for page in the_pages:
+        session.add(page)
+    session.commit()
+    return the_pages
 
 
 def test_page(page_client, session, pages):
     """
     """
-    from pygameweb.page.models import Page
+    resp = page_client.get('content.html')
+    assert resp.status_code == 200
+    assert b'Some great content.' in resp.data, 'content page'
+
+    resp = page_client.get('hidden.shtml')
+    assert resp.status_code == 404, 'hidden pages'
+
+    resp = page_client.get('redirect.html')
+    assert resp.status_code == 302
+    assert 'redirected_to.html'  in resp.location, 'redirects'
 
 
-    # projects = (session
-    #             .query(Project)
-    #             .filter(Tags.project_id == Project.id)
-    #             .filter(Tags.value == 'arcade')
-    #             .offset(start)
-    #             .limit(per_page)
-    #             .all())
-
-    # resp = project_client.get('/tags/game')
-    # assert resp.status_code == 200
-
-    assert 'content pages'
-    assert 'redirects'
-    assert 'hidden pages'
-
-
-def test_nav():
+def test_nav(pages, session):
     """ is there.
     """
+    from pygameweb.nav.views import make_nav
+    nav = make_nav(session)
+    assert nav.items[0].text == 'pagename1'
+    assert nav.items[1].text == 'Download Redirect'
 
-def test_nav_groups():
-    """ show nav items in correct groups.
-    """
-
-def test_nav_order():
-    """ is respected.
-    """
-
+    assert nav.items[2].title == 'Can We Be', 'subgroup'
+    assert nav.items[2].items[0].text == 'Page Group1'
+    assert nav.items[2].items[1].text == 'Page Group2'
