@@ -107,6 +107,8 @@ def save_image(form_field, image_path):
 @roles_required('member')
 @project_blueprint.route('/members/projects/new', methods=['GET', 'POST'])
 def new_project():
+    """ This adds both a project, and a release.
+    """
     form = FirstReleaseForm()
 
     if form.validate_on_submit():
@@ -132,6 +134,11 @@ def new_project():
                           macuri=form.macuri.data,
                           version=form.version.data)
         project.releases.append(release)
+
+        tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
+        for tag in tags:
+            current_session.add(Tags(project=project, value=tag))
+
         current_session.add(project)
         current_session.commit()
 
@@ -146,6 +153,99 @@ def new_project():
         return redirect(url_for('project.view', project_id=project.id))
 
     return render_template('project/newproject.html', form=form)
+
+
+@roles_required('member')
+@project_blueprint.route('/members/projects/edit/<int:project_id>', methods=['GET', 'POST'])
+def edit_project(project_id):
+    form = ProjectForm()
+
+    if form.validate_on_submit():
+
+        project = project_for(project_id)
+        if project.user.id != current_user.id:
+            abort(404)
+
+        project.title = form.title.data
+        project.summary = form.summary.data
+        project.description = form.description.data
+        project.uri = form.uri.data
+        project.datetimeon = datetime.datetime.now()
+
+        for tag in (current_session
+                    .query(Tags)
+                    .filter(Tags.project_id == project.id)
+                    .all()):
+            current_session.delete(tag)
+
+        tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
+        for tag in tags:
+            current_session.add(Tags(project=project, value=tag))
+
+        current_session.add(project)
+        current_session.commit()
+
+        if form.image.data is not None:
+            www = Path(current_app.config['WWW'])
+            sec_fname = secure_filename(form.image.data.filename)
+            extension = os.path.splitext(sec_fname)[-1]
+
+            image_fname = f'{project.id}{extension}'
+            project.image = image_fname
+            current_session.add(project)
+            image_path = str(www / 'shots' / image_fname)
+
+            save_image(form.image, image_path)
+            current_session.commit()
+
+        return redirect(url_for('project.view', project_id=project.id))
+
+    return render_template('project/editproject.html', form=form, project_id=project_id)
+
+
+@roles_required('member')
+@project_blueprint.route('/members/projects/<int:project_id>/releases/new',
+                         methods=['GET', 'POST'],
+                         defaults={'release_id':None})
+@project_blueprint.route('/members/projects/<int:project_id>/releases/edit/<int:release_id>', methods=['GET', 'POST'])
+def edit_release(project_id, release_id):
+    form = ReleaseForm()
+
+    if form.validate_on_submit():
+        project = project_for(project_id)
+        if project.user.id != current_user.id:
+            abort(404)
+
+        if release_id is None:
+            release = Release(datetimeon=datetime.datetime.now(),
+                              description=form.description.data,
+                              srcuri=form.srcuri.data,
+                              winuri=form.winuri.data,
+                              macuri=form.macuri.data,
+                              version=form.version.data)
+            project.releases.append(release)
+            current_session.add(project)
+        else:
+            release = release_for(release_id)
+
+            release.datetimeon = datetime.datetime.now()
+            release.description = form.description.data
+            release.srcuri = form.srcuri.data
+            release.winuri = form.winuri.data
+            release.macuri = form.macuri.data
+            release.version = form.version.data
+            current_session.add(release)
+
+        current_session.commit()
+
+        return redirect(url_for('project.release', project_id=project_id, release_id=release.id))
+
+    return render_template('project/editrelease.html',
+                           form=form,
+                           project_id=project_id,
+                           release_id=release_id)
+
+
 
 
 def add_project_blueprint(app):

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+	<h1>Edit Release</h1>
+
+    <form class="form" method="post" action="{{ url_for('project.edit_release', project_id=project_id, release_id=release_id) }}">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+
+        {{ wtf.form_field(form.description, rows=5) }}
+        {{ wtf.form_field(form.version) }}
+        {{ wtf.form_field(form.srcuri) }}
+        {{ wtf.form_field(form.winuri) }}
+        {{ wtf.form_field(form.macuri) }}
+        <button class="btn btn-lg btn-primary" type="submit">Continue</button>
+    </form>
+
+{% endblock %}

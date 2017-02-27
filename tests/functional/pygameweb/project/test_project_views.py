@@ -160,6 +160,7 @@ def test_project_new(project_client, session, user):
     """
 
     from io import BytesIO
+    from flask import url_for
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
 
     session.commit()
@@ -192,4 +193,71 @@ def test_project_new(project_client, session, user):
 
     assert resp.status_code == 200
     assert project.title == 'title'
-    assert project.releases[0].version == '1.0.2'
+    assert project.releases[0].version == '1.0.2', 'a release was added too'
+
+
+    url = f'/members/projects/edit/{project.id}'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+
+    image = (BytesIO(png), 'helloworld.png')
+    data = dict(image=image, title='titlechanged',
+                tags='tag1, tag2, tag3', summary='summary',
+                description='description', uri='http://example.com/')
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post(f'/members/projects/edit/{project.id}', data=data, follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'titlechanged')
+                   .first())
+        assert save_image.call_args[0][1] == f'frontend/www/shots/{project.id}.png'
+
+
+    data = dict(title='titlechangedagain',
+                tags='tag1, tag2, tag3', summary='summary',
+                description='description', uri='http://example.com/')
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post(f'/members/projects/edit/{project.id}', data=data, follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'titlechangedagain')
+                   .first())
+        assert not save_image.called, 'no image was sent, and we do not save one'
+
+        tags = (session
+                .query(Tags)
+                .filter(Tags.project_id == project.id)
+                .all())
+        assert len(tags) == 3
+        assert [tag.value for tag in tags] == ['tag1', 'tag2', 'tag3']
+
+
+
+    url = f'/members/projects/{project.id}/releases/new'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+
+    data = dict(description='updated description', version='2.0.0', srcuri='http://example.com/')
+
+    release = project.releases[0]
+    url = f'/members/projects/{project.id}/releases/edit/{release.id}'
+    resp = project_client.post(url, data=data, follow_redirects=True)
+    assert resp.status_code == 200
+
+    session.refresh(project)
+    session.refresh(project.releases[0])
+    assert project.releases[0].version == '2.0.0', 'we edited a release version'
+    assert len(project.releases) == 1
+
+
+    data = dict(description='new release', version='3.0.0', srcuri='http://example.com/')
+    url = f'/members/projects/{project.id}/releases/new'
+    resp = project_client.post(url, data=data, follow_redirects=True)
+    assert resp.status_code == 200
+    session.refresh(project)
+    assert len(project.releases) == 2
+    assert project.releases[1].version == '3.0.0', 'we added a release version'
