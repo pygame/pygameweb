@@ -1,0 +1,57 @@
+<div id="collaborate" class="collaboratePage">
+	{#
+	<div class="grid2 page column">
+		<div class="videoHolder">
+			<video IEsrc="videos/collaborate_sm.mp4"  width="304" height="224" preload="preload" autoplay="autoplay" loop="loop">
+				<source src="videos/collaborate_sm.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+				<source src="videos/collaborate_sm.ogv" type='video/ogg; codecs="theora, vorbis"'>
+				<img src="images/static_collaborate.jpg" width="304" height="224" class="jQstaticImages">
+			</video>
+		</div>
+	</div>
+	#}
+
+	<section class="grid2 page column">
+		<div class="headingWrap">
+		  	<h1>project comments</h1>
+		</div>
+		<div id="recentcomments" class="dsq-widget">
+			<!--
+			<script type="text/javascript" src="http://pygame.disqus.com/recent_comments_widget.js?num_items=25&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=200"></script>
+			-->
+
+
+			<script type="text/javascript">
+				setTimeout(function () {
+
+					var s = document.createElement('script'),
+						document_write = document.write,
+					    content = '';
+
+					//s.src = 'http://www.reddit.com/domain/skattertech.com/new/.embed?limit=4&amp;t=all&amp;sort=new&amp;style=off';
+					s.src = 'http://pygame.disqus.com/recent_comments_widget.js?num_items=25&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=200';
+					document.write = function(s) {
+					    content += s;
+					};
+					s.onload = function(){
+					    document.getElementById('recentcomments').innerHTML = content;
+						document.write = document_write;
+					};
+					document.getElementsByTagName('head')[0].appendChild(s);
+				}, 2000);
+
+			</script>
+
+
+		</div>
+	</section>
+
+
+	<section class="grid2 page column">
+		<div class="headingWrap">
+		  	<h1>meetups</h1>
+		</div>
+	</section>
+
+
+</div>

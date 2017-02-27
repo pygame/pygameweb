@@ -24,6 +24,8 @@ def image_thumb(www_path:Path, fname, width:int, height:int, itype="jpg", qualit
     shots_path = www_path / 'shots'
     thumb_path = www_path / 'thumb'
     image = shots_path / fname
+    if '..' in fname:
+        raise ValueError('wat')
 
     try:
         filesize = os.path.getsize(image)

@@ -1,0 +1,194 @@
+<article id="show" class="showPage">
+
+	<section class="grid2 page column">
+		<div class="release">
+			<div class="headingWrap">
+			  	<h1>our projects - recent releases</h1>
+			</div>
+
+			<p class="release-intro">pygame.org welcomes all python game, art, music, sound,
+			    video and multimedia projects. If they use pygame or not.
+
+			    Once you finished
+			    <a href="//www.pygame.org/wiki/GettingStarted">getting started</a>
+			    you could
+			    <a href="//www.pygame.org/members/projects/new/new.php">add a new project</a>
+			    or
+			    <a href="#collaborate">collaborate</a> with other people.
+			    Or perhaps you're interested in <a href="#make">making</a>
+			    pygame (the python multimedia library) itself better?
+			    First you may need to <a href="#learn">learn</a> a thing or two
+			    <a href="//www.pygame.org/wiki/about">about</a> pygame by reading
+			    the <a href="//www.pygame.org/docs/">docs</a>.
+			</p>
+			<div class="releaseWrap displayNone jQreleaseWrap cf">
+				<h2 class="releaseTitle">
+					<span class="jQrelease_project_title">Project title</span>
+					<span class="jQreleaseTitle">1.0.0</span><span>, by</span> <span class="jQrelease_users_title">Joe Blogs</span>
+				</h2>
+
+				<a href="" class="jQreleaseLink">
+					<img class="jQreleaseImg" src="">
+				</a>
+
+				<div class="newsContent news jQrelease_project_summary">project summary</div>
+				<div class="newsDateText jQreleaseDateText">20 March 2014</div>
+				<div class="admin jQreleaseAdmin"><a href="admin/release/show?id=">edit</a></div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="grid2 page column">
+		<div class="news_show">
+			<div class="headingWrap">
+			  	<h1>news</h1>
+			</div>
+			<div class="newsWrap displayNone jQnewsWrap cf">
+				<h2 class="newsTitle jQnewsTitle">the title</h2>
+				<div class="newsContent news jQnewsContent">the news body</div>
+				<div class="newsDateText jQnewsDateText">20 March 2014</div>
+				<div class="admin jQnewsAdmin"><a href="admin/news/show?id=">edit</a></div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="grid2 page column">
+		<div class="headingWrap">
+		  	<h1>tweets</h1>
+		</div>
+		<div>
+			<a class="twitter-timeline" width="300" height="1600" href="https://twitter.com/pygame_org" data-widget-id="303463737174663169" data-dnt="true"></a>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+		</div>
+	</section>
+
+
+	<section class="grid2 page column">
+		<div class="headingWrap">
+		  	<h1>reddit</h1>
+		</div>
+		<div id="reddit">
+			<!--
+			<script src="http://www.reddit.com/r/pygame.embed?limit=28" type="text/javascript"></script>
+			-->
+
+
+			<script type="text/javascript">
+				setTimeout(function () {
+
+					var s = document.createElement('script'),
+						document_write = document.write,
+					    content = '';
+
+					//s.src = 'http://www.reddit.com/domain/skattertech.com/new/.embed?limit=4&amp;t=all&amp;sort=new&amp;style=off';
+					s.src = 'http://www.reddit.com/r/pygame.embed?limit=28';
+					document.write = function(s) {
+					    content += s;
+					};
+					s.onload = function(){
+					    document.getElementById('reddit').innerHTML = content;
+						document.write = document_write;
+					};
+					document.getElementsByTagName('head')[0].appendChild(s);
+				}, 0);
+
+			</script>
+
+		</div>
+	</section>
+
+
+	<section class="grid2 page column">
+		<div class="videoSection">
+			<div class="headingWrap">
+			  <h1>videos</h1>
+			</div>
+
+			<div id="youtubeVideos"></div>
+			<div id="vids" class="jQList"></div>
+		</div>
+	</section>
+
+
+
+
+
+	{#
+	<div class="grid2 page column">
+		<div class="videoHolder">
+			<video IEsrc="videos/home2_sm.mp4" width="304" height="224" preload="preload" autoplay="autoplay" loop="loop">
+				<source src="videos/home2_sm.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+				<source src="videos/home2_sm.ogv" type='video/ogg; codecs="theora, vorbis"'>
+				<img src="images/static_home.jpg" width="304" height="224" class="jQstaticImages">
+			</video>
+		</div>
+	</div>
+
+
+
+	<div class="grid2 page column jQcolumn">
+		<div class="jQcolumnWrap displayNone">
+		  <div class="headingWrap">
+		    <h1 class="jQcolumnName">A heading</h1><br/><br/>
+		  </div>
+		  <div class="jQcolumnContent">the content</div>
+		  <div class="admin jQcolumnAdmin"><a href="admin/column/show?id=">edit</a></div>
+		</div>
+	</div>
+
+	<div class="grid2 page column">
+	<div class="create_show">
+		<div class="headingWrap">
+		  <h1>Calendar of create</h1><br/><br/>
+		</div>
+		<div class="jQdatePicker datePicker"></div>
+
+
+		<div class="createWrap displayNone jQeventWrap">
+		  <div class="createLeft"><a href="#" class="jQcreatetartDateText">Dec 10</a></div>
+		  <div class="createRight">
+		<div class="createName"><a href="#" class="jQeventName">Event Name</a></div>
+		<div class="createLocation"><a href="#" class="jQeventLocation">Event Location</a></div>
+		<div class="jQcreatetartDate displayNone">2010-08-22</div>
+		<div class="jQeventEndDate displayNone">2010-08-22</div>
+		<div class="jQeventUrl displayNone">a url</div>
+		<div class="jQeventId displayNone">a url</div>
+		<div class="admin jQeventAdmin"><a href="admin/create/show?id=">edit</a></div>
+		  </div>
+		  <div class="clear"></div>
+		</div>
+	</div>
+	</div>
+
+
+
+	<div class="grid2 page column">
+		<div class="downloads_show">
+			<div class="headingWrap">
+			  <h1>heading ok</h1><br/><br/>
+			</div>
+			<p>paragraph.</p>
+
+			<div class="shuffleBar">
+			  <p>ok</p>
+			</div>
+
+
+			<div class="downloadsWrap displayNone jQdownloadsWrap">
+				<div class="downloadsContent downloads">
+						<ul><li class="jQdownloadsContent">News content.  This is the downloads content.</li></ul>
+				</div>
+				<div class="admin jQdownloadsAdmin">
+					<a href="admin/downloads/show?id=">edit</a>
+				</div>
+			    <div class="clear"></div>
+			</div>
+
+		</div>
+	</div>
+	#}
+
+
+</article>

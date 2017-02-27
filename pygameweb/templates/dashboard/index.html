@@ -1,0 +1,132 @@
+{% include 'dashboard/top.html' %}
+
+<div id="wrapper" class="scroll-x site_show">
+    <div id="secondNav">
+    	<span class="searchBox">
+        	<form action="http://www.google.co.uk/search" id="searchForm">
+				<input type='hidden' name='as_sitesearch' value='www.pygame.org'>
+				<input type="text" name="q" id="searchInput">
+				<input type="submit" name="search" value="search"/>
+        	</form>
+    	</span>
+
+        <span id="keyboard" class="keyArrows">
+            <ul id="bottomrow" class="cf">
+                <ol class="cf">
+                    <li><a id="left" class="key c37 jQgoLeft" href="#" title="Use arrow keys to move around in the website"><span><img src="css/left.png"></span></a></li>
+                    <li>
+                        <a id="up" class="key c38 jQgoUp" href="#" title="Use arrow keys to move around in the website"><span><img src="css/up.png"></span></a>
+                        <a id="down" class="key c40 jQgoDown" href="#" title="Use arrow keys to move around in the website"><span><img src="css/down.png"></span></a>
+                    </li>
+                    <li><a id="right" class="key c39 jQgoRight" href="#" title="Use arrow keys to move around in the website"><span><img src="css/right.png"></span></a></li>
+                </ol>
+            </ul>
+        </span>
+
+        <audio id="mejs" type="audio/mp3" controls="controls">
+            <Source src="music/solarwolf-h2.mp3" title="Solarwolf - h2"></Source>
+            <Source src="music/owt.mp3" title="Juan J. Martinez - OWT"></Source>
+            <Source src="music/zanthor-soundtrack3.mp3" title="Phil Hassey and Tim - zanthor-soundtrack3"></Source>
+            <Source src="music/zanthor-grass.mp3" title="Phil Hassey and Tim - zanthor-grass"></Source>
+            <Source src="music/zanthor.mp3" title="Phil Hassey and Tim - zanthor"></Source>
+        </audio>
+
+    </div>
+
+
+    {% include 'dashboard/heading-nav.html' %}
+    {% include 'dashboard/drops.html' %}
+
+	<div id="content" class="clearIt">
+		<div class="post clearIt jQpage">
+			<div id="arrowRight"><a href="#"></a></div>
+			<div id="arrowLeft"><a href="#"></a></div>
+			<div class="post-mask grid4 clearIt">
+				<div class="post-content content-3 jQthePages" scope="PostContent">
+					{% include 'dashboard/show.html' %}
+					{% include 'dashboard/learn.html' %}
+					{% include 'dashboard/make.html' %}
+					{% include 'dashboard/create.html' %}
+					{% include 'dashboard/collaborate.html' %}
+					{% include 'dashboard/awesome.html' %}
+	    	    </div>
+	        </div>
+	    </div>
+	</div>
+
+
+    <div id="footer" class="clearIt">
+        <div class="grid3 column">
+        </div>
+        <div class="grid1 column">
+        </div>
+        <div class="grid1 column">
+        </div>
+    </div>
+    <!--footer-->
+</div>
+<!--wrapper-->
+
+
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+
+
+<script type="text/javascript">
+  // Check if we have been processed server side or not.
+  if(window._processedServerSide === undefined) {
+    // We should be client side, so fetch the json.
+    // Note, you can skip the json loading if you do not need to use json.
+    var clientJSON = 'client.json';
+    var clientJSON = 'server.json';
+
+
+    $.ajaxSetup({
+        async: false
+    });
+
+
+    //alert('eee');
+    $.getJSON(clientJSON, function(data) {
+      // When processed on the server side window._jsonData
+      //     is put there by the server.
+      window._jsonData = data;
+      // Your server side scripts get run on client side if not processed on server side.
+    });
+
+
+    $.ajaxSetup({
+        async: true
+    });
+
+
+    var loadScript = function (url) {
+        //$.getScript(url);
+        document.write('<' + 'script src="', url, '" type="text/javascript"' + '>' + '<' + '/' + 'script' + '>');
+    }
+    //loadScript('yourServerSide2.js');
+    loadScript('js/serverSide.js');
+
+  }
+</script>
+
+<script type="text/javascript" src="mediaelement/mediaelement-and-player.min.js"></script>
+
+{% if is_crawler %}
+<script type="text/javascript" src="js/pygame.min.js"></script>
+{% else %}
+<!-- STARTSCRIPTS -->
+
+<script type="text/javascript" src="js/pygame.plugins.js"></script>
+<script type="text/javascript" src="js/pygame.js"></script>
+
+<!-- ENDSCRIPTS -->
+{% endif %}
+
+
+<script type="text/javascript" src="html5media/flowplayer.js"></script>
+<script type="text/javascript" src="html5media/html5media.js?v=2"></script>
+
+
+    </body>
+</html>
