@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from flask import Blueprint, render_template, abort, current_app, send_from_directory
+from flask import Blueprint, render_template, abort, current_app, send_from_directory, request
 from pygameweb.thumb import image_thumb
 
 dashboard_blueprint = Blueprint('dashboard',
@@ -16,7 +16,7 @@ dashboard_blueprint = Blueprint('dashboard',
 def index():
     """ This either shows a page if it exists, or does a redirect.
     """
-
+    is_crawler = 'our-web-crawler' in request.headers.get('User-Agent', '')
     return render_template('dashboard/index.html', is_crawler=False)
 
 
