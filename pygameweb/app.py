@@ -32,7 +32,7 @@ def create_app(object_name='pygameweb.config.Config',
         app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
         from flask_debugtoolbar import DebugToolbarExtension
-        toolbar = DebugToolbarExtension(app)
+        DebugToolbarExtension(app, sqlalchemy_engine=app.engine)
 
     return app
 
