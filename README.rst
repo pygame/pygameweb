@@ -121,6 +121,7 @@ User login with Flask-security-fork
 ===================================
 
 pygameweb.user
+pygameweb/templates/security
 
 Using::
 
@@ -137,6 +138,19 @@ Using::
 
     * flask-nav http://pythonhosted.org/flask-nav/
     * flask-bootstrap https://pythonhosted.org/Flask-Bootstrap/nav.html
+
+
+
+Dashboard is an overview
+========================
+
+of all sorts of things happening in the pygame worlds around the interwebs.
+
+It's a 7000px wide webpage offering a summary of various parts.
+
+
+
+
 
 
 

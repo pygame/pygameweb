@@ -8,6 +8,15 @@ from flask_admin.contrib.sqla import ModelView
 from wtforms.fields import PasswordField
 
 from pygameweb.user.models import User, Group
+from pygameweb.page.models import Page
+
+from pygameweb.news.models import News
+from pygameweb.project.models import Project, Release
+
+
+
+
+
 
 
 class TheAdminIndexView(AdminIndexView):
@@ -37,10 +46,30 @@ class GroupAdmin(ModelView):
     def is_accessible(self):
         return current_user.has_role('admin')
 
+class NewsAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+class ProjectAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+class ReleaseAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+class PageAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
 
 def add_admin(app):
     """ to the app.
     """
     admin = Admin(app, template_mode='bootstrap3', index_view=TheAdminIndexView())
     admin.add_view(UserAdmin(User, admin.app.scoped_session, endpoint='user_admin'))
-    admin.add_view(GroupAdmin(Group, admin.app.scoped_session))
+    admin.add_view(GroupAdmin(Group, admin.app.scoped_session, endpoint='group_admin'))
+    admin.add_view(NewsAdmin(News, admin.app.scoped_session, endpoint='news_admin'))
+    admin.add_view(ProjectAdmin(Project, admin.app.scoped_session, endpoint='project_admin'))
+    admin.add_view(ReleaseAdmin(Release, admin.app.scoped_session, endpoint='release_admin'))
+    admin.add_view(PageAdmin(Page, admin.app.scoped_session, endpoint='page_admin'))
