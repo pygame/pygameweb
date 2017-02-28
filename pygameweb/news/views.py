@@ -7,7 +7,6 @@ from flask import Blueprint, render_template, request, make_response
 from flask_sqlalchemy_session import current_session
 
 from pygameweb.news.models import News
-from pygameweb.cache import cache
 
 
 news_blueprint = Blueprint('news',
@@ -24,11 +23,9 @@ def latest_news(session, per_page=10):
 
 @news_blueprint.route('/news.html', methods=['GET'])
 @news_blueprint.route('/news', methods=['GET'])
-@cache.cached(timeout=50)
 def index():
     """ of the news page.
     """
-
     return render_template('news/view.html', news=latest_news(current_session))
 
 
