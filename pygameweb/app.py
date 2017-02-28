@@ -50,6 +50,7 @@ def add_views_front(app):
     from pygameweb.user.views import add_user_blueprint
     from pygameweb.nav.views import add_nav
     from pygameweb.page.views import add_page
+    from pygameweb.sidebar.views import add_sidebar
     from pygameweb.dashboard.views import add_dashboard
 
 
@@ -63,6 +64,7 @@ def add_views_front(app):
     add_user_blueprint(app)
     add_dashboard(app)
     add_page(app)
+    add_sidebar(app)
 
     # nav should be last, since it uses other routes.
     add_nav(app)

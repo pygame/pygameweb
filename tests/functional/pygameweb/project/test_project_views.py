@@ -8,8 +8,12 @@ def project_client(app, session, client):
     """
     from pygameweb.project.views import add_project_blueprint
     from pygameweb.user.views import add_user_blueprint
+    from pygameweb.sidebar.views import add_sidebar
+    from pygameweb.thumb.views import add_thumb_blueprint
+    add_sidebar(app)
     add_user_blueprint(app)
     add_project_blueprint(app)
+    add_thumb_blueprint(app)
 
     return client
 

@@ -14,27 +14,4 @@
     {% endfor %}
     </div>
 
-
-    <h1>Recent Releases</h1>
-    <div>
-    {% for user, project, release in recent_releases %}
-
-        <span>{{ release.datetimeon }}<span>
-        <a href="{{ url_for('project.view', project_id=project.id, release_id=release.id) }}">
-            <img src="{{ project.image_thumb(124,93) }}">
-            {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
-            {# <span>{{ user.title }}</span>#}
-        </a>
-    {% endfor %}
-    </div>
-
-
-    <h1>Projects</h1>
-    <div>
-    {% for value, count, size in top_tag_counts %}
-    {% set size2 = size//2 %}
-        <a href='/tags/{{value}}'>{{value}} ({{count}})</a>
-    {% endfor %}
-    </div>
-
 {% endblock %}

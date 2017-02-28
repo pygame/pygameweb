@@ -1,13 +1,88 @@
-{% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% block doc -%}
+<!DOCTYPE html>
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+  <head>
+    {%- block head %}
+    <title>{% block title %}{{title|default}}{% endblock title %}</title>
 
-{% block title %}This is an example page{% endblock %}
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
 
-{% block navbar %}
+    {%- block styles %}
+    <!-- Bootstrap -->
+    <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+    {%- endblock styles %}
+    {%- endblock head %}
+  </head>
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+    {% block navbar %}
+    {% if nav %}
+    {{ nav.mynavbar.render() }}
+    {% endif %}
+    {%- endblock navbar %}
 
-{% if nav %}
-{{ nav.mynavbar.render() }}
-{% endif %}
+    <div class="container">
+      <div class="row row-offcanvas row-offcanvas-right">
+        <div class="col-xs-12 col-sm-9">
+        {% block content -%}
+        {%- endblock content %}
+      </div><!--/.col-xs-12.col-sm-9-->
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
+        {% block sidebar -%}
 
-{% endblock %}
+          {% if sidebar %}
+            {% set side_stuff = sidebar() %}
+            {% set recent_releases = side_stuff.recent_releases %}
+            {% set top_tag_counts = side_stuff.top_tag_counts %}
 
+            <h2>Recent Releases</h2>
+            <div class="list-group">
+            {% for user, project, release in recent_releases %}
+
+              <a href="{{ url_for('project.view', project_id=project.id, release_id=release.id) }}"
+                 class="list-group-item">
+                <span>{{ release.datetimeon }}<span>
+                <img class="img-responsive" src="{{ project.image_thumb(230,230) }}">
+                <br>
+                {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
+                {# <span>{{ user.title }}</span>#}
+              </a>
+
+            {% endfor %}
+            </div>
+
+
+            <h2>Projects</h2>
+            <div class="list-group">
+            {% for value, count, size in top_tag_counts %}
+                {% set size2 = size//2 %}
+                <a href='/tags/{{value}}' class="list-group-item">{{value}}<span class="pull-right">({{count}})</span></a>
+
+            {% endfor %}
+            </div>
+          {% endif %}
+
+        {%- endblock sidebar %}
+        </div><!--/.sidebar-offcanvas-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+    <p></p>
+      </footer>
+    </div><!--/.container-->
+
+    {% block scripts %}
+    <script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
+    <script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}
