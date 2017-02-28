@@ -5,7 +5,7 @@
     <tagline></tagline>
     <link rel="alternate" type="text/html" href="http://www.pygame.org"/>
     <id>http://www.pygame.org</id>
-    <modified>2017-02-09T13:30:09-07:00</modified>
+    <modified>{{ news[0].datetimeon.strftime('%a, %d %b %y %T') }}</modified>
     <generator>pygameweb 0.0.1</generator>
     {% for new in news %}
     <entry>
@@ -14,7 +14,7 @@
         <created>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</created>
         <issued>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</issued>
         <modified>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</modified>
-        <id>http://www.pygame.org/news.html</id>
+        <id>https://www.pygame.org/news.html</id>
         <author>
             <name>pygame.org</name>
         </author>
