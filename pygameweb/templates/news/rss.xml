@@ -4,11 +4,11 @@
     <channel>
         <title>pygame news</title>
         <description></description>
-        <link>http://www.pygame.org</link>
+        <link>https://www.pygame.org</link>
         <lastBuildDate>{{ build_date }}</lastBuildDate>
         <generator>pygameweb 0.0.1</generator>
         <image>
-            <url>http://www.pygame.org/skins/main/poweredby.gif</url>
+            <url>https://www.pygame.org/skins/main/poweredby.gif</url>
             <title>pygame news</title>
             <link>https://www.pygame.org</link>
         </image>
