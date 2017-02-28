@@ -19,9 +19,16 @@ def project_client(app, session, client):
 
 
 @pytest.fixture
-def user(session):
-    from pygameweb.user.models import User
-    user = User(name='joe', email='asdf@example.com')
+def user(app, session):
+    """ gives us a user who is a member.
+    """
+    from pygameweb.user.models import User, Group
+    from flask_security.utils import encrypt_password
+    group = Group(name='member', title='Member')
+    user = User(name='joe',
+                email='asdf@example.com',
+                password=encrypt_password('password'),
+                roles=[group])
     session.add(user)
     return user
 
@@ -32,7 +39,6 @@ def project(session, user):
     """
     import datetime
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
-
 
     the_project = Project(
         title='Some project title 1',
@@ -168,6 +174,9 @@ def test_project_new(project_client, session, user):
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
 
     session.commit()
+
+
+
     with project_client.session_transaction() as sess:
         sess['user_id'] = user.id
         sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins

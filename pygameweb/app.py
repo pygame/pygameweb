@@ -59,12 +59,12 @@ def add_views_front(app):
 
 
     from pygameweb.admin.views import add_admin
+    add_user_blueprint(app)
     add_wiki_blueprint(app)
     add_project_blueprint(app)
     add_thumb_blueprint(app)
     add_static_blueprint(app)
     add_news_blueprint(app)
-    add_user_blueprint(app)
     add_dashboard(app)
     add_page(app)
     add_sidebar(app)

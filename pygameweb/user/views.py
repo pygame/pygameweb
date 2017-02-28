@@ -69,24 +69,12 @@ class SQLAlchemySessionUserDatastore(SQLAlchemyUserDatastore):
                                          role_model)
 
 
-
-
-
-@user_blueprint.route('/home')
-@login_required
-def home():
-    # app.user_datastore.create_user(email='renesd@gmail.com', password='password')
-    # current_session.commit()
-    return render_template('base.html')
-
-
-
 def add_user_blueprint(app):
     """ to the app.
     """
     app.user_datastore = SQLAlchemySessionUserDatastore(current_session, User, Group)
+    Security(app, app.user_datastore)
 
-    security = Security(app, app.user_datastore)
 
     from flask_security import user_confirmed
     @user_confirmed.connect_via(app)

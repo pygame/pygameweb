@@ -44,10 +44,24 @@ def release_for(release_id):
     return result
 
 
-
-@project_blueprint.route('/projects', methods=['GET'])
+@project_blueprint.route('/members/projects', methods=['GET'])
+@login_required
+@roles_required('member')
 def projects():
+
+    projects = (current_session
+                .query(Project)
+                .filter(Project.id == project_id)
+                .filter(Project.user_id == current_user.id)
+                .all())
+
     return render_template('project/projects.html', projects=[])
+
+@project_blueprint.route('/members/<int:project_id>/releases', methods=['GET'])
+@login_required
+@roles_required('member')
+def releases():
+    return render_template('project/releases.html', releases=[])
 
 
 # @project_blueprint.route('/project/', methods=['GET'])
@@ -95,8 +109,6 @@ def tags(tag):
                            prev_start=prev_start,
                            next_start=next_start)
 
-# members/projects/
-# http://pygame.org/members/projects/new/new.php?&_id=7ac085095c01e07e633302581e829dfd
 
 def save_image(form_field, image_path):
     """ A little helper to save images.
@@ -104,8 +116,9 @@ def save_image(form_field, image_path):
     return form_field.data.save(image_path)
 
 
-@roles_required('member')
 @project_blueprint.route('/members/projects/new', methods=['GET', 'POST'])
+@login_required
+@roles_required('member')
 def new_project():
     """ This adds both a project, and a release.
     """
@@ -155,8 +168,9 @@ def new_project():
     return render_template('project/newproject.html', form=form)
 
 
-@roles_required('member')
 @project_blueprint.route('/members/projects/edit/<int:project_id>', methods=['GET', 'POST'])
+@login_required
+@roles_required('member')
 def edit_project(project_id):
     form = ProjectForm()
 
@@ -203,11 +217,12 @@ def edit_project(project_id):
     return render_template('project/editproject.html', form=form, project_id=project_id)
 
 
-@roles_required('member')
 @project_blueprint.route('/members/projects/<int:project_id>/releases/new',
                          methods=['GET', 'POST'],
                          defaults={'release_id':None})
 @project_blueprint.route('/members/projects/<int:project_id>/releases/edit/<int:release_id>', methods=['GET', 'POST'])
+@login_required
+@roles_required('member')
 def edit_release(project_id, release_id):
     form = ReleaseForm()
 
