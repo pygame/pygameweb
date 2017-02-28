@@ -24,12 +24,13 @@ def user(app, session):
     """
     from pygameweb.user.models import User, Group
     from flask_security.utils import encrypt_password
-    group = Group(name='member', title='Member')
+    group = Group(name='members', title='Member')
     user = User(name='joe',
                 email='asdf@example.com',
                 password=encrypt_password('password'),
                 roles=[group])
     session.add(user)
+    session.commit()
     return user
 
 
@@ -172,9 +173,6 @@ def test_project_new(project_client, session, user):
     from io import BytesIO
     from flask import url_for
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
-
-    session.commit()
-
 
 
     with project_client.session_transaction() as sess:

@@ -46,22 +46,30 @@ def release_for(release_id):
 
 @project_blueprint.route('/members/projects', methods=['GET'])
 @login_required
-@roles_required('member')
+@roles_required('members')
 def projects():
-
+    """ shows a list of projects for the user.
+    """
     projects = (current_session
                 .query(Project)
-                .filter(Project.id == project_id)
-                .filter(Project.user_id == current_user.id)
+                .filter(Project.users_id == current_user.id)
                 .all())
 
-    return render_template('project/projects.html', projects=[])
+    return render_template('project/projects.html', projects=projects)
 
 @project_blueprint.route('/members/<int:project_id>/releases', methods=['GET'])
 @login_required
-@roles_required('member')
-def releases():
-    return render_template('project/releases.html', releases=[])
+@roles_required('members')
+def releases(project_id):
+    project = (current_session
+               .query(Project)
+               .filter(Project.id == project_id)
+               .filter(Project.users_id == current_user.id)
+               .first())
+    if not project:
+        abort(404)
+
+    return render_template('project/releases.html', releases=project.releases, project=project)
 
 
 # @project_blueprint.route('/project/', methods=['GET'])
@@ -118,7 +126,7 @@ def save_image(form_field, image_path):
 
 @project_blueprint.route('/members/projects/new', methods=['GET', 'POST'])
 @login_required
-@roles_required('member')
+@roles_required('members')
 def new_project():
     """ This adds both a project, and a release.
     """
@@ -126,9 +134,6 @@ def new_project():
 
     if form.validate_on_submit():
 
-        www = Path(current_app.config['WWW'])
-        sec_fname = secure_filename(form.image.data.filename)
-        extension = os.path.splitext(sec_fname)[-1]
         now = datetime.datetime.now()
 
         user = current_user
@@ -140,6 +145,15 @@ def new_project():
             datetimeon=now,
             user=user
         )
+
+        tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
+        if '' in tags:
+            tags.remove('')
+
+        for value in tags:
+            tag = Tags(project=project, value=value)
+            current_session.add(tag)
+
         release = Release(datetimeon=now,
                           description=form.description.data,
                           srcuri=form.srcuri.data,
@@ -148,19 +162,19 @@ def new_project():
                           version=form.version.data)
         project.releases.append(release)
 
-        tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
-        for tag in tags:
-            current_session.add(Tags(project=project, value=tag))
+        if form.image.data is not None:
+            www = Path(current_app.config['WWW'])
+            sec_fname = secure_filename(form.image.data.filename)
+            extension = os.path.splitext(sec_fname)[-1]
+
+            current_session.commit()
+            image_fname = f'{project.id}{extension}'
+            project.image = image_fname
+            image_path = str(www / 'shots' / image_fname)
+
+            save_image(form.image, image_path)
 
         current_session.add(project)
-        current_session.commit()
-
-        image_fname = f'{project.id}{extension}'
-        project.image = image_fname
-        current_session.add(project)
-        image_path = str(www / 'shots' / image_fname)
-
-        save_image(form.image, image_path)
         current_session.commit()
 
         return redirect(url_for('project.view', project_id=project.id))
@@ -170,7 +184,7 @@ def new_project():
 
 @project_blueprint.route('/members/projects/edit/<int:project_id>', methods=['GET', 'POST'])
 @login_required
-@roles_required('member')
+@roles_required('members')
 def edit_project(project_id):
     form = ProjectForm()
 
@@ -193,8 +207,13 @@ def edit_project(project_id):
             current_session.delete(tag)
 
         tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
-        for tag in tags:
-            current_session.add(Tags(project=project, value=tag))
+        if '' in tags:
+            tags.remove('')
+
+        for value in tags:
+            tag = Tags(project=project, value=value)
+            current_session.add(tag)
+
 
         current_session.add(project)
         current_session.commit()
@@ -222,7 +241,7 @@ def edit_project(project_id):
                          defaults={'release_id':None})
 @project_blueprint.route('/members/projects/<int:project_id>/releases/edit/<int:release_id>', methods=['GET', 'POST'])
 @login_required
-@roles_required('member')
+@roles_required('members')
 def edit_release(project_id, release_id):
     form = ReleaseForm()
 

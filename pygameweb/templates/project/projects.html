@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Your Projects</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>View</th>
+      <th>Edit</th>
+      <th>Releases</th>
+      <th>New release</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in projects %}
+    <tr>
+      <td>{{ project.title }}</td>
+      <td><a href="{{ url_for('project.view', project_id=project.id)}}">view <span class="glyphicon glyphicon-file"></span></a></td>
+      <td><a href="{{ url_for('project.edit_project', project_id=project.id)}}">edit <span class="glyphicon glyphicon-edit"></span></a></td>
+      <td><a href="{{ url_for('project.releases', project_id=project.id)}}">releases</a></td>
+      <td><a href="{{ url_for('project.edit_release', project_id=project.id) }}" class="btn btn-primary">new release</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock %}

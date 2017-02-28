@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Your Releases - {{ project.title }}</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Date</th>
+      <th>View</th>
+      <th>Edit</th>
+      <!-- <th>Delete</th> -->
+    </tr>
+  </thead>
+  <tbody>
+    {% for release in releases %}
+    <tr>
+      <td>{{ release.version }}</td>
+      <td>{{ release.datetimeon }}</td>
+      <td><a href="{{ url_for('project.release', project_id=project.id, release_id=release.id)}}">view <span class="glyphicon glyphicon-file"></span></a></td>
+      <td><a href="{{ url_for('project.edit_release', project_id=project.id, release_id=release.id) }}" class="btn btn-primary">edit release</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock %}
