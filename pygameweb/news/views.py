@@ -3,7 +3,7 @@
 import datetime
 from email.utils import formatdate
 
-from flask import Blueprint, render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response, redirect, url_for
 from flask_sqlalchemy_session import current_session
 
 from pygameweb.news.models import News
@@ -27,6 +27,15 @@ def index():
     """ of the news page.
     """
     return render_template('news/view.html', news=latest_news(current_session))
+
+
+@news_blueprint.route('/', methods=['GET'])
+def index_redirect():
+    """ of the main url.
+    """
+    return redirect(url_for('news.index'))
+
+
 
 
 @news_blueprint.route('/feed/atom', methods=['GET'])
