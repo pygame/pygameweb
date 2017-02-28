@@ -146,12 +146,25 @@ Dashboard is an overview
 
 of all sorts of things happening in the pygame worlds around the interwebs.
 
-It's a 7000px wide webpage offering a summary of various parts.
+It's a 7000px wide webpage offering a summary of what's happening.
+
+Projects people are working on,
+videos folks are making,
+tweets twits are... tweeting,
+questions asked and answered.
 
 
 
+To caching things we
+====================
+
+use Flask-Caching http://pythonhosted.org/Flask-Caching/
+
+pygameweb.cache
+pygameweb.news.views
 
 
+With with a @cache decorator, and/or markup in a template.
 
 
 

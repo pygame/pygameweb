@@ -5,6 +5,7 @@ feedparser
 Flask
 flask_admin
 flask-bootstrap
+Flask-Caching
 flask-debugtoolbar
 flask-nav
 Flask-Security-Fork==2.0.1

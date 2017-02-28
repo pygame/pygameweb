@@ -34,6 +34,9 @@ def create_app(object_name='pygameweb.config.Config',
         from flask_debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app, sqlalchemy_engine=app.engine)
 
+    from pygameweb.cache import cache
+    cache.init_app(app)
+
     return app
 
 

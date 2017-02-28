@@ -35,6 +35,7 @@
         {% block sidebar -%}
 
           {% if sidebar %}
+          {% cache 60*5 %}
             {% set side_stuff = sidebar() %}
             {% set recent_releases = side_stuff.recent_releases %}
             {% set top_tag_counts = side_stuff.top_tag_counts %}
@@ -64,6 +65,8 @@
 
             {% endfor %}
             </div>
+
+          {% endcache %}
           {% endif %}
 
         {%- endblock sidebar %}
