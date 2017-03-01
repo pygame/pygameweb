@@ -6,4 +6,3 @@ docs/_build/
 junit.xml
 node_modules
 pygameweb.egg-info
-static
