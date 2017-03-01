@@ -34,8 +34,10 @@ def create_app(object_name='pygameweb.config.Config',
         from flask_debugtoolbar import DebugToolbarExtension
         DebugToolbarExtension(app, sqlalchemy_engine=app.engine)
 
-    from pygameweb.cache import cache
+
+    from pygameweb.cache import cache, limiter
     cache.init_app(app)
+    limiter.init_app(app)
 
     return app
 
@@ -55,6 +57,7 @@ def add_views_front(app):
     from pygameweb.page.views import add_page
     from pygameweb.sidebar.views import add_sidebar
     from pygameweb.dashboard.views import add_dashboard
+    from pygameweb.bitbucket.views import add_bitbucket
 
 
 
@@ -68,6 +71,7 @@ def add_views_front(app):
     add_dashboard(app)
     add_page(app)
     add_sidebar(app)
+    add_bitbucket(app)
 
     # nav should be last, since it uses other routes.
     add_nav(app)
