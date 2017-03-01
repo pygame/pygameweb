@@ -57,7 +57,7 @@ def projects():
 
     return render_template('project/projects.html', projects=projects)
 
-@project_blueprint.route('/members/<int:project_id>/releases', methods=['GET'])
+@project_blueprint.route('/members/projects/<int:project_id>/releases', methods=['GET'])
 @login_required
 @roles_required('members')
 def releases(project_id):
@@ -280,6 +280,16 @@ def edit_release(project_id, release_id):
                            release_id=release_id)
 
 
+@project_blueprint.route('/members/projects/<int:project_id>/releases/delete/<int:release_id>', methods=['GET', 'POST'])
+@login_required
+@roles_required('members')
+def delete_release(project_id, release_id):
+    """
+
+    on post, delete the release.
+    on get, show a form for posting to delete it.
+    """
+    raise NotImplementedError()
 
 
 def add_project_blueprint(app):
