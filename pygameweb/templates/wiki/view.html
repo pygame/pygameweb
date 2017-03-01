@@ -2,6 +2,7 @@
 <h1>Wiki</h1>
 
 {% block content %}
+  {% cache 60*5 %}
 
   <h1>{{ wiki.title }}</h1>
 
@@ -9,5 +10,5 @@
   {{ wiki.content_rendered | safe }}
   </div>
 
-
+  {% endcache %}
 {% endblock %}
