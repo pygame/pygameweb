@@ -7,9 +7,11 @@ https://pythonhosted.org/Flask-Bootstrap/nav.html
 from flask_sqlalchemy_session import current_session
 from pygameweb.page.models import Page
 
-
+from flask import url_for
+from werkzeug.routing import BuildError
 from flask_nav import Nav
-from flask_nav.elements import Navbar, Subgroup, Link
+from flask_nav.elements import Navbar, Subgroup, Link, View
+
 
 def make_nav(session):
     """ Creates the navigation using flask-nav.
@@ -35,7 +37,15 @@ def make_nav(session):
         else:
             parts.append(Link(page.name, dest))
 
-    nav_bar = Navbar('pygame')
+    title = 'pygame'
+    endpoint = 'news.index'
+    # in tests, news.index might not exist. So we don't link there if not.
+    try:
+        url_for(endpoint)
+        nav_bar = Navbar(View(title, endpoint))
+    except (BuildError, RuntimeError):
+        nav_bar = Navbar(title)
+
     nav_bar.items.extend(parts)
     return nav_bar
 
@@ -48,6 +58,8 @@ def add_nav(app):
     @nav.navigation()
     def mynavbar():
         """ Every time a page is loaded we create the navigation.
+
+        We cache the navbar in the templates.
         """
         return make_nav(current_session)
 
