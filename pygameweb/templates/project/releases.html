@@ -11,7 +11,7 @@
       <th>Date</th>
       <th>View</th>
       <th>Edit</th>
-      <!-- <th>Delete</th> -->
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -20,12 +20,12 @@
       <td>{{ release.version }}</td>
       <td>{{ release.datetimeon }}</td>
       <td><a href="{{ url_for('project.release', project_id=project.id, release_id=release.id)}}">view <span class="glyphicon glyphicon-file"></span></a></td>
-      <td><a href="{{ url_for('project.edit_release', project_id=project.id, release_id=release.id) }}" class="btn btn-primary">edit release</a></td>
+      <td><a href="{{ url_for('project.edit_release', project_id=project.id, release_id=release.id) }}">edit <span class="glyphicon glyphicon-edit"></span></a></td>
+      <td><a href="{{ url_for('project.delete_release', project_id=project.id, release_id=release.id) }}">edit <span class="glyphicon glyphicon-minus"></span></a></td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-
 
 
 {% endblock %}
