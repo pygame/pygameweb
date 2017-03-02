@@ -19,7 +19,7 @@ def project_client(app, session, client):
 
 
 @pytest.fixture
-def user(app, session):
+def user(app, session, project_client):
     """ gives us a user who is a member.
     """
     from pygameweb.user.models import User, Group
@@ -31,6 +31,11 @@ def user(app, session):
                 roles=[group])
     session.add(user)
     session.commit()
+
+    with project_client.session_transaction() as sess:
+        sess['user_id'] = user.id
+        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+
     return user
 
 
@@ -175,9 +180,9 @@ def test_project_new(project_client, session, user):
     from pygameweb.project.models import Project, Release, Projectcomment, Tags
 
 
-    with project_client.session_transaction() as sess:
-        sess['user_id'] = user.id
-        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+    # with project_client.session_transaction() as sess:
+    #     sess['user_id'] = user.id
+    #     sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
 
     resp = project_client.get('/members/projects/new')
     assert resp.status_code == 200

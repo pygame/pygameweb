@@ -36,6 +36,7 @@
         <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
         {% block sidebar -%}
 
+          {% if sidebar %}
           {% if current_user and url_for_security %}
           <div class="list-group">
 
@@ -52,8 +53,6 @@
           {% endif %}
 
 
-
-          {% if sidebar %}
           {% cache 60*5 %}
             {% set side_stuff = sidebar() %}
             {% set recent_releases = side_stuff.recent_releases %}
