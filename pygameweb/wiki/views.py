@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, abort, redirect, url_for, request,
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
+from flask_security import current_user, login_required, roles_required
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
@@ -52,6 +53,8 @@ def index(link='index'):
 
 
 @wiki_blueprint.route('/wiki/<link>/revert', methods=['GET'])
+@login_required
+@roles_required('members')
 def revert(link):
     """ the link to make the latest version the one selected.
     """
@@ -96,6 +99,8 @@ def source(link):
 
 
 @wiki_blueprint.route('/wiki/<link>/history', methods=['GET'])
+@login_required
+@roles_required('members')
 def history(link):
     """ for the wiki page with all the changes.
     """
@@ -140,6 +145,8 @@ def diff(link):
 
 
 @wiki_blueprint.route('/wiki/<link>/edit', methods=['GET', 'POST'])
+@login_required
+@roles_required('members')
 def edit(link):
     """ the wiki page.
     """
