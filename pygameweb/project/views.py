@@ -186,13 +186,18 @@ def new_project():
 @login_required
 @roles_required('members')
 def edit_project(project_id):
-    form = ProjectForm()
+    project = project_for(project_id)
+    if project.user.id != current_user.id:
+        abort(404)
+
+    if request.method == 'GET':
+        form = ProjectForm(obj=project)
+        form.tags.data = ','.join([t.value for t in project.tags])
+        form.image.data = ''
+    else:
+        form = ProjectForm()
 
     if form.validate_on_submit():
-
-        project = project_for(project_id)
-        if project.user.id != current_user.id:
-            abort(404)
 
         project.title = form.title.data
         project.summary = form.summary.data
@@ -243,12 +248,23 @@ def edit_project(project_id):
 @login_required
 @roles_required('members')
 def edit_release(project_id, release_id):
-    form = ReleaseForm()
+    """ or create a new release if release_id is None.
+    """
+    project = project_for(project_id)
+    if project.user.id != current_user.id:
+        abort(404)
+    if release_id is not None:
+        release = release_for(release_id)
+        if release.project.user.id != current_user.id:
+            abort(404)
+
+
+    if request.method == 'GET' and release_id is not None:
+        form = ReleaseForm(obj=release)
+    else:
+        form = ReleaseForm()
 
     if form.validate_on_submit():
-        project = project_for(project_id)
-        if project.user.id != current_user.id:
-            abort(404)
 
         if release_id is None:
             release = Release(datetimeon=datetime.datetime.now(),
@@ -260,8 +276,6 @@ def edit_release(project_id, release_id):
             project.releases.append(release)
             current_session.add(project)
         else:
-            release = release_for(release_id)
-
             release.datetimeon = datetime.datetime.now()
             release.description = form.description.data
             release.srcuri = form.srcuri.data
