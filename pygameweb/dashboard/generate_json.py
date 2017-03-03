@@ -273,7 +273,12 @@ class GenerateJson(object):
         return output
 
 
-
+def main():
+    # www_path = os.path.join(os.path.split(pygameweb.__file__)[0], '..', 'www')
+    www_path = os.path.join('frontend', 'www')
+    json_path = os.path.join(www_path, 'server.json')
+    GenerateJson(www_path, json_path)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
@@ -286,8 +291,4 @@ if __name__ == "__main__":
         _test()
 
     else:
-        # www_path = os.path.join(os.path.split(pygameweb.__file__)[0], '..', 'www')
-        www_path = os.path.join('frontend', 'www')
-        json_path = os.path.join(www_path, 'server.json')
-        GenerateJson(www_path, json_path)
-        sys.exit(0)
+        main()

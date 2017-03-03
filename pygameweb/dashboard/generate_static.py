@@ -299,10 +299,7 @@ class Urls(object):
 
         return parser.parse_args(input_args)
 
-if __name__ == "__main__":
-
-
-
+def main():
     args = Urls.parse_args()
     _logit = args.log
     log (args)
@@ -311,3 +308,6 @@ if __name__ == "__main__":
 
     # return 0 for a successful run.
     sys.exit(0)
+
+if __name__ == "__main__":
+    main()

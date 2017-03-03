@@ -63,6 +63,8 @@ setup(
     entry_points={
         'console_scripts': [
             'pygameweb_front=pygameweb.run:run_front',
+            'pygameweb_generate_json=pygameweb.dashboard.generate_json:main',
+            'pygameweb_generate_static=pygameweb.dashboard.generate_static:main',
         ],
     },
 
