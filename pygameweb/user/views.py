@@ -73,7 +73,20 @@ def add_user_blueprint(app):
     """ to the app.
     """
     app.user_datastore = SQLAlchemySessionUserDatastore(current_session, User, Group)
-    Security(app, app.user_datastore)
+    security = Security(app, app.user_datastore)
+    from pygameweb.cache import limiter
+    # login = app.view_functions['security.login']
+    # limiter.limit("4/hour")(login)
+    limiter.limit("4/hour")(security.app.blueprints['security'])
+
+    # 'security.change_password',
+    # 'security.confirm_email',
+    # 'security.forgot_password',
+    # 'security.login',
+    # 'security.logout',
+    # 'security.register',
+    # 'security.reset_password',
+    # 'security.send_confirmation',
 
 
     from flask_security import user_confirmed
