@@ -7,6 +7,7 @@ flask_admin
 flask-bootstrap
 Flask-Caching
 flask-debugtoolbar
+Flask-Gravatar
 flask_limiter
 flask-nav
 Flask-Security-Fork==2.0.1

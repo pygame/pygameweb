@@ -64,4 +64,8 @@ def add_static_blueprint(app):
     for file in files:
         add_file(app, static_blueprint, file)
 
+
+    from pygameweb.cache import limiter
+    limiter.limit("1000/hour")(static_blueprint)
+
     app.register_blueprint(static_blueprint)

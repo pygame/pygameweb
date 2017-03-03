@@ -81,15 +81,23 @@ def view(project_id):
     return render_template('project/view.html', project=project)
 
 
-@project_blueprint.route('/project/<project_id>/<release_id>', methods=['GET'])
+# @project_blueprint.route('/project/<project_id>/<release_id>', methods=['GET'])
 @project_blueprint.route('/project/<int:project_id>/<int:release_id>', methods=['GET'])
 def release(project_id, release_id):
     """ of the wiki page.
     """
+    # import pdb;pdb.set_trace()
     return render_template('project/view.html',
                            project=project_for(project_id),
                            release=release_for(release_id))
 
+
+
+def inchunks(alist, chunk_size):
+    """ [1,2,3, 4,5,6] -> [[1,2,3], [4,5,6]]
+    """
+    for i in range(0, len(alist), chunk_size):
+        yield alist[i:i + chunk_size]
 
 @project_blueprint.route('/tags/<tag>', methods=['GET'])
 def tags(tag):
@@ -109,11 +117,12 @@ def tags(tag):
                 .offset(start)
                 .limit(per_page)
                 .all())
+
     return render_template('project/tags.html',
                            tag=tag,
                            tags=tags,
                            top_tag_counts=top_tag_counts,
-                           projects=projects,
+                           projects=inchunks(projects, 3),
                            prev_start=prev_start,
                            next_start=next_start)
 

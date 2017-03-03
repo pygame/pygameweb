@@ -3,24 +3,46 @@
 
 {% block content %}
   {% cache 60*5 %}
+    {# So images in description are shown the full width. #}
+    <style>
+    .row.description img, .row.screenshot img {
+      max-width: 100%;
+    }
+    </style>
 
-
-    <h1>{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}</h1>
-    <h3>{{ project.user.title }}  ({{ project.user.name }})</h3>
-
-    <h3>Tags:</h3>
-    <div>
-    {% for value, count, size in project.tag_counts %}
-    {% set size2 = size//2 %}
-      <a href='/tags/{{value}}' style='font-size:{{size}}px;margin-left:{{size2}}px;margin-right:{{size2}}px;'>{{value}}</a>
-    {% endfor %}
+    <div class="row">
+      <div class="col-md-10">
+        <h1>{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}</h1>
+        <p class="lead">{{ project.summary_html|safe }}</p>
+      </div>
+      <div class="col-md-2">
+        <img src="{{ project.user.email | gravatar }}">
+        <br>
+        {{ project.user.title }}
+        <br>
+        ({{ project.user.name }})
+      </div>
     </div>
 
-    {# update tags input box. #}
+    <div class="row description">
+      <div class="col-md-12">
+        {{ project.description_html|safe }}
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-responsive" src="{{ project.image_thumb(400,400) }}">
+      </div>
+      <div class="col-md-6">
+        {% for value, count, size in project.tag_counts %}
+          <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
 
-    <h3>Description</h3>
-    {{ project.description_html|safe }}
+    <div class="row">
+    </div>
 
     <h3>Links</h3>
     <div>
@@ -28,19 +50,23 @@
         <dt>Home Page</dt>
         <dd><a href="{{ project.uri }}">{{ project.uri }}</a></dd>
         {% if release %}
-          <dt>Source</dt>
-          <dd><a href="{{ release.srcuri }}">{{ release.srcuri }}</a></dd>
-          <dt>Windows</dt>
-          <dd><a href="{{ release.winuri }}">{{ release.winuri }}</a></dd>
-          <dt>Mac</dt>
-          <dd><a href="{{ release.macuri }}">{{ release.macuri }}</a></dd>
+          {% if release.srcuri %}
+            <dt>Source</dt>
+            <dd><a href="{{ release.srcuri }}">{{ release.srcuri }}</a></dd>
+          {% endif %}
+          {% if release.winuri %}
+            <dt>Windows</dt>
+            <dd><a href="{{ release.winuri }}">{{ release.winuri }}</a></dd>
+          {% endif %}
+          {% if release.macuri %}
+            <dt>Mac</dt>
+            <dd><a href="{{ release.macuri }}">{{ release.macuri }}</a></dd>
+          {% endif %}
         {% endif %}
       </dl>
     </div>
 
 
-    <h3>Screenshot</h3>
-    <img src="{{ project.image_thumb(400,400) }}">
 
 
     <h3>Releases</h3>

@@ -2,40 +2,45 @@
 <h1>Project</h1>
 
 {% block content %}
+    <h1>{{ tag }}</h1>
 
-    <h1>Tags</h1>
+    <div class="row">
+      <div class="col-md-12">
+        {% for value, count, size in top_tag_counts %}
+            <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
+    <br>
 
-    {% for value, count, size in top_tag_counts %}
-    {% set size2 = size//2 %}
-        <a href='/tags/{{value}}' style='font-size:{{size}}px;margin-left:{{size2}}px;margin-right:{{size2}}px;'>{{value}}</a>
+    {% for chunk in projects %}
+    <div class="row">
+      {% for project in chunk %}
+        <div class="col-md-4">
+            <div class="media">
+              <div class="media-left">
+                {% set thumb = project.image_thumb(100,100) %}
+                {% if thumb %}
+                    <a href="{{ url_for('project.view', project_id=project.id) }}">
+                        <img class="media-object" src="{{ thumb }}" alt="{{ project.title }}">
+                    </a>
+                {% endif %}
+              </div>
+              <div class="media-body">
+                <h4 class="media-heading"><a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.title }}</a></h4>
+                {{ project.summary_html|safe }}
+              </div>
+            </div>
+            <br>
+        </div>
+      {% endfor %}
+    </div>
     {% endfor %}
 
-
-    <h3>{{ tag }}</h3>
-
-    <div>
-        {% for project in projects %}
-        <div>
-            <a href="{{ url_for('project.view', project_id=project.id) }}">{{ project.title }}</a>
-            <div>
-            {% set thumb = project.image_thumb(100,100) %}
-            {% if thumb %}
-                <a href="{{ url_for('project.view', project_id=project.id) }}">
-                    <img src="{{ thumb }}">
-                </a>
-            {% endif %}
-            </div>
-            <div>
-            {{ project.summary_html|safe }}
-            </div>
-        </div>
-        {% endfor %}
-
-        {% if prev_start %}
-            <a href='?start={{prev_start}}'>previous</a>
-        {% endif %}
-        <a href='?start={{next_start}}'>next</a>
-    </div>
+    {% if prev_start %}
+        <a href='?start={{prev_start}}'>previous</a>
+    {% endif %}
+    <a href='?start={{next_start}}'>next</a>
 
 
 

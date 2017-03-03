@@ -88,6 +88,15 @@ def add_user_blueprint(app):
     # 'security.reset_password',
     # 'security.send_confirmation',
 
+    # https://pypi.python.org/pypi/Flask-Gravatar
+    from flask_gravatar import Gravatar
+    gravatar = Gravatar(app,
+                        size=100,
+                        rating='g',
+                        default='retro',
+                        force_default=False,
+                        use_ssl=False,
+                        base_url=None)
 
     from flask_security import user_confirmed
     @user_confirmed.connect_via(app)

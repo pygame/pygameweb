@@ -24,7 +24,6 @@ def create_app(object_name='pygameweb.config.Config',
     db.init(app, engine, session_factory)
     Mail(app)
 
-
     # https://flask-debugtoolbar.readthedocs.io/en/latest/
     if app.config['DEBUG'] and not app.config['TESTING']:
         app.config['DEBUG_TB_PROFILER_ENABLED'] = True
@@ -37,7 +36,6 @@ def create_app(object_name='pygameweb.config.Config',
             DebugToolbarExtension(app, sqlalchemy_engine=app.engine)
         except TypeError:
             DebugToolbarExtension(app)
-
 
     from pygameweb.cache import cache, limiter
     cache.init_app(app)

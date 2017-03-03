@@ -15,4 +15,7 @@ thumb_blueprint = Blueprint('thumb',
 def add_thumb_blueprint(app):
     """ to the app.
     """
+    from pygameweb.cache import limiter
+    limiter.limit("1000/hour")(thumb_blueprint)
+
     app.register_blueprint(thumb_blueprint)

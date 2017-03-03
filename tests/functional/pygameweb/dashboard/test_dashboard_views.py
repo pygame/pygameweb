@@ -16,7 +16,7 @@ def dashboard_client(app, session, client):
 def test_dashboard_view(dashboard_client, session):
     """ is shown as the default.
     """
-    resp = dashboard_client.get('/dashboard')
+    resp = dashboard_client.get('/dashboard-dev')
     assert resp.status_code == 200
 
     # resp = dashboard_client.get('/screenshot-300/1.jpg')

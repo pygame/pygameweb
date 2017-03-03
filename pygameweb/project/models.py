@@ -36,6 +36,10 @@ class Project(Base):
     def summary_html(self):
         return sanitize_html(self.summary)
 
+    @property
+    def description_html(self):
+        return sanitize_html(self.description)
+
     def image_thumb(self, width, height):
         """ Return path to the thumbnail for this image.
         """

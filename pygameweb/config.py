@@ -56,3 +56,8 @@ class Config(object):
     CACHE_TYPE = 'null' if truthy_config('APP_DEBUG') else 'simple'
     """ flask_caching is off in debug mode.
     """
+
+    RATELIMIT_GLOBAL = ('5000 per day, 5000 per hour'
+                        if truthy_config('APP_DEBUG')
+                        else '200 per day, 50 per hour')
+

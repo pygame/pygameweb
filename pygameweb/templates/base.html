@@ -84,12 +84,9 @@
             </div>
 
 
-            <h2>Projects</h2>
-            <div class="list-group">
+            <div>
             {% for value, count, size in top_tag_counts %}
-                {% set size2 = size//2 %}
-                <a href='/tags/{{value}}' class="list-group-item">{{value}}<span class="pull-right">({{count}})</span></a>
-
+                <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
             {% endfor %}
             </div>
 
