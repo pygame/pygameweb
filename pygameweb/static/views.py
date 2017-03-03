@@ -28,7 +28,7 @@ def add_folder(app, static_blueprint, folder):
     """Add a static folder.
     """
     full_path = Path('..', app.config['WWW']) / folder
-    full_path_str = str(full_path)
+    full_path_str = str(full_path.absolute())
     if not full_path.exists():
         return
 
@@ -44,7 +44,7 @@ def add_file(app, static_blueprint, file):
     """Add a file to serve.
     """
     full_path = Path('..', app.config['WWW'])
-    full_path_str = str(full_path)
+    full_path_str = str(full_path.absolute())
     if not (full_path / file).exists():
         return
 
