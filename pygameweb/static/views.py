@@ -27,7 +27,7 @@ def is_there(app, full_path, file_folder):
 def add_folder(app, static_blueprint, folder):
     """Add a static folder.
     """
-    full_path = str(Path('..', app.config['WWW']) / folder)
+    full_path = Path('..', app.config['WWW']) / folder
     full_path_str = str(full_path)
     if not full_path.exists():
         return
