@@ -22,6 +22,7 @@ def upgrade():
     op.execute('INSERT into users_groups (users_id, groups_id) SELECT users_id,2 FROM project')
     # users who have super=1, we add them to the admin group.
     op.execute('INSERT into users_groups (users_id, groups_id) SELECT id,1 FROM users WHERE super=1;')
+    op.execute("INSERT into groups VALUES (11, 'commenter', 'Commenter', 11)")
     # ### end Alembic commands ###
 
 
