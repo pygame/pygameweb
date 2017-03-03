@@ -9,7 +9,7 @@ static_blueprint = Blueprint('static',
                              template_folder='../templates/')
 
 
-files = ['lofi.html', 'server.json']
+files = ['lofi.html', 'server.json', 'hifi.html']
 folders = ['content', 'contests', 'css', 'ctypes', 'docs', 'docs-old', 'ftp',
            'galleries', 'gamelets', 'games', 'html5media', 'images',
            'interview', 'iscroll', 'js', 'ludumcontest1', 'ludumcontest2',

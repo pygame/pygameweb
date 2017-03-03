@@ -171,7 +171,7 @@ class GenerateJson(object):
                         project.description as project_description,project.summary as project_summary,
                         project.title as project_title,project.image as project_image,
 
-                        release.datetimeon as datetimeon, release.title as title, release.id as id
+                        release.datetimeon as datetimeon, release.version as title, release.id as id
 
                  FROM users,project,release
                  WHERE release.project_id = project.id AND users.id=project.users_id
@@ -221,7 +221,7 @@ class GenerateJson(object):
                    project.description as project_description, project.summary as project_summary,
                    project.title as project_title, project.image as project_image,
 
-                        release.datetimeon as datetimeon, release.title as title, release.id as id
+                        release.datetimeon as datetimeon, release.version as title, release.id as id
 
                  FROM users,project,release
                  WHERE release.project_id = project.id AND users.id=project.users_id

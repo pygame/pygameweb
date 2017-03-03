@@ -11,13 +11,13 @@ dashboard_blueprint = Blueprint('dashboard',
                                 template_folder='../templates/')
 
 
-@dashboard_blueprint.route('/hifi.html', methods=['GET'])
-@dashboard_blueprint.route('/dashboard', methods=['GET'])
+# @dashboard_blueprint.route('/hifi.html', methods=['GET'])
+@dashboard_blueprint.route('/dashboard-dev', methods=['GET'])
 def index():
     """ This either shows a page if it exists, or does a redirect.
     """
     is_crawler = 'our-web-crawler' in request.headers.get('User-Agent', '')
-    return render_template('dashboard/index.html', is_crawler=False)
+    return render_template('dashboard/index.html', is_crawler=is_crawler)
 
 
 @dashboard_blueprint.route('/screens-300/<path:fname>', methods=['GET'])

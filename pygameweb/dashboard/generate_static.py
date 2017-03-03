@@ -39,7 +39,8 @@ class Urls(object):
 
 
         #self.urls = self.generateAllUrls(self.parse_urls)
-        self.urls = ["hifi.html"]
+        # self.urls = ["hifi.html"]
+        self.urls = ["dashboard-dev"]
 
 
 
