@@ -27,7 +27,7 @@ def dashboard():
     """
     full_path = Path(current_app.config['WWW'])
     full_path_str = str(full_path.absolute())
-    return send_from_directory(full_path_str, 'dashboard-dev')
+    return send_from_directory(full_path_str, 'dashboard-dev', mimetype='text/html')
 
 
 @dashboard_blueprint.route('/screens-300/<path:fname>', methods=['GET'])
