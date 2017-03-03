@@ -236,10 +236,15 @@ class Urls(object):
         for fname in files_to_compress:
             full_fname = os.path.join(self.www_path, fname)
             out_fname = full_fname.replace(".min.css", ".css").replace(".css", ".min.css")
-            #cmd = ["yui-compressor", full_fname]
             cmd = ["yuicompressor", full_fname]
             log(cmd)
-            compressed_data = subprocess.check_output(cmd)
+            try:
+                compressed_data = subprocess.check_output(cmd)
+            except FileNotFoundError:
+                cmd = ["yui-compressor", full_fname]
+                log(cmd)
+                compressed_data = subprocess.check_output(cmd)
+
             all_compressed_data.append(compressed_data)
 
         log("concatenate css together")
