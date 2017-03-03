@@ -8,4 +8,6 @@ def sanitize_html(html):
         >>> sanitize_html("<script>alert('what')</script>")
         ''
     """
-    return feedparser._sanitizeHTML(html, "utf-8", "text/html")
+    clean_html = feedparser._sanitizeHTML(html, "utf-8", "text/html")
+    no_http_html = clean_html.replace('http://', 'https://')
+    return no_http_html
