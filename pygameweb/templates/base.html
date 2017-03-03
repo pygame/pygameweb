@@ -70,7 +70,7 @@
 
               <a href="{{ url_for('project.view', project_id=project.id, release_id=release.id) }}"
                  class="list-group-item">
-                <span>{{ release.datetimeon }}<span>
+                <span>{{ release.datetimeon.strftime('%-d %b, %Y') }}<span>
                 {% set thumb = project.image_thumb(230,230) %}
                 {% if thumb %}
                   <img class="img-responsive" src="{{ thumb }}">

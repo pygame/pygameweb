@@ -73,7 +73,7 @@
 
     {% for arelease in project.releases %}
       <p>
-        <a href="{{ url_for('project.view', project_id=project.id, release_id=arelease.id) }}">{{ arelease.version }} - {{ arelease.datetimeon }}</a>
+        <a href="{{ url_for('project.view', project_id=project.id, release_id=arelease.id) }}">{{ project.title }} {{ arelease.version }} &mdash; {{ arelease.datetimeon.strftime('%-d %b, %Y') }}</a>
       </p>
     {% endfor %}
 

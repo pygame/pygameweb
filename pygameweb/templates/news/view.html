@@ -8,10 +8,13 @@
     <div>
     {% for new in news %}
 
-        <section>
-            <h3>{{ new.title_html }} - {{ new.datetimeon }}</h3>
-            {{ new.description_html|safe }}
-        </section>
+      <div class="panel panel-default">
+        <div class="panel-heading">{{ new.title_html }} &mdash; {{ new.datetimeon.strftime('%-d %b, %Y') }}</div>
+        <div class="panel-body">
+          {{ new.description_html|safe }}
+        </div>
+      </div>
+
 
     {% endfor %}
     </div>
