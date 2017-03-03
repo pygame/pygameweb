@@ -1,4 +1,5 @@
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as util %}
 {% block doc -%}
 <!DOCTYPE html>
 <html{% block html_attribs %}{% endblock html_attribs %}>
@@ -30,6 +31,8 @@
     <div class="container">
       <div class="row row-offcanvas row-offcanvas-right">
         <div class="col-xs-12 col-sm-9">
+        {{util.flashed_messages(dismissible=True, container=False)}}
+
         {% block content -%}
         {%- endblock content %}
       </div><!--/.col-xs-12.col-sm-9-->
