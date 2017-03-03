@@ -20,6 +20,16 @@ def index():
     return render_template('dashboard/index.html', is_crawler=is_crawler)
 
 
+@dashboard_blueprint.route('/hifi.html', methods=['GET'])
+@dashboard_blueprint.route('/dashboard', methods=['GET'])
+def dashboard():
+    """ we send the www/dashboard-dev file made with generate_static.
+    """
+    full_path = Path(app.config['WWW'])
+    full_path_str = str(full_path.absolute())
+    return send_from_directory(full_path_str, 'dashboard-dev')
+
+
 @dashboard_blueprint.route('/screens-300/<path:fname>', methods=['GET'])
 @dashboard_blueprint.route('/screenshots-300/<path:fname>', methods=['GET'])
 def screenshots300(fname):
