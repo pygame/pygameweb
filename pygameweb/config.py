@@ -52,3 +52,7 @@ class Config(object):
 
     TESTING = False
     MAIL_DEBUG = truthy_config('APP_DEBUG')
+
+    CACHE_TYPE = 'null' if truthy_config('APP_DEBUG') else 'simple'
+    """ flask_caching is off in debug mode.
+    """
