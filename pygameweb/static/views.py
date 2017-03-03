@@ -46,7 +46,7 @@ def add_file(app, static_blueprint, file):
 def add_static_blueprint(app):
     """ to the app.
     """
-    if app.config['DEBUG']:
+    if 1 or app.config['DEBUG']:
         # Don't really need these files in production. A real webserver serves them.
         for folder in folders:
             add_folder(app, static_blueprint, folder)
