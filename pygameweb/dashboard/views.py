@@ -25,7 +25,7 @@ def index():
 def dashboard():
     """ we send the www/dashboard-dev file made with generate_static.
     """
-    full_path = Path(app.config['WWW'])
+    full_path = Path(current_app.config['WWW'])
     full_path_str = str(full_path.absolute())
     return send_from_directory(full_path_str, 'dashboard-dev')
 
