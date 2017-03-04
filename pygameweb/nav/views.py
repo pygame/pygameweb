@@ -60,7 +60,7 @@ class BootstrapRendererNew(BootstrapRendererOld):
                 # a_tag = tags.a(node.title.text, _class='navbar-brand',
                 #                   href=node.title.get_url())
                 a_tag = tags.a(_class='navbar-left', title=node.title.text, href=node.title.get_url())
-                a_tag.add(tags.img(src='images/logo_lofi.png', style='max-width:100px;margin-top: 10px;'))
+                a_tag.add(tags.img(src='/images/logo_lofi.png', style='max-width:100px;margin-top: 10px;'))
                 header.add(a_tag)
             else:
                 header.add(tags.span(node.title, _class='navbar-brand'))
