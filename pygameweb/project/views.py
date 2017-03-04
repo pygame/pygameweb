@@ -2,15 +2,12 @@ import os
 from pathlib import Path
 import datetime
 
-from flask import Blueprint, render_template, abort, redirect, url_for, request, Response, current_app
-# http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
+from flask import (Blueprint, render_template, abort,
+                   redirect, url_for, request, current_app)
 from flask_sqlalchemy_session import current_session
-import ghdiff
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
 
-
-from pygameweb.user.models import User
 from pygameweb.project.models import Project, Release, Tags, top_tags
 from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
 
@@ -18,6 +15,7 @@ from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
 project_blueprint = Blueprint('project',
                               __name__,
                               template_folder='../templates/')
+
 
 def project_for(project_id):
     """ gets a project for the given
@@ -57,7 +55,9 @@ def projects():
 
     return render_template('project/projects.html', projects=projects)
 
-@project_blueprint.route('/members/projects/<int:project_id>/releases', methods=['GET'])
+
+@project_blueprint.route('/members/projects/<int:project_id>/releases',
+                         methods=['GET'])
 @login_required
 @roles_required('members')
 def releases(project_id):
@@ -69,7 +69,9 @@ def releases(project_id):
     if not project:
         abort(404)
 
-    return render_template('project/releases.html', releases=project.releases, project=project)
+    return render_template('project/releases.html',
+                           releases=project.releases,
+                           project=project)
 
 
 # @project_blueprint.route('/project/', methods=['GET'])
@@ -77,27 +79,31 @@ def releases(project_id):
 def view(project_id):
     """ of the wiki page.
     """
-    project = project_for(project_id)
-    return render_template('project/view.html', project=project)
+    return render_template('project/view.html',
+                           project_id=project_id,
+                           project_for=project_for)
 
 
-# @project_blueprint.route('/project/<project_id>/<release_id>', methods=['GET'])
-@project_blueprint.route('/project/<int:project_id>/<int:release_id>', methods=['GET'])
+@project_blueprint.route('/project/<int:project_id>/<int:release_id>',
+                         methods=['GET'])
 def release(project_id, release_id):
     """ of the wiki page.
     """
-    # import pdb;pdb.set_trace()
     return render_template('project/view.html',
-                           project=project_for(project_id),
-                           release=release_for(release_id))
-
+                           project_for=project_for,
+                           release_for=release_for,
+                           project_id=project_id,
+                           release_id=release_id)
 
 
 def inchunks(alist, chunk_size):
-    """ [1,2,3, 4,5,6] -> [[1,2,3], [4,5,6]]
+    """ Splits a list up into chunks of chunk_size.
+
+        [1,2,3, 4,5,6] -> [[1,2,3], [4,5,6]]
     """
     for i in range(0, len(alist), chunk_size):
         yield alist[i:i + chunk_size]
+
 
 @project_blueprint.route('/tags/<tag>', methods=['GET'])
 def tags(tag):
@@ -191,7 +197,8 @@ def new_project():
     return render_template('project/newproject.html', form=form)
 
 
-@project_blueprint.route('/members/projects/edit/<int:project_id>', methods=['GET', 'POST'])
+@project_blueprint.route('/members/projects/edit/<int:project_id>',
+                         methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
 def edit_project(project_id):
@@ -228,7 +235,6 @@ def edit_project(project_id):
             tag = Tags(project=project, value=value)
             current_session.add(tag)
 
-
         current_session.add(project)
         current_session.commit()
 
@@ -247,13 +253,17 @@ def edit_project(project_id):
 
         return redirect(url_for('project.view', project_id=project.id))
 
-    return render_template('project/editproject.html', form=form, project_id=project_id)
+    return render_template('project/editproject.html',
+                           form=form,
+                           project_id=project_id)
 
 
 @project_blueprint.route('/members/projects/<int:project_id>/releases/new',
                          methods=['GET', 'POST'],
-                         defaults={'release_id':None})
-@project_blueprint.route('/members/projects/<int:project_id>/releases/edit/<int:release_id>', methods=['GET', 'POST'])
+                         defaults={'release_id': None})
+@project_blueprint.route('/members/projects/<int:project_id>/'
+                         'releases/edit/<int:release_id>',
+                         methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
 def edit_release(project_id, release_id):
@@ -266,7 +276,6 @@ def edit_release(project_id, release_id):
         release = release_for(release_id)
         if release.project.user.id != current_user.id:
             abort(404)
-
 
     if request.method == 'GET' and release_id is not None:
         form = ReleaseForm(obj=release)
@@ -295,7 +304,9 @@ def edit_release(project_id, release_id):
 
         current_session.commit()
 
-        return redirect(url_for('project.release', project_id=project_id, release_id=release.id))
+        return redirect(url_for('project.release',
+                                project_id=project_id,
+                                release_id=release.id))
 
     return render_template('project/editrelease.html',
                            form=form,
@@ -303,7 +314,9 @@ def edit_release(project_id, release_id):
                            release_id=release_id)
 
 
-@project_blueprint.route('/members/projects/<int:project_id>/releases/delete/<int:release_id>', methods=['GET', 'POST'])
+@project_blueprint.route('/members/projects/<int:project_id>/'
+                         'releases/delete/<int:release_id>',
+                         methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
 def delete_release(project_id, release_id):
@@ -319,5 +332,3 @@ def add_project_blueprint(app):
     """ to the app.
     """
     app.register_blueprint(project_blueprint)
-
-

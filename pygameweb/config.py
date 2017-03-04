@@ -2,12 +2,14 @@
 
 See http://flask.pocoo.org/docs/0.12/config/
 
-Uses environment variables to make things easier for deployment and local development.
+Uses environment variables to make things easier for
+deployment and local development.
 
 See pygameweb.__init__ where we automatically look at these variables.
 """
 
 import os
+
 
 def truthy_config(key, default=False):
     """Returns True if an environment var contains a truth variable.
@@ -53,6 +55,7 @@ class Config(object):
     TESTING = False
     MAIL_DEBUG = truthy_config('APP_DEBUG')
 
+    # CACHE_TYPE = 'simple'
     CACHE_TYPE = 'null' if truthy_config('APP_DEBUG') else 'simple'
     """ flask_caching is off in debug mode.
     """
@@ -60,4 +63,3 @@ class Config(object):
     RATELIMIT_GLOBAL = ('5000 per day, 5000 per hour'
                         if truthy_config('APP_DEBUG')
                         else '200 per day, 50 per hour')
-

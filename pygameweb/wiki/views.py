@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
+from flask import (Blueprint, render_template, abort,
+                   redirect, url_for, request, Response)
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
-from flask_security import current_user, login_required, roles_required
+from flask_security import login_required, roles_required
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
-
 
 
 wiki_blueprint = Blueprint('wiki',
@@ -49,7 +49,7 @@ def index(link='index'):
         # show back links
         pass
 
-    return render_template('wiki/view.html', wiki=wiki_for(link))
+    return render_template('wiki/view.html', link=link, wiki_for=wiki_for)
 
 
 @wiki_blueprint.route('/wiki/<link>/revert', methods=['GET'])
@@ -76,7 +76,6 @@ def revert(link):
         return redirect(url_for('wiki.index', link=link, id=newone.id))
     else:
         abort(404)
-
 
 
 @wiki_blueprint.route('/wiki/<link>/source', methods=['GET'])
@@ -136,12 +135,12 @@ def diff(link):
         old_wiki = [o for o in results if o.id == old_id][0]
         new_wiki = [o for o in results if o.id == new_id][0]
 
-        html_diff = ghdiff.diff(old_wiki.content_rendered, new_wiki.content_rendered)
+        html_diff = ghdiff.diff(old_wiki.content_rendered,
+                                new_wiki.content_rendered)
     else:
         abort(404)
 
     return render_template('wiki/diff.html', wiki=result, html_diff=html_diff)
-
 
 
 @wiki_blueprint.route('/wiki/<link>/edit', methods=['GET', 'POST'])
@@ -151,7 +150,7 @@ def edit(link):
     """ the wiki page.
     """
 
-    #TODO: we need to add users_id, parents, and keywords
+    # TODO: we need to add users_id, parents, and keywords
     page = (current_session
             .query(Wiki)
             .filter(Wiki.link == link)
@@ -178,10 +177,7 @@ def edit(link):
     return render_template('wiki/edit.html', form=form, wiki=page)
 
 
-
-
 def add_wiki_blueprint(app):
     """ to the app.
     """
     app.register_blueprint(wiki_blueprint)
-

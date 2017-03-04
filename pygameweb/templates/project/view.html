@@ -2,7 +2,10 @@
 <h1>Project</h1>
 
 {% block content %}
-  {% cache 60*5 %}
+  {% cache 60*5, project_id | string(), release_id | string() if release_id else '' %}
+    {% set project = project_for(project_id) %}
+    {% set release = release_for(release_id) if release_id else None %}
+
     {# So images in description are shown the full width. #}
     <style>
     .row.description img, .row.screenshot img {
@@ -73,7 +76,7 @@
 
     {% for arelease in project.releases %}
       <p>
-        <a href="{{ url_for('project.view', project_id=project.id, release_id=arelease.id) }}">{{ project.title }} {{ arelease.version }} &mdash; {{ arelease.datetimeon.strftime('%-d %b, %Y') }}</a>
+        <a href="{{ url_for('project.release', project_id=project.id, release_id=arelease.id) }}">{{ project.title }} {{ arelease.version }} &mdash; {{ arelease.datetimeon.strftime('%-d %b, %Y') }}</a>
       </p>
     {% endfor %}
 

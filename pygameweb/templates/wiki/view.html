@@ -2,8 +2,8 @@
 <h1>Wiki</h1>
 
 {% block content %}
-  {% cache 60*5 %}
-
+  {% cache 60*5, link %}
+  {% set wiki = wiki_for(link) %}
   <h1>{{ wiki.title }}</h1>
 
   <div>
