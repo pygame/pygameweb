@@ -128,7 +128,7 @@ xml_example = """<?xml version="1.0" encoding="utf-8"?>
 def test_comment_load(session):
     """
     """
-    from pygameweb.comment.models import load_xml, CommentPost
+    from pygameweb.comment.models import load_xml, CommentPost, CommentThread
     from io import BytesIO
 
     # load_xml(session, 'comments.xml')
@@ -163,5 +163,11 @@ def test_comment_load(session):
     assert (len(posts)) == num_top_level_posts
     first_post_id = 194227070
     assert posts[0].id == first_post_id
+    assert posts[1].children[0].children[0].id == 194253444
 
+    forum = 'someforum'
+    id_text = 'some_project_1820'
+    posts = CommentPost.for_thread(session, forum, id_text)
+    assert (len(posts)) == num_top_level_posts
+    assert posts[0].id == first_post_id
     assert posts[1].children[0].children[0].id == 194253444

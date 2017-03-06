@@ -81,30 +81,36 @@
     {% endfor %}
 
 
-        <h3>Pygame.org account Comments</h3>
+    <h3>Pygame.org account Comments</h3>
 
-        {#
-        <p>Please leave a comment.</p>
+    {#
+          <p>Please leave a comment.</p>
 
-        <form method="post">
-          <p><i>Worst</i> &nbsp; <input name="rating" value="1" type="radio">1 &nbsp;<input name="rating" value="2" type="radio">2 &nbsp; <input name="rating" value="3" type="radio">3 &nbsp; <input name="rating" value="4" type="radio">4 &nbsp; <input name="rating" value="5" type="radio">5 &nbsp; <i>Best</i><br><textarea name="content" rows="5" cols="80"></textarea><br><input value="Add Comment" type="submit"></p>
-        </form>
-        #}
+          <form method="post">
+            <p><i>Worst</i> &nbsp; <input name="rating" value="1" type="radio">1 &nbsp;<input name="rating" value="2" type="radio">2 &nbsp; <input name="rating" value="3" type="radio">3 &nbsp; <input name="rating" value="4" type="radio">4 &nbsp; <input name="rating" value="5" type="radio">5 &nbsp; <i>Best</i><br><textarea name="content" rows="5" cols="80"></textarea><br><input value="Add Comment" type="submit"></p>
+          </form>
+    #}
 
-        <table class="comments">
-          <tbody>
-          {% for comment in project.comments %}
-            <tr>
-              <th align="left">{{ comment.datetimeon }} - {{ comment.user.title }} - nickname: ({{ comment.user.title }}) - {{ comment.rating }}/5</th>
-            </tr>
-            <tr>
-              <td>
-                <div>{{ comment.content }}</div><div><a href="?action=comments_delete&amp;id={{ comment.id }}">delete</a></div>
-              </td>
-            </tr>
-          {%endfor %}
-          </tbody>
-        </table>
+
+
+    {% from "comment/_macros.html" import post_toplevel %}
+    {{ post_toplevel(comments_for(project_id)) }}
+
+
+    <table class="comments">
+      <tbody>
+      {% for comment in project.comments %}
+        <tr>
+          <th align="left">{{ comment.datetimeon }} - {{ comment.user.title }} - nickname: ({{ comment.user.title }}) - {{ comment.rating }}/5</th>
+        </tr>
+        <tr>
+          <td>
+            <div>{{ comment.content }}</div><div><a href="?action=comments_delete&amp;id={{ comment.id }}">delete</a></div>
+          </td>
+        </tr>
+      {%endfor %}
+      </tbody>
+    </table>
 
   {% endcache %}
 {% endblock %}

@@ -6,6 +6,7 @@ from sqlalchemy import (Column, DateTime, ForeignKey, String, Text,
 from sqlalchemy.orm import relationship, backref
 
 from pygameweb.models import Base
+from pygameweb.sanitize import sanitize_html
 
 
 class CommentCategory(Base):
@@ -84,6 +85,13 @@ class CommentPost(Base):
     thread = relationship(CommentThread)
 
     message = Column(Text)
+    @property
+    def message_html(self):
+        """
+        """
+        return sanitize_html(self.message)
+
+
     ip_address = Column(String(80))
     created_at = Column(DateTime)
     is_deleted = Column(Boolean)
@@ -95,6 +103,27 @@ class CommentPost(Base):
                                   name='comment_post_author_id_fkey'),
                        nullable=False)
     author = relationship(CommentAuthor, back_populates='posts')
+
+    @classmethod
+    def for_thread(cls, session, forum, id_text):
+        """ return top level posts in thread.
+        """
+        parent_id = None
+        is_spam = False
+        is_deleted = False
+
+        posts = (session
+                 .query(CommentPost)
+                 .join(CommentThread)
+                 .filter(CommentThread.id_text == id_text)
+                 .filter(CommentThread.forum == forum)
+                 .filter(CommentThread.id == CommentPost.thread_id)
+                 .filter(CommentPost.parent_id == parent_id)
+                 .filter(CommentPost.is_deleted == is_deleted)
+                 .filter(CommentPost.is_spam == is_spam)
+                 .order_by(CommentPost.created_at)
+                 .all())
+        return posts
 
     @classmethod
     def in_thread(cls, session, thread_id):

@@ -10,12 +10,11 @@ from flask_security import current_user, login_required, roles_required
 
 from pygameweb.project.models import Project, Release, Tags, top_tags
 from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
-
+from pygameweb.comment.models import CommentPost
 
 project_blueprint = Blueprint('project',
                               __name__,
                               template_folder='../templates/')
-
 
 def project_for(project_id):
     """ gets a project for the given
@@ -40,6 +39,12 @@ def release_for(release_id):
     if not result:
         abort(404)
     return result
+
+
+def comments_for(project_id):
+    forum = 'pygame'
+    id_text = f'pygame_project_{project_id}'
+    return CommentPost.for_thread(current_session, forum, id_text)
 
 
 @project_blueprint.route('/members/projects', methods=['GET'])
@@ -81,7 +86,8 @@ def view(project_id):
     """
     return render_template('project/view.html',
                            project_id=project_id,
-                           project_for=project_for)
+                           project_for=project_for,
+                           comments_for=comments_for)
 
 
 @project_blueprint.route('/project/<int:project_id>/<int:release_id>',
@@ -93,7 +99,8 @@ def release(project_id, release_id):
                            project_for=project_for,
                            release_for=release_for,
                            project_id=project_id,
-                           release_id=release_id)
+                           release_id=release_id,
+                           comments_for=comments_for)
 
 
 def inchunks(alist, chunk_size):

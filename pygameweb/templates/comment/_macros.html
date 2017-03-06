@@ -1,0 +1,40 @@
+{% macro post_left(post) %}
+  <a class="media-left" href="#">
+    <img src="{{ post.author.email | gravatar }}">
+  </a>
+{% endmacro %}
+
+{% macro post_body(post) %}
+  <div class="media-body">
+    {# set how_old = post.created_at - now() #}
+    {% set how_old = post.created_at %}
+    <h4 class="media-heading">{{ post.author.name }} {{ how_old }}</h4>
+    {{ post.message_html | safe }}
+    {{ post_children(post) }}
+  </div>
+{% endmacro %}
+
+{% macro post_children(post) %}
+  {% if post.children %}
+    {% for child in post.children if ((not child.is_spam) and (not child.is_deleted)) %}
+      <div class="media">
+        {{ post_left(child) }}
+        {{ post_body(child) }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
+
+{% macro post_toplevel(posts) %}
+  {# This is the main macro to use. #}
+  {% if posts %}
+    <ul class="media-list">
+      {% for post in posts if ((not post.is_spam) and (not post.is_deleted)) %}
+        <li class="media">
+          {{ post_left(post) }}
+          {{ post_body(post) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

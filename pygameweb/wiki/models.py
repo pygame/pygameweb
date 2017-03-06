@@ -1,25 +1,11 @@
 """ wiki models
 """
-
-
 from sqlalchemy import Column, DateTime, Integer, String, Text
 from sqlalchemy.orm.session import make_transient
-import feedparser
 
 from pygameweb.models import Base
 from pygameweb.wiki.wiki import render
-
-
-def sanitize_html(html):
-    """ santise_html(html) returns some sanitized html.
-          It can be used to try and avoid basic html insertion attacks.
-
-        >>> sanitize_html("<p>hello</p>")
-        '<p>hello</p>'
-        >>> sanitize_html("<script>alert('what')</script>")
-        ''
-    """
-    return feedparser._sanitizeHTML(html, "utf-8", "text/html")
+from pygameweb.sanitize import sanitize_html
 
 
 class Wiki(Base):
@@ -41,7 +27,6 @@ class Wiki(Base):
     parent = Column(String(255))
     keywords = Column(String(255))
 
-
     def new_version(self, session):
         """ Create a new version of this page. Leave the old on in the db.
         """
@@ -59,7 +44,6 @@ class Wiki(Base):
         del self.id
         self.latest = 1
         session.add(self)
-
 
     @property
     def content_rendered(self):
