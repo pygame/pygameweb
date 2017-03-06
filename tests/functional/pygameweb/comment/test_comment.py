@@ -106,6 +106,22 @@ xml_example = """<?xml version="1.0" encoding="utf-8"?>
     <thread dsq:id="291436086"/>
     <parent dsq:id="194229307"/>
   </post>
+  <post dsq:id="194253444">
+    <id/>
+    <message>&lt;p&gt;Some X message ok.&lt;/p&gt;</message>
+    <createdAt>2011-04-29T17:39:31Z</createdAt>
+    <isDeleted>false</isDeleted>
+    <isSpam>false</isSpam>
+    <author>
+      <email>a@example.com</email>
+      <name>Some name a</name>
+      <isAnonymous>false</isAnonymous>
+      <username>blablax</username>
+    </author>
+    <ipAddress>2.2.2.2</ipAddress>
+    <thread dsq:id="291436086"/>
+    <parent dsq:id="194253320"/>
+  </post>
 </disqus>"""
 
 
@@ -147,3 +163,5 @@ def test_comment_load(session):
     assert (len(posts)) == num_top_level_posts
     first_post_id = 194227070
     assert posts[0].id == first_post_id
+
+    assert posts[1].children[0].children[0].id == 194253444

@@ -71,10 +71,12 @@ class CommentPost(Base):
                        ForeignKey('comment_post.id',
                                   name='comment_post_parent_id_fkey'),
                        nullable=True)
+    # http://docs.sqlalchemy.org/en/latest/orm/self_referential.html
+    # Load up to 5 levels deep in one query.
     children = relationship('CommentPost',
                             lazy='joined',
+                            join_depth=5,
                             backref=backref('parent', remote_side=[id]))
-
     thread_id = Column(BigInteger,
                        ForeignKey(CommentThread.id,
                                   name='comment_post_thread_id_fkey'),
