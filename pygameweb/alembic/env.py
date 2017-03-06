@@ -19,6 +19,7 @@ import pygameweb.project.models
 import pygameweb.tasks.models
 import pygameweb.user.models
 import pygameweb.wiki.models
+import pygameweb.comment.models
 
 from pygameweb.models import Base
 

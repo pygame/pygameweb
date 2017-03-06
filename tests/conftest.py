@@ -53,6 +53,7 @@ def get_metadata():
         import pygameweb.page.models
         import pygameweb.news.models
         import pygameweb.doc.models
+        import pygameweb.comment.models
         return pygameweb.models.metadata
 
     return load_models
