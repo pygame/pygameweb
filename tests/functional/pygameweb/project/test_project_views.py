@@ -32,10 +32,10 @@ def user(app, session, project_client):
     session.add(user)
     session.commit()
 
+    # https://flask-login.readthedocs.org/en/latest/#fresh-logins
     with project_client.session_transaction() as sess:
         sess['user_id'] = user.id
-        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
-
+        sess['_fresh'] = True
     return user
 
 
@@ -90,10 +90,11 @@ def project(session, user):
 
 @pytest.fixture
 def project2(session, project, user):
+    """ adds a second project with a couple of tags.
+    """
 
     import datetime
-    from pygameweb.project.models import Project, Release, Projectcomment, Tags
-    from pygameweb.user.models import User
+    from pygameweb.project.models import Project, Tags
 
     the_project2 = Project(
         title='Some project title 2',
@@ -131,39 +132,32 @@ def test_project_index(project_client, session, project, project2):
     assert b'game' in resp.data
     assert b'arcade' in resp.data
 
+    resp = project_client.get('/project-blabla+bla-1-.html')
+    assert resp.status_code == 200, 'because this url works too.'
+    assert b'Some project title 1' in resp.data
+
     resp = project_client.get('/project/1/1')
     assert resp.status_code == 200
     assert b'A release title.' in resp.data
 
+    resp = project_client.get('/project-blabla+blasbla+-1-1.html')
+    assert resp.status_code == 200, 'because this url works too.'
+    assert b'A release title.' in resp.data
 
     resp = project_client.get('/project/66')
-    assert resp.status_code == 404
+    assert resp.status_code == 404, 'when the project is not there'
     resp = project_client.get('/project/1/66')
-    assert resp.status_code == 404
+    assert resp.status_code == 404, 'when the release is not there either'
 
 
 def test_tags(project_client, session, project, project2):
     """ shows a list of projects for that tag.
     """
-    from pygameweb.project.models import Project, Release, Projectcomment, Tags
-
-    per_page = 30
-    start = 0
-    prev_start = max(start - per_page, 0)
-    next_start = start + per_page
-
-    projects = (session
-                .query(Project)
-                .filter(Tags.project_id == Project.id)
-                .filter(Tags.value == 'arcade')
-                .offset(start)
-                .limit(per_page)
-                .all())
-
+    session.commit()
     resp = project_client.get('/tags/game')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
-    assert project2.title.encode('utf-8') not in resp.data, 'only first is tagged game'
+    assert project2.title.encode('utf-8') not in resp.data, 'only first tagged'
 
     resp = project_client.get('/tags/arcade')
     assert resp.status_code == 200
@@ -176,23 +170,17 @@ def test_project_new(project_client, session, user):
     """
 
     from io import BytesIO
-    from flask import url_for
-    from pygameweb.project.models import Project, Release, Projectcomment, Tags
-
-
-    # with project_client.session_transaction() as sess:
-    #     sess['user_id'] = user.id
-    #     sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+    from pygameweb.project.models import Project, Tags
 
     resp = project_client.get('/members/projects/new')
     assert resp.status_code == 200
     assert b'New Project' in resp.data
     assert b'Windows URL' in resp.data
 
-
-    png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02'
-           b'\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT\x08\x99c```\x00\x00\x00\x04\x00'
-           b'\x01\xa3\n\x15\xe3\x00\x00\x00\x00IEND\xaeB`\x82')
+    png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00'
+           b'\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT'
+           b'\x08\x99c```\x00\x00\x00\x04\x00\x01\xa3\n\x15\xe3\x00\x00'
+           b'\x00\x00IEND\xaeB`\x82')
 
     image = (BytesIO(png), 'helloworld.png')
     data = dict(image=image, title='title', version='1.0.2',
@@ -200,22 +188,23 @@ def test_project_new(project_client, session, user):
                 description='description', uri='http://example.com/')
 
     with mock.patch('pygameweb.project.views.save_image') as save_image:
-        resp = project_client.post('/members/projects/new', data=data, follow_redirects=True)
+        resp = project_client.post('/members/projects/new',
+                                   data=data,
+                                   follow_redirects=True)
         project = (session
                    .query(Project)
                    .filter(Project.title == 'title')
                    .first())
-        assert save_image.call_args[0][1] == f'frontend/www/shots/{project.id}.png'
+        assert (save_image.call_args[0][1] ==
+                f'frontend/www/shots/{project.id}.png')
 
     assert resp.status_code == 200
     assert project.title == 'title'
     assert project.releases[0].version == '1.0.2', 'a release was added too'
 
-
     url = f'/members/projects/edit/{project.id}'
     resp = project_client.get(url)
     assert resp.status_code == 200
-
 
     image = (BytesIO(png), 'helloworld.png')
     data = dict(image=image, title='titlechanged',
@@ -223,25 +212,30 @@ def test_project_new(project_client, session, user):
                 description='description', uri='http://example.com/')
 
     with mock.patch('pygameweb.project.views.save_image') as save_image:
-        resp = project_client.post(f'/members/projects/edit/{project.id}', data=data, follow_redirects=True)
+        resp = project_client.post(f'/members/projects/edit/{project.id}',
+                                   data=data,
+                                   follow_redirects=True)
         project = (session
                    .query(Project)
                    .filter(Project.title == 'titlechanged')
                    .first())
-        assert save_image.call_args[0][1] == f'frontend/www/shots/{project.id}.png'
-
+        assert (save_image.call_args[0][1] ==
+                f'frontend/www/shots/{project.id}.png')
 
     data = dict(title='titlechangedagain',
                 tags='tag1, tag2, tag3', summary='summary',
                 description='description', uri='http://example.com/')
 
     with mock.patch('pygameweb.project.views.save_image') as save_image:
-        resp = project_client.post(f'/members/projects/edit/{project.id}', data=data, follow_redirects=True)
+        resp = project_client.post(f'/members/projects/edit/{project.id}',
+                                   data=data,
+                                   follow_redirects=True)
         project = (session
                    .query(Project)
                    .filter(Project.title == 'titlechangedagain')
                    .first())
-        assert not save_image.called, 'no image was sent, and we do not save one'
+        assert (not save_image.called,
+                'no image was sent, and we do not save one')
 
         tags = (session
                 .query(Tags)
@@ -250,14 +244,13 @@ def test_project_new(project_client, session, user):
         assert len(tags) == 3
         assert [tag.value for tag in tags] == ['tag1', 'tag2', 'tag3']
 
-
-
     url = f'/members/projects/{project.id}/releases/new'
     resp = project_client.get(url)
     assert resp.status_code == 200
 
-
-    data = dict(description='updated description', version='2.0.0', srcuri='http://example.com/')
+    data = dict(description='updated description',
+                version='2.0.0',
+                srcuri='http://example.com/')
 
     release = project.releases[0]
     url = f'/members/projects/{project.id}/releases/edit/{release.id}'
@@ -266,11 +259,13 @@ def test_project_new(project_client, session, user):
 
     session.refresh(project)
     session.refresh(project.releases[0])
-    assert project.releases[0].version == '2.0.0', 'we edited a release version'
+    assert (project.releases[0].version ==
+            '2.0.0', 'we edited a release version')
     assert len(project.releases) == 1
 
-
-    data = dict(description='new release', version='3.0.0', srcuri='http://example.com/')
+    data = dict(description='new release',
+                version='3.0.0',
+                srcuri='http://example.com/')
     url = f'/members/projects/{project.id}/releases/new'
     resp = project_client.post(url, data=data, follow_redirects=True)
     assert resp.status_code == 200
