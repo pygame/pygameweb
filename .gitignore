@@ -6,3 +6,16 @@ docs/_build/
 junit.xml
 node_modules
 pygameweb.egg-info
+.DS_Store
+.cache/
+.env
+.hg/
+.hgignore
+frontend/
+graphic_design/
+nmig/
+*.xml
+*.sublime-project
+*.sublime-workspace
+readme.txt
+scripts
