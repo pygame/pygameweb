@@ -229,3 +229,10 @@ def load_xml(session, source):
     root = tree.getroot()
     load_xml_threads(session, root)
     load_xml_posts(session, root)
+
+
+def load_comments():
+    """ load all the comments into the db.
+    """
+    from pygameweb.db import _get_session
+    load_xml(_get_session(), 'comments.xml')
