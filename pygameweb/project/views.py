@@ -129,10 +129,14 @@ def tags(tag):
     prev_start = max(start - per_page, 0)
     next_start = start + per_page
 
-    projects = (current_session
-                .query(Project)
-                .filter(Tags.project_id == Project.id)
-                .filter(Tags.value == tag)
+    projectsq = (current_session
+                 .query(Project)
+                 .filter(Tags.project_id == Project.id))
+    # all is a special tag, meaning show all.
+    if tag != 'all':
+        projectsq = projectsq.filter(Tags.value == tag)
+
+    projects = (projectsq
                 .offset(start)
                 .limit(per_page)
                 .all())

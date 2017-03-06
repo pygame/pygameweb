@@ -157,12 +157,21 @@ def test_tags(project_client, session, project, project2):
     resp = project_client.get('/tags/game')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
-    assert project2.title.encode('utf-8') not in resp.data, 'only first tagged'
+    assert (project2.title.encode('utf-8') not in resp.data,
+            'because only first tagged.')
 
     resp = project_client.get('/tags/arcade')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
-    assert project2.title.encode('utf-8') in resp.data, 'both are in arcade'
+    assert (project2.title.encode('utf-8') in resp.data,
+            'because both are in arcade.')
+
+    resp = project_client.get('/tags/all')
+    assert (resp.status_code == 200,
+            'because all is a special tag meaning show all.')
+    assert project.title.encode('utf-8') in resp.data
+    assert project2.title.encode('utf-8') in resp.data, 'both are in all'
+
 
 
 def test_project_new(project_client, session, user):
