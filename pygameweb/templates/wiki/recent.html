@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Wiki Recent</h1>
+
+  {% for group in day_groups %}
+    <div class="row">
+    {{ group[0][0] }} / {{ group[0][1] }} / {{ group[0][2] }}
+    </div>
+    {% for page in group[-1] %}
+      <div class="row">
+        <a href="/wiki/{{ page.link }}?action=view&id={{ page.id }}">{{ page.link }}
+        &mdash;
+        {% if page.user.title %}
+          {{ page.user.title }}
+        {% else %}
+          Anonymous
+        {% endif %}
+        {% if page.changes %}
+          &mdash;
+          {{ page.changes }}
+        {% endif %}
+        </a>
+      </div>
+    {% endfor %}
+    <hr>
+  {% endfor %}
+
+{% endblock %}

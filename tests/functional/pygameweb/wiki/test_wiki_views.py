@@ -26,10 +26,10 @@ def user(app, session, wiki_client):
                 password=encrypt_password('password'))
     session.add(user)
     session.commit()
-
+    # https://flask-login.readthedocs.org/en/latest/#fresh-logins
     with wiki_client.session_transaction() as sess:
         sess['user_id'] = user.id
-        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+        sess['_fresh'] = True
 
     return user
 
@@ -48,15 +48,19 @@ def member(session, user):
 
 @pytest.fixture
 def wiki_page_info(session):
+    import datetime
     from pygameweb.wiki.models import Wiki
 
     first_content = 'some content<br/> yo.'
     second_content = 'We all love content.'
+    first_changes = 'first wiki page version is done'
+    second_changes = 'new changes to the wiki page'
 
     wiki_page = Wiki(link='blablabla',
                      title='Yo title',
+                     datetimeon=datetime.datetime(2017, 1, 12),
                      content=first_content,
-                     changes='first wiki page version is done',
+                     changes=first_changes,
                      latest=1)
     session.add(wiki_page)
     session.commit()
@@ -67,17 +71,19 @@ def wiki_page_info(session):
     wiki_page.new_version(session)
     wiki_page.title = 'A new title for a new day'
     wiki_page.content = second_content
-    wiki_page.changes = 'new changes to the wiki page'
+    wiki_page.changes = second_changes
 
     session.add(wiki_page)
     session.commit()
-    return [wiki_page, first_content, second_content, first_id]
+
+    return [wiki_page, first_content, second_content,
+            first_id, first_changes, second_changes]
 
 
 def test_wiki_link(wiki_client, session, wiki_page_info):
     """ works when we pass the correct wiki link.
     """
-    wiki_page, first_content, second_content, first_id = wiki_page_info
+    wiki_page, first_content, second_content, first_id, _, _ = wiki_page_info
 
     second_id = wiki_page.id
     assert second_id != first_id
@@ -88,11 +94,13 @@ def test_wiki_link(wiki_client, session, wiki_page_info):
 
     resp = wiki_client.get('/wiki/blablabla?action=source')
     assert resp.status_code == 200
-    assert b'A new title for a new day' not in resp.data, 'only the content is shown'
+    assert (b'A new title for a new day' not in resp.data,
+            'because only the content is shown')
     assert second_content in resp.data.decode('utf-8')
 
-    resp = wiki_client.get('/wiki/blablabla?action=source&id={first_id}'.format(first_id=first_id))
-    assert first_content in resp.data.decode('utf-8'), 'the old version of page is still there'
+    resp = wiki_client.get(f'/wiki/blablabla?action=source&id={first_id}')
+    assert (first_content in resp.data.decode('utf-8'),
+            'because the old version of page is still there')
 
     url = ('/wiki/blablabla?action=diff&oldid={oldid}&newid={newid}'
            .format(oldid=first_id, newid=second_id))
@@ -102,6 +110,18 @@ def test_wiki_link(wiki_client, session, wiki_page_info):
 
     resp = wiki_client.get('/wiki/blablabla?action=history')
     assert resp.status_code == 302, 'login member required'
+
+
+def test_wiki_recent(wiki_client, session, wiki_page_info):
+    """ works when we pass the correct wiki link.
+    """
+    (_, _, _, _, first_changes, second_changes) = wiki_page_info
+    resp = wiki_client.get('/wiki/recent')
+    assert resp.status_code == 200
+    resp = wiki_client.get('/wiki/recent.php')
+    assert resp.status_code == 200
+    assert first_changes in resp.data.decode('utf-8')
+    assert second_changes in resp.data.decode('utf-8')
 
 
 def test_wiki_link_login(wiki_client, session, wiki_page_info, member):
@@ -123,7 +143,9 @@ def test_wiki_new_page(wiki_client, session, member):
     assert b'blabla' in resp.data
 
     data = dict(changes='I have changed.', content='some content')
-    resp = wiki_client.post('/wiki/blabla/edit', data=data, follow_redirects=True)
+    resp = wiki_client.post('/wiki/blabla/edit',
+                            data=data,
+                            follow_redirects=True)
 
     assert resp.status_code == 200
     assert b'blabla' in resp.data

@@ -4,6 +4,7 @@ from flask import (Blueprint, render_template, abort,
 from flask_sqlalchemy_session import current_session
 import ghdiff
 from flask_security import login_required, roles_required
+import sqlalchemy
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
@@ -141,6 +142,31 @@ def diff(link):
         abort(404)
 
     return render_template('wiki/diff.html', wiki=result, html_diff=html_diff)
+
+
+@wiki_blueprint.route('/wiki/recent.php', methods=['GET'])
+@wiki_blueprint.route('/wiki/recent', methods=['GET'])
+def recent():
+    """ Show recently modified wiki pages.
+    """
+
+    pages = (current_session
+             .query(Wiki)
+             .order_by(Wiki.datetimeon.desc())
+             .limit(30)
+             .all())
+
+    from itertools import groupby
+
+    def grouper(item):
+        return item.datetimeon.year, item.datetimeon.month, item.datetimeon.day
+
+    day_groups = []
+    for ((year, month, day), items) in groupby(pages, grouper):
+        day_groups.append(((year, month, day), list(items)))
+
+    return render_template('wiki/recent.html', day_groups=day_groups)
+
 
 
 @wiki_blueprint.route('/wiki/<link>/edit', methods=['GET', 'POST'])

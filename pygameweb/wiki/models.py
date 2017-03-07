@@ -1,10 +1,12 @@
 """ wiki models
 """
-from sqlalchemy import Column, DateTime, Integer, String, Text
+from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey
 from sqlalchemy.orm.session import make_transient
+from sqlalchemy.orm import relationship
 
 from pygameweb.models import Base
 from pygameweb.wiki.wiki import render
+from pygameweb.user.models import User
 from pygameweb.sanitize import sanitize_html
 
 
@@ -20,12 +22,17 @@ class Wiki(Base):
     datetimeon = Column(DateTime)
     fname = Column(String(255))
     changes = Column(String(255))
-    users_id = Column(Integer)
     latest = Column(Integer)
     name = Column(String(255))
     title = Column(String(255))
     parent = Column(String(255))
     keywords = Column(String(255))
+
+    users_id = Column(Integer,
+                      ForeignKey(User.id,
+                                 name='wiki_user_id_fkey'),
+                      nullable=True)
+    user = relationship(User)
 
     def new_version(self, session):
         """ Create a new version of this page. Leave the old on in the db.
