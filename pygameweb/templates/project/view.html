@@ -1,5 +1,11 @@
 {% extends "base.html" %}
-<h1>Project</h1>
+
+{% block title %}{% cache 60*5, project_id | string(), release_id | string() if release_id else '', 'title' %}
+    {% set project = project_for(project_id) %}
+    {% set release = release_for(release_id) if release_id else None %}
+    {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
+{% endcache %}{% endblock title %}
+
 
 {% block content %}
   {% cache 60*5, project_id | string(), release_id | string() if release_id else '' %}
