@@ -59,6 +59,10 @@ class BootstrapRendererNew(BootstrapRendererOld):
             if hasattr(node.title, 'get_url'):
                 # a_tag = tags.a(node.title.text, _class='navbar-brand',
                 #                   href=node.title.get_url())
+                pip_style = 'max-width:100px;margin-top: 18px;margin-right: 4px;'
+                header.add(tags.span('pip3 install',
+                                     _class='navbar-left hidden-xs',
+                                     style=pip_style))
                 a_tag = tags.a(_class='navbar-left', title=node.title.text, href=node.title.get_url())
                 a_tag.add(tags.img(src='/images/logo_lofi.png', style='max-width:100px;margin-top: 10px;'))
                 header.add(a_tag)
