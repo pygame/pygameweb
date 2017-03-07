@@ -1,10 +1,14 @@
 {% extends "base.html" %}
-<h1>Wiki</h1>
+
+{% block title %}{% cache 60*5, link, 'title' %}
+    {% set wiki = wiki_for(link) %}
+    {{ wiki.title }} - pygame wiki
+{% endcache %}{% endblock title %}
 
 {% block content %}
   {% cache 60*5, link %}
   {% set wiki = wiki_for(link) %}
-  <h1>{{ wiki.title }}</h1>
+  <h1>{{ wiki.title }} &mdash; <a href="/wiki">wiki</a></h1>
 
   <div>
   {{ wiki.content_rendered | safe }}
