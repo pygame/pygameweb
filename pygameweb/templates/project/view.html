@@ -41,7 +41,10 @@
 
     <div class="row">
       <div class="col-md-6">
-        <img class="img-responsive" src="{{ project.image_thumb(400,400) }}">
+        {% set thumb_img = project.image_thumb(400,400) %}
+        {% if thumb_img %}
+            <img class="img-responsive" src="{{ thumb_img }}">
+        {% endif %}
       </div>
       <div class="col-md-6">
         {% for value, count, size in project.tag_counts %}
