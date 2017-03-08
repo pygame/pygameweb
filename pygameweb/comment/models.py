@@ -263,5 +263,15 @@ def load_xml(session, source):
 def load_comments():
     """ load all the comments into the db.
     """
-    from pygameweb.db import _get_session
-    load_xml(_get_session(), 'comments.xml')
+    from pygameweb.config import Config
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+
+    a_connection = engine.connect()
+    a_transaction = a_connection.begin()
+    session = sessionmaker(bind=a_connection)()
+
+    load_xml(session, 'comments.xml')
+
+    a_transaction.commit()

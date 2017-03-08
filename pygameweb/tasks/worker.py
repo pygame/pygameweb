@@ -2,16 +2,16 @@
 """
 
 from pygameweb.tasks import queue
-from pygameweb.db import _get_session
+from pygameweb.config import Config
+from sqlalchemy import create_engine
 
 def work():
     name = 'default'
-    the_queue = queue(name, _get_session())
+
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+    the_queue = queue(name, engine=engine)
     for job in the_queue[name]:
         print(job)
-
-
-
 
 if __name__ == '__main__':
     work()

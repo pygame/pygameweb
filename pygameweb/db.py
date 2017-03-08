@@ -30,5 +30,8 @@ def _get_session():
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
-    session = sessionmaker(bind=engine)()
-    return session
+    a_connection = engine.connect()
+    a_transaction = a_connection.begin()
+    session = sessionmaker(bind=a_connection)()
+
+    return a_transaction, session

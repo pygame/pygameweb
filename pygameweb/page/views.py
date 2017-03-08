@@ -15,7 +15,6 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response, current_app
 from flask_sqlalchemy_session import current_session
 
-from pygameweb.db import _get_session
 from pygameweb.user.models import User
 from pygameweb.project.models import Project, Release, Tags, top_tags
 from pygameweb.page.models import Page

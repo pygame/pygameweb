@@ -32,18 +32,15 @@ def get(name):
     return queue(name)[name]
 
 
-def queue(name, session=None):
+def queue(name, session=None, engine=None):
     """ gives use a queue back for working with.
 
     :Example:
         >>> queue('apples').put({})
 
     """
-    if session is None:
-        the_session = current_session
-    else:
-        the_session = session
+    if engine is None:
+        engine = session.get_bind()
 
-    engine = the_session.get_bind()
     connection = engine.raw_connection()
     return PQ(connection.connection)
