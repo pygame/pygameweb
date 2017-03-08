@@ -33,6 +33,7 @@ class Config(object):
     DEBUG = truthy_config('APP_DEBUG')
     SECRET_KEY = os.getenv('APP_SECRET_KEY')
     WWW = os.getenv('APP_WWW')
+    TESTING = False
 
     # http://flask-security-fork.readthedocs.io/en/latest/configuration.html
     SECURITY_PASSWORD_HASH = 'bcrypt'
@@ -51,8 +52,6 @@ class Config(object):
     MAIL_USERNAME = os.getenv('APP_MAIL_USERNAME', '')
     MAIL_PASSWORD = os.getenv('APP_MAIL_PASSWORD', '')
     MAIL_SUPPRESS_SEND = truthy_config('APP_DEBUG')
-
-    TESTING = False
     MAIL_DEBUG = truthy_config('APP_DEBUG')
 
     # CACHE_TYPE = 'simple'
