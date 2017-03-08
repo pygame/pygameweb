@@ -102,15 +102,18 @@ def add_user_blueprint(app):
     @user_confirmed.connect_via(app)
     def when_the_user_is_confirmed(app, user):
         """ we can add a newbie role.
-
-        After a couple of hours we can add a 'member' role.
-        The idea is to combat spam a bit.
         """
 
         # we add a newbie role, once the user confirms their email.
-        # default_role = app.user_datastore.find_role("newbie")
-        # app.user_datastore.add_role_to_user(user, default_role)
-        # current_session.commit()
+        default_role = app.user_datastore.find_role("newbie")
+        app.user_datastore.add_role_to_user(user, default_role)
+
+        # TODO: After a couple of hours we can add a 'member' role.
+        #   The idea with this magic spell would be to ward off spam a bit.
+        member_role = app.user_datastore.find_role("members")
+        app.user_datastore.add_role_to_user(user, default_role)
+
+        current_session.commit()
 
 
     app.register_blueprint(user_blueprint)
