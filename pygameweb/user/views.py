@@ -77,16 +77,24 @@ def add_user_blueprint(app):
     # https://pythonhosted.org/Flask-Security-Fork/customizing.html
     from flask_security.forms import RegisterForm, ConfirmRegisterForm
     from wtforms.fields import StringField
-    from wtforms.validators import Required
+    from wtforms.validators import Required, Regexp, Length
 
+    username_validators = [
+        Required(),
+        Regexp('^\w+$',
+               message='Username must contain only letters numbers or underscore'),
+        Length(min=5,
+               max=25,
+               message='Username must be betwen 5 & 25 characters')
+    ]
 
     class ExtendedRegisterForm(RegisterForm):
-        name = StringField('Username', [Required()])
+        name = StringField('Username', username_validators)
         title = StringField('Title (eg. Real name)', [Required()])
 
 
     class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
-        name = StringField('Username', [Required()])
+        name = StringField('Username', username_validators)
         title = StringField('Title (eg. Real name)', [Required()])
 
 
