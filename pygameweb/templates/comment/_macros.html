@@ -1,38 +1,63 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% macro post_left(post) %}
   <a class="media-left" href="#">
     <img src="{{ post.author.email | gravatar }}">
   </a>
 {% endmacro %}
 
-{% macro post_body(post) %}
+{% macro post_reply_part(post, comment_url, comment_form, top_level) %}
+  {% set thread_id = post.thread_id if post else '' %}
+  {% set parent_id = post.id if (post and not top_level) else '' %}
+
+  {% if not top_level %}
+    <button data-toggle="collapse" data-target="#comment_post{{ post.id }}_{{ top_level }}">reply</button>
+  {% endif %}
+
+  <div id="comment_post{{ post.id }}_{{ top_level }}" class="{% if not top_level %}collapse{% endif %} row form-group">
+    <form class="form {% if top_level %}col-sm-6{% else %}col-sm-8{% endif %}" method="post" action="{{ comment_url }}">
+        {{ comment_form.csrf_token }}
+        <input type="hidden" name="thread_id" value="{{ thread_id }}">
+        <input type="hidden" name="parent_id" value="{{ parent_id }}">
+        {{ wtf.form_errors(comment_form, hiddens="only") }}
+        {{ wtf.form_field(comment_form.message, rows=5) }}
+        <button class="btn btn-lg btn-primary" type="submit">Leave thoughtful comment</button>
+    </form>
+  </div>
+{% endmacro %}
+
+
+
+{% macro post_body(post, comment_url, comment_form) %}
   <div class="media-body">
     {# set how_old = post.created_at - now() #}
     {% set how_old = post.created_at %}
     <h4 class="media-heading">{{ post.author.name }} {{ how_old }}</h4>
     {{ post.message_html | safe }}
-    {{ post_children(post) }}
+    {{ post_reply_part(post, comment_url, comment_form, False) }}
+    {{ post_children(post, comment_url, comment_form) }}
   </div>
 {% endmacro %}
 
-{% macro post_children(post) %}
+{% macro post_children(post,comment_url, comment_form) %}
   {% if post.children %}
     {% for child in post.children if ((not child.is_spam) and (not child.is_deleted)) %}
       <div class="media">
         {{ post_left(child) }}
-        {{ post_body(child) }}
+        {{ post_body(child, comment_url, comment_form) }}
       </div>
     {% endfor %}
   {% endif %}
 {% endmacro %}
 
-{% macro post_toplevel(posts) %}
+{% macro post_toplevel(posts, comment_url, comment_form) %}
   {# This is the main macro to use. #}
   {% if posts %}
     <ul class="media-list">
       {% for post in posts if ((not post.is_spam) and (not post.is_deleted)) %}
         <li class="media">
           {{ post_left(post) }}
-          {{ post_body(post) }}
+          {{ post_body(post, comment_url, comment_form) }}
         </li>
       {% endfor %}
     </ul>

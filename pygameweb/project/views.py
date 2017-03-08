@@ -9,8 +9,12 @@ from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
 
 from pygameweb.project.models import Project, Release, Tags, top_tags
-from pygameweb.project.forms import FirstReleaseForm, ReleaseForm, ProjectForm
-from pygameweb.comment.models import CommentPost
+from pygameweb.project.forms import (FirstReleaseForm,
+                                     ReleaseForm,
+                                     ProjectForm,
+                                     ProjectCommentForm)
+from pygameweb.comment.models import CommentPost, CommentAuthor, CommentThread
+from pygameweb.sanitize import sanitize_html
 
 project_blueprint = Blueprint('project',
                               __name__,
@@ -23,7 +27,6 @@ def project_for(project_id):
               .query(Project)
               .filter(Project.id == project_id)
               .first())
-    # import pdb;pdb.set_trace()
     if not result:
         abort(404)
     return result
@@ -89,6 +92,7 @@ def view(project_id, title=None):
     return render_template('project/view.html',
                            project_id=project_id,
                            project_for=project_for,
+                           commentform=ProjectCommentForm(),
                            comments_for=comments_for)
 
 
@@ -106,6 +110,7 @@ def release(project_id, release_id, title=None):
                            release_for=release_for,
                            project_id=project_id,
                            release_id=release_id,
+                           commentform=ProjectCommentForm(),
                            comments_for=comments_for)
 
 
@@ -148,6 +153,83 @@ def tags(tag):
                            projects=inchunks(projects, 3),
                            prev_start=prev_start,
                            next_start=next_start)
+
+
+"""
+  <post dsq:id="194253444">
+    <id/>
+    <message>&lt;p&gt;Some X message ok.&lt;/p&gt;</message>
+    <createdAt>2011-04-29T17:39:31Z</createdAt>
+    <isDeleted>false</isDeleted>
+    <isSpam>false</isSpam>
+    <author>
+      <email>a@example.com</email>
+      <name>Some name a</name>
+      <isAnonymous>false</isAnonymous>
+      <username>blablax</username>
+    </author>
+    <ipAddress>2.2.2.2</ipAddress>
+    <thread dsq:id="291436086"/>
+    <parent dsq:id="194253320"/>
+  </post>
+"""
+
+@project_blueprint.route('/project/<int:project_id>/comment', methods=['GET', 'POST'])
+@login_required
+@roles_required('members')
+def new_comment(project_id):
+    """ Post a comment on this project.
+    """
+    form = ProjectCommentForm()
+
+    if form.validate_on_submit():
+        project = project_for(project_id)
+        author = CommentAuthor.from_user(current_session, current_user)
+        parent_id = int(form.parent_id.data) if form.parent_id.data else None
+        thread_id = int(form.thread_id.data) if form.thread_id.data else None
+        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+        created_at = datetime.datetime.now()
+
+        # hardcoded pygame forum id.
+        category = '796386'
+        forum = 'pygame'
+        title = project.title
+        link = f'https://pygame.org/project/{project_id}/'
+        id_text = f'pygame_project_{project_id}'
+        message = form.message.data
+        message = message if '<p>' not in message else f'<p>{message}</p>'
+
+        if not thread_id:
+            thread = CommentThread(
+                id_text=id_text,
+                forum=forum,
+                category=category,
+                link=link,
+                title=title,
+                ip_address=ip_address,
+                author=author,
+                created_at=created_at,
+                is_closed=False,
+                is_deleted=False,
+            )
+            current_session.add(thread)
+
+        post = CommentPost(author=author,
+                           parent_id=parent_id,
+                           message=sanitize_html(message),
+                           ip_address=ip_address,
+                           created_at=created_at,
+                           is_deleted=False,
+                           is_spam=False)
+        if thread_id is None:
+            post.thread = thread
+        else:
+            post.thread_id = thread_id
+
+        current_session.add(post)
+        current_session.commit()
+
+    return redirect(url_for('project.view', project_id=project_id))
 
 
 def save_image(form_field, image_path):

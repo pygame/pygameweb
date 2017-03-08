@@ -40,6 +40,44 @@ class CommentAuthor(Base):
         return (f'<CommentAuthor({self.name}, {self.email}m {self.link}, '
                 f'{self.username}, {self.is_anonymous})>')
 
+    @classmethod
+    def old_or_new(cls, session, newauthor):
+        """ returns an existing author if it exists, otherwise a new one.
+        """
+        author = (session
+                  .query(CommentAuthor)
+                  .filter(CommentAuthor.email == newauthor.email)
+                  .filter(CommentAuthor.name == newauthor.name)
+                  .filter(CommentAuthor.is_anonymous == newauthor.is_anonymous)
+                  .filter(CommentAuthor.username == newauthor.username)
+                  .first())
+        if author is None:
+            author = newauthor
+        return author
+
+    @classmethod
+    def from_eauthor(cls, session, eauthor):
+        """ get the CommentAuthor instance from the eauthor etree tag.
+        """
+        eusername = eauthor.find('username')
+        uname = None if eusername is None else eusername.text
+        author = CommentAuthor(
+            email=eauthor.find('email').text,
+            name=eauthor.find('name').text,
+            is_anonymous=eauthor.find('isAnonymous').text == 'true',
+            username=uname)
+        return cls.old_or_new(session, author)
+
+    @classmethod
+    def from_user(cls, session, user):
+        """ returns a CommentAuthor from a given user.
+        """
+        author = CommentAuthor(email=user.email,
+                               name=user.title,
+                               username=user.name,
+                               is_anonymous=False)
+        return cls.old_or_new(session, author)
+
 
 class CommentThread(Base):
     __tablename__ = 'comment_thread'
@@ -165,35 +203,13 @@ def remove_prefix(fname):
     return tree
 
 
-def author_from(session, eauthor):
-    """ get the author db instance from the eauthor etree tag.
-    """
-    eusername = eauthor.find('username')
-    uname = None if eusername is None else eusername.text
-    dauthor = CommentAuthor(
-        email=eauthor.find('email').text,
-        name=eauthor.find('name').text,
-        is_anonymous=eauthor.find('isAnonymous').text == 'true',
-        username=uname)
-
-    author = (session
-              .query(CommentAuthor)
-              .filter(CommentAuthor.email == dauthor.email)
-              .filter(CommentAuthor.name == dauthor.name)
-              .filter(CommentAuthor.is_anonymous == dauthor.is_anonymous)
-              .filter(CommentAuthor.username == dauthor.username)
-              .first())
-    if author is None:
-        author = dauthor
-    return author
-
 def load_xml_threads(session, root):
     """
     """
     for thread in root.findall('thread'):
         # import pdb;pdb.set_trace()
         eauthor = thread.find('author')
-        author = author_from(session, eauthor)
+        author = CommentAuthor.from_eauthor(session, eauthor)
 
         # Seems all thread->authors are the owner of the forum.
         the_id = [v for k, v in thread.attrib.items() if k.endswith('id')][0]
@@ -220,7 +236,7 @@ def load_xml_posts(session, root):
     for post in root.findall('post'):
         # import pdb;pdb.set_trace()
         eauthor = post.find('author')
-        author = author_from(session, eauthor)
+        author = CommentAuthor.from_eauthor(session, eauthor)
         session.add(author)
 
         the_id = [v for k, v in post.attrib.items() if k.endswith('id')][0]

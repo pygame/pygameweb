@@ -111,7 +111,7 @@ def add_user_blueprint(app):
         # TODO: After a couple of hours we can add a 'member' role.
         #   The idea with this magic spell would be to ward off spam a bit.
         member_role = app.user_datastore.find_role("members")
-        app.user_datastore.add_role_to_user(user, default_role)
+        app.user_datastore.add_role_to_user(user, member_role)
 
         current_session.commit()
 

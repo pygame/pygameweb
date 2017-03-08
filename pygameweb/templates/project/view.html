@@ -75,9 +75,6 @@
       </dl>
     </div>
 
-
-
-
     <h3>Releases</h3>
 
     {% for arelease in project.releases %}
@@ -97,11 +94,14 @@
           </form>
     #}
 
+    {% set comment_url = url_for('project.new_comment', project_id=project_id) %}
+    {% set comment_form = commentform %}
+    {% set comments = comments_for(project_id) %}
+    {% set post = comments[0] if comments else None %}
 
-
-    {% from "comment/_macros.html" import post_toplevel %}
-    {{ post_toplevel(comments_for(project_id)) }}
-
+    {% from "comment/_macros.html" import post_toplevel, post_reply_part %}
+    {{ post_reply_part(post, comment_url, commentform, True) }}
+    {{ post_toplevel(comments, comment_url, commentform) }}
 
     <table class="comments">
       <tbody>

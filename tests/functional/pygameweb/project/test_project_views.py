@@ -281,3 +281,14 @@ def test_project_new(project_client, session, user):
     session.refresh(project)
     assert len(project.releases) == 2
     assert project.releases[1].version == '3.0.0', 'we added a release version'
+
+
+def test_new_project_comment(project_client, session, project, project2, user):
+    """ adds the thoughtful and supportive comment to the project page for the
+        interesting creative work someone is trying to share with the world.
+    """
+    url = f'/project/{project.id}/comment'
+    data = dict(message='<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>')
+    resp = project_client.post(url, data=data, follow_redirects=True)
+    assert resp.status_code == 200
+    assert b'Gidday matey.' in resp.data, 'because the comment should be there.'
