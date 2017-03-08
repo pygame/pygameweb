@@ -8,9 +8,11 @@
       {{ register_user_form.csrf_token }}
       {{ wtf.form_errors(register_user_form, hiddens="only") }}
 
-
+      {{ wtf.form_field(register_user_form.name) }}
+      {{ wtf.form_field(register_user_form.title) }}
       {{ wtf.form_field(register_user_form.email) }}
       {{ wtf.form_field(register_user_form.password) }}
+
       {% if register_user_form.password_confirm %}
         {{ wtf.form_field(register_user_form.password_confirm) }}
       {% endif %}

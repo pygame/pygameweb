@@ -27,8 +27,8 @@ class User(Base, UserMixin):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(80))
-    email = Column(String(80))
+    name = Column(String(80), unique=True)
+    email = Column(String(80), unique=True)
 
     password = Column(String(255))
     """ new password field.

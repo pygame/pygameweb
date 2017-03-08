@@ -73,7 +73,28 @@ def add_user_blueprint(app):
     """ to the app.
     """
     app.user_datastore = SQLAlchemySessionUserDatastore(current_session, User, Group)
-    security = Security(app, app.user_datastore)
+
+    # https://pythonhosted.org/Flask-Security-Fork/customizing.html
+    from flask_security.forms import RegisterForm, ConfirmRegisterForm
+    from wtforms.fields import StringField
+    from wtforms.validators import Required
+
+
+    class ExtendedRegisterForm(RegisterForm):
+        name = StringField('Username', [Required()])
+        title = StringField('Title (eg. Real name)', [Required()])
+
+
+    class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
+        name = StringField('Username', [Required()])
+        title = StringField('Title (eg. Real name)', [Required()])
+
+
+    security = Security(app,
+                        app.user_datastore,
+                        register_form=ExtendedRegisterForm,
+                        confirm_register_form=ExtendedConfirmRegisterForm)
+
     from pygameweb.cache import limiter
     # login = app.view_functions['security.login']
     # limiter.limit("4/hour")(login)
