@@ -28,6 +28,7 @@ def add_folder(app, static_blueprint, folder):
     """Add a static folder.
     """
     full_path = Path(app.config['WWW']) / folder
+    full_path_index = Path(app.config['WWW']) / folder / 'index.html'
     full_path_str = str(full_path.absolute())
     if not full_path.exists():
         return
@@ -38,6 +39,15 @@ def add_folder(app, static_blueprint, folder):
     url = f'/{folder}/<path:path>'
     path = f'static_{folder}'
     app.add_url_rule(url, path, download_file)
+
+    if full_path_index.exists():
+        def download_index_file():
+            return send_from_directory(full_path_str, 'index.html')
+
+        url = f'/{folder}/'
+        path = f'static_{folder}_index'
+        app.add_url_rule(url, path, download_index_file)
+
 
 
 def add_file(app, static_blueprint, file):
