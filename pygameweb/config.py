@@ -62,3 +62,5 @@ class Config(object):
     RATELIMIT_GLOBAL = ('5000 per day, 5000 per hour'
                         if truthy_config('APP_DEBUG')
                         else '200 per day, 50 per hour')
+
+    STACK_KEY = os.getenv('APP_STACK_KEY', '')

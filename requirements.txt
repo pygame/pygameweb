@@ -18,3 +18,4 @@ psycopg2
 pyquery
 pygments
 pq
+sphinx

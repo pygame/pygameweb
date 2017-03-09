@@ -65,7 +65,10 @@ setup(
             'pygameweb_front=pygameweb.run:run_front',
             'pygameweb_generate_json=pygameweb.dashboard.generate_json:main',
             'pygameweb_generate_static=pygameweb.dashboard.generate_static:main',
-            'pygameweb_loadcomments=pygameweb.comment.models:load_comments'
+            'pygameweb_launchpad=pygameweb.builds.launchpad_build_badge:check_pygame_builds',
+            'pygameweb_update_docs=pygameweb.builds.update_docs:update_docs',
+            'pygameweb_stackoverflow=pygameweb.builds.stackoverflow:download_stack_json',
+            'pygameweb_loadcomments=pygameweb.comment.models:load_comments',
         ],
     },
 )
