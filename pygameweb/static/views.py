@@ -49,7 +49,6 @@ def add_folder(app, static_blueprint, folder):
         app.add_url_rule(url, path, download_index_file)
 
 
-
 def add_file(app, static_blueprint, file):
     """Add a file to serve.
     """

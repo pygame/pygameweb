@@ -86,9 +86,14 @@ def releases(project_id):
 @project_blueprint.route('/project-<path:title>-<int:project_id>-.html',
                          methods=['GET'])
 @project_blueprint.route('/project/<int:project_id>', methods=['GET'])
+@project_blueprint.route('/project/<int:project_id>/', methods=['GET'])
 def view(project_id, title=None):
     """ of the wiki page.
     """
+    release_id = request.args.get('release_id', None)
+    if release_id is not None:
+        return release(project_id, int(release_id))
+
     return render_template('project/view.html',
                            project_id=project_id,
                            project_for=project_for,
