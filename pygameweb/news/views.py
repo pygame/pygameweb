@@ -38,7 +38,7 @@ def index_redirect():
 
 
 
-@news_blueprint.route('/feed/atom', methods=['GET'])
+@news_blueprint.route('/news/feed/atom', methods=['GET'])
 def atom():
     """ of the news page.
     """
@@ -61,7 +61,7 @@ def atom():
     # return feed.get_response()
 
 
-@news_blueprint.route('/feed/rss', methods=['GET'])
+@news_blueprint.route('/news/feed/rss', methods=['GET'])
 def rss():
     """ of the news page.
     """

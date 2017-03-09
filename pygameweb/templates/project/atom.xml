@@ -1,0 +1,26 @@
+{% cache 60*5 %}<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="pygameweb 0.0.1" -->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+    <title>latest pygame project releases</title>
+    <tagline></tagline>
+    <link rel="alternate" type="text/html" href="https://www.pygame.org"/>
+    <id>https://www.pygame.org</id>
+    <modified>{{ recent_releases[0][2].datetimeon.isoformat() }}</modified>
+    <generator>pygameweb 0.0.1</generator>
+    {% for user, project, release in recent_releases -%}
+    <entry>
+        <title>{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}</title>
+        <link rel="alternate" type="text/html" href="https://www.pygame.org{{ url_for('project.release', project_id=project.id, release_id=release.id) }}"/>
+        <created>{{ release.datetimeon.isoformat() }}</created>
+        <issued>{{ release.datetimeon.isoformat() }}</issued>
+        <modified>{{ release.datetimeon.isoformat() }}</modified>
+        <id>{{ url_for('project.release', project_id=project.id, release_id=release.id, _external=True) }}</id>
+        <author>
+            <name>{{ user.title }} ({{ user.name }})</name>
+        </author>
+        {%- set thumb = project.image_thumb(230,230) %}
+        <summary>{% if thumb %}&lt;img src='https://www.pygame.org{{ thumb }}' align=right&gt;{% endif -%}
+        	{% if release.description %}{{ release.description }}{% endif %}</summary>
+    </entry>
+    {% endfor -%}
+</feed>{% endcache %}

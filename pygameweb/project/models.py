@@ -2,6 +2,7 @@
 """
 from math import sqrt
 from pathlib import Path
+from email.utils import formatdate
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, inspect
 from sqlalchemy.orm import relationship
@@ -126,4 +127,8 @@ class Release(Base):
     version = Column(String(80))
 
     project = relationship(Project, backref='releases')
+
+    @property
+    def datetimeon_2882(self):
+        return formatdate(self.datetimeon.timestamp())
 

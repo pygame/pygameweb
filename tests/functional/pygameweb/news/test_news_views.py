@@ -42,8 +42,8 @@ def test_news_view(news_client, session, news):
 @pytest.mark.parametrize("feed_url", [
     '/feed/news.php?format=ATOM',
     '/feed/news.php?format=RSS2.0',
-    '/feed/rss',
-    '/feed/atom'
+    '/news/feed/rss',
+    '/news/feed/atom'
 ])
 def test_news_feeds(news_client, session, news, feed_url):
     """ have our news in them, and can be feedparsed.

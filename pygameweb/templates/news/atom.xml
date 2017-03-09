@@ -5,20 +5,20 @@
     <tagline></tagline>
     <link rel="alternate" type="text/html" href="https://www.pygame.org"/>
     <id>https://www.pygame.org</id>
-    <modified>{{ news[0].datetimeon.strftime('%a, %d %b %y %T') }}</modified>
+    <modified>{{ news[0].datetimeon.isoformat() }}</modified>
     <generator>pygameweb 0.0.1</generator>
-    {% for new in news %}
+    {% for new in news -%}
     <entry>
         <title>{{ new.title }}</title>
         <link rel="alternate" type="text/html" href="https://www.pygame.org/news.html"/>
-        <created>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</created>
-        <issued>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</issued>
-        <modified>{{ new.datetimeon.strftime('%a, %d %b %y %T') }}</modified>
+        <created>{{ new.datetimeon.isoformat() }}</created>
+        <issued>{{ new.datetimeon.isoformat() }}</issued>
+        <modified>{{ new.datetimeon.isoformat() }}</modified>
         <id>https://www.pygame.org/news.html</id>
         <author>
             <name>pygame.org</name>
         </author>
         <summary>{{ new.description_html }}</summary>
     </entry>
-    {% endfor %}
+    {% endfor -%}
 </feed>{% endcache %}

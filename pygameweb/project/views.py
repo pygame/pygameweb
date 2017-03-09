@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
 import datetime
+from email.utils import formatdate
 
 from flask import (Blueprint, render_template, abort,
-                   redirect, url_for, request, current_app)
+                   redirect, url_for, request, current_app, make_response)
 from flask_sqlalchemy_session import current_session
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
@@ -430,6 +431,57 @@ def delete_release(project_id, release_id):
     on get, show a form for posting to delete it.
     """
     raise NotImplementedError()
+
+
+
+from pygameweb.project.models import top_tags, Project, Release
+from pygameweb.user.models import User
+
+def recent_releases():
+    return (current_session.query(User, Project, Release)
+            .filter(Release.project_id == Project.id)
+            .filter(User.id == Project.users_id)
+            .order_by(Release.datetimeon.desc())
+            .limit(20)
+            .all())
+
+
+@project_blueprint.route('/project/feed/atom', methods=['GET'])
+def atom():
+    """ of recent releases
+    """
+    resp = render_template('project/atom.xml', recent_releases=recent_releases())
+    response = make_response(resp)
+    response.headers['Content-Type'] = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
+    return response
+
+
+@project_blueprint.route('/project/feed/rss', methods=['GET'])
+def rss():
+    """ of recent releases
+    """
+    build_date = formatdate(datetime.datetime.now().timestamp())
+    resp = render_template('project/rss.xml', recent_releases=recent_releases(), build_date=build_date)
+    response = make_response(resp)
+    response.headers['Content-Type'] = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
+    return response
+
+
+@project_blueprint.route('/feed/releases.php', methods=['GET'])
+def legacy_feeds():
+    feed_type = request.args.get('format', 'ATOM')
+    if feed_type == 'ATOM':
+        return atom()
+    elif feed_type == 'RSS2.0':
+        return rss()
+    return ''
+
+
+
+
+
+
+
 
 
 def add_project_blueprint(app):

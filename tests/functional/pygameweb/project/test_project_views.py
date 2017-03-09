@@ -125,7 +125,7 @@ def test_project_index(project_client, session, project, project2):
     assert project.user.projectcomments
     assert project.tag_counts == [('arcade', 2, 16), ('game', 1, 14)]
 
-    resp = project_client.get('/project/1')
+    resp = project_client.get('/project/1/')
     assert resp.status_code == 200
     assert b'Some project title 1' in resp.data
     assert b'Some project title 2' not in resp.data
@@ -144,7 +144,7 @@ def test_project_index(project_client, session, project, project2):
     assert resp.status_code == 200, 'because this url works too.'
     assert b'A release title.' in resp.data
 
-    resp = project_client.get('/project/66')
+    resp = project_client.get('/project/66/')
     assert resp.status_code == 404, 'when the project is not there'
     resp = project_client.get('/project/1/66')
     assert resp.status_code == 404, 'when the release is not there either'
