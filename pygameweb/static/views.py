@@ -15,7 +15,7 @@ folders = ['content', 'contests', 'css', 'ctypes', 'docs', 'docs-old', 'ftp',
            'interview', 'iscroll', 'js', 'ludumcontest1', 'ludumcontest2',
            'mediaelement', 'mediagit', 'music', 'neu', 'new', 'old',
            'old_bug_attachments', 'oldhtml', 'pcr', 'pcr_old', 'pygame_wincvs',
-           'search', 'shredwheat', 'siteswing', 'skins', 'swfs', 'test',
+           'search', 'shots', 'shredwheat', 'siteswing', 'skins', 'swfs', 'test',
            'thumb', 'tiny_mce', 'tinymce_3_2_3_1', 'tmp', 'webalizer']
 
 
