@@ -10,6 +10,15 @@
   {% set wiki = wiki_for(link) %}
   <h1>{{ wiki.title }} &mdash; <a href="/wiki">wiki</a></h1>
 
+  <nav>
+    <a class="btn btn-default" href="{{ url_for('wiki.edit', link=link) }}" role="button">Edit</a>
+    <a class="btn btn-default" href="{{ url_for('wiki.source', link=link) }}" role="button">Source</a>
+    <a class="btn btn-default" href="{{ url_for('wiki.history', link=link) }}" role="button">History</a>
+    {#- <a class="btn btn-default" href="#" role="button">Links</a> -#}
+    {#- <a class="btn btn-default" href="#" role="button">Wiki Map</a> -#}
+    <a class="btn btn-default" href="{{ url_for('wiki.recent') }}" role="button">Recent Changes</a>
+  </nav>
+
   <div>
   {{ wiki.content_rendered | safe }}
   </div>

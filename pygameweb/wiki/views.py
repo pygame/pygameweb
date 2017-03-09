@@ -165,7 +165,8 @@ def recent():
     for ((year, month, day), items) in groupby(pages, grouper):
         day_groups.append(((year, month, day), list(items)))
 
-    return render_template('wiki/recent.html', day_groups=day_groups)
+    return render_template('wiki/recent.html',
+                           day_groups=day_groups)
 
 
 

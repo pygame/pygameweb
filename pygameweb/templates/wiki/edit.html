@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-<h1>Wiki edit</h1>
-
+{% block title %}{{ wiki.title }} - Edit{% endblock title %}
 {% block content %}
 
     <h1>{{ wiki.title }} - Edit</h1>
