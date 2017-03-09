@@ -86,8 +86,8 @@ def releases(project_id):
 # project-Rotating+3D+Cube-1859-.html
 @project_blueprint.route('/project-<path:title>-<int:project_id>-.html',
                          methods=['GET'])
-@project_blueprint.route('/project/<int:project_id>', methods=['GET'])
 @project_blueprint.route('/project/<int:project_id>/', methods=['GET'])
+@project_blueprint.route('/project/<int:project_id>', methods=['GET'])
 def view(project_id, title=None):
     """ of the wiki page.
     """
@@ -105,6 +105,8 @@ def view(project_id, title=None):
 # project-pyChessClock-1695-2948.html
 @project_blueprint.route('/project-<path:title>-<int:project_id>'
                          '-<int:release_id>.html',
+                         methods=['GET'])
+@project_blueprint.route('/project/<int:project_id>/<int:release_id>/',
                          methods=['GET'])
 @project_blueprint.route('/project/<int:project_id>/<int:release_id>',
                          methods=['GET'])
