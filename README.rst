@@ -10,7 +10,7 @@ The stack is something like: python 3.6, postgresql, Flask, py.test, sqlalchemy,
 
 Set up the required packages::
 
-    virtualenv anenv
+    python3.6 -m venv anenv
     . ./anenv/bin/activate
     pip install --upgrade pip
     pip install -r requirements.dev.txt
@@ -82,6 +82,9 @@ To run all unit tests and functional tests use::
 
     pytest
 
+To watch for changes and rerun tests::
+
+    ptw
 
 tests/unit/ are for unit tests.
 tests/functional/ are for tests which would use flask and db.
@@ -100,9 +103,9 @@ pygameweb/templates/
 
 We use::
 
-    * Jinja2 http://jinja.pocoo.org/
-    * Flask-Bootstrap https://pythonhosted.org/Flask-Bootstrap/basic-usage.html
-    * Bootstrap http://getbootstrap.com/
+    * `Jinja2 <http://jinja.pocoo.org/>`_
+    * `Flask-Bootstrap <https://pythonhosted.org/Flask-Bootstrap/basic-usage.html>`_
+    * `Bootstrap <http://getbootstrap.com/>`_
 
 
 Command line tools with click
@@ -110,11 +113,13 @@ Command line tools with click
 
 We use click and setuptools entry points (in setup.py) for command line tools::
 
-    * click http://click.pocoo.org/5/
-    * entry points https://packaging.python.org/distributing/#entry-points
+    * `click <http://click.pocoo.org/5/>`_
+    * `entry points <https://packaging.python.org/distributing/#entry-points>`_
 
 Note, when you add or change a command line tool, you need to `pip install -e .` again.
 
+If you can, try not to use command line options at all. Have one command do one thing,
+and make the defaults good, or use the pygameweb.config.
 
 
 User login with Flask-security-fork
@@ -125,7 +130,7 @@ pygameweb/templates/security
 
 Using::
 
-    * flask-security-fork https://flask-security-fork.readthedocs.io/en/latest/quickstart.html
+    * `flask-security-fork <https://flask-security-fork.readthedocs.io/en/latest/quickstart.html>`_
 
 
 Navigation with flask-nav
@@ -136,8 +141,8 @@ pygameweb.page.models
 
 Using::
 
-    * flask-nav http://pythonhosted.org/flask-nav/
-    * flask-bootstrap https://pythonhosted.org/Flask-Bootstrap/nav.html
+    * `flask-nav <http://pythonhosted.org/flask-nav/>`_
+    * `flask-bootstrap <https://pythonhosted.org/Flask-Bootstrap/nav.html>`_
 
 
 
@@ -145,6 +150,8 @@ Dashboard is an overview
 ========================
 
 of all sorts of things happening in the pygame worlds around the interwebs.
+
+https://pygame.org/dashboard
 
 It's a 7000px wide webpage offering a summary of what's happening.
 
@@ -158,7 +165,7 @@ questions asked and answered.
 To caching things we
 ====================
 
-use Flask-Caching http://pythonhosted.org/Flask-Caching/
+use `Flask-Caching <http://pythonhosted.org/Flask-Caching/>`_
 
 pygameweb.cache
 pygameweb.news.views
