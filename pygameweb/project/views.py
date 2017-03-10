@@ -142,12 +142,19 @@ def tags(tag):
     prev_start = max(start - per_page, 0)
     next_start = start + per_page
 
-    projectsq = (current_session
-                 .query(Project)
-                 .filter(Tags.project_id == Project.id))
     # all is a special tag, meaning show all.
-    if tag != 'all':
-        projectsq = projectsq.filter(Tags.value == tag)
+    if tag == 'all':
+        projectsq = (current_session.query(Project)
+                     .join(User)
+                     .join(Release)
+                     .filter(Release.project_id == Project.id)
+                     .filter(User.id == Project.users_id)
+                     .order_by(Release.datetimeon.desc()))
+    else:
+        projectsq = (current_session
+                     .query(Project)
+                     .filter(Tags.project_id == Project.id)
+                     .filter(Tags.value == tag))
 
     projects = (projectsq
                 .offset(start)

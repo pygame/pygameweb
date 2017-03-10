@@ -94,7 +94,7 @@ def project2(session, project, user):
     """
 
     import datetime
-    from pygameweb.project.models import Project, Tags
+    from pygameweb.project.models import Project, Tags, Release
 
     the_project2 = Project(
         title='Some project title 2',
@@ -105,6 +105,16 @@ def project2(session, project, user):
         image='1.png',
         user=user
     )
+
+    release1 = Release(datetimeon=datetime.datetime(2017, 1, 5),
+                       description='Description of some project 2.',
+                       srcuri='http://example.com/source.tar.gz',
+                       winuri='http://example.com/win.exe',
+                       macuri='http://example.com/mac.dmg',
+                       version='some version')
+
+    the_project2.releases.append(release1)
+
 
     tag3 = Tags(project=the_project2, value='2d')
     tag4 = Tags(project=the_project2, value='arcade')
@@ -127,14 +137,14 @@ def test_project_index(project_client, session, project, project2):
 
     resp = project_client.get('/project/1/')
     assert resp.status_code == 200
-    assert b'Some project title 1' in resp.data
-    assert b'Some project title 2' not in resp.data
+    assert b'<h1>Some project title 1' in resp.data
+    assert b'<h1>Some project title 2' not in resp.data
     assert b'game' in resp.data
     assert b'arcade' in resp.data
 
     resp = project_client.get('/project-blabla+bla-1-.html')
     assert resp.status_code == 200, 'because this url works too.'
-    assert b'Some project title 1' in resp.data
+    assert b'<h1>Some project title 1' in resp.data
 
     resp = project_client.get('/project/1/1')
     assert resp.status_code == 200
