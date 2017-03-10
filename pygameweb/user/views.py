@@ -124,7 +124,7 @@ def add_user_blueprint(app):
                         rating='g',
                         default='retro',
                         force_default=False,
-                        use_ssl=False,
+                        use_ssl=True,
                         base_url=None)
 
     from flask_security import user_confirmed
