@@ -16,6 +16,8 @@
         {{ wtf.form_field(login_user_form.password) }}
         {% if login_user_form.password.errors == ['No password is set for this user'] %}
             If your email account already exists, you may need to <a class="btn btn-primary" href="{{ url_for_security('send_confirmation') }}">Confirm your account</a> first.
+
+            If you have already confirmed your email, you may need to <a class="btn btn-primary" href="{{ url_for_security('forgot_password') }}">Reset your password</a>.
         {% endif %}
 
         {{ wtf.form_field(login_user_form.remember) }}
