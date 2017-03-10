@@ -127,7 +127,7 @@ class CommentPost(Base):
     def message_html(self):
         """
         """
-        return sanitize_html(self.message)
+        return sanitize_html(self.message, force_https=False)
 
 
     ip_address = Column(String(80))
