@@ -11,6 +11,11 @@
       {{ wtf.form_field(register_user_form.name) }}
       {{ wtf.form_field(register_user_form.title) }}
       {{ wtf.form_field(register_user_form.email) }}
+
+      {% if register_user_form.email.errors %}
+        If your email account already exists, you may need to <a class="btn btn-primary" href="{{ url_for_security('send_confirmation') }}">Confirm your account</a> first.
+      {% endif %}
+
       {{ wtf.form_field(register_user_form.password) }}
 
       {% if register_user_form.password_confirm %}
