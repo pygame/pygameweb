@@ -10,6 +10,6 @@ def sanitize_html(html, force_https=True):
     """
     clean_html = feedparser._sanitizeHTML(html, "utf-8", "text/html")
     if force_https:
-        return clean_html.replace('http://', 'https://')
+        return clean_html.replace('src="http://', 'src="https://')
     else:
         return clean_html
