@@ -5,8 +5,21 @@ Pieces of the pygame website will be open sourced here.
 
 Strategy is to bring in code one piece at a time, and clean it up as I go.
 
-The stack is something like: python 3.6, postgresql, Flask, py.test, sqlalchemy, alembic, gulp, ansible, node.
 
+Contributing
+============
+
+Please discuss contributions first to avoid disapointment and rework.
+
+Please see `contribution-guide.org <http://www.contribution-guide.org/>`_ and
+`Python Code of Conduct <https://www.python.org/psf/codeofconduct/>`_ for
+details on what we expect from contributors. Thanks!
+
+The stack is something like: python 3.6, postgresql 9.6, Flask, py.test, sqlalchemy, alembic, gulp, ansible, node.
+
+
+Quickstart
+==========
 
 Set up the required packages::
 
@@ -86,6 +99,11 @@ To watch for changes and rerun tests::
 
     ptw
 
+Maybe you just want to test the wiki parts::
+
+    pytest -k wiki
+
+
 tests/unit/ are for unit tests.
 tests/functional/ are for tests which would use flask and db.
 tests/conftest.py is for test configuration.
@@ -94,6 +112,12 @@ tests/sqlpytestflask.py are some fixtures for db testing.
 Unit tests and functional tests are kept separate, because functional tests can take a while longer to run.
 
 We use various fixtures to make writing the tests easier and faster.
+
+
+Running the webserver locally
+=============================
+
+can be done by using the executable pygameweb_front.
 
 
 Templates with jinja2 and bootstrap
