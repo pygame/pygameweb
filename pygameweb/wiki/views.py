@@ -178,11 +178,7 @@ def edit(link):
     """
 
     # TODO: we need to add users_id, parents, and keywords
-    page = (current_session
-            .query(Wiki)
-            .filter(Wiki.link == link)
-            .filter(Wiki.latest == 1)
-            .first())
+    page = Wiki.for_link(current_session, link)
     if page is None:
         # we create a new empty wiki page!
         page = Wiki(link=link, title=link, latest=1)

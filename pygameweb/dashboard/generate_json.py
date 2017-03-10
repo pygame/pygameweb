@@ -16,6 +16,7 @@ import xml.sax.saxutils
 import pygameweb
 from pygameweb.config import Config
 from pygameweb.wiki.wiki import render as wiki_render
+from pygameweb.wiki.models import Wiki
 
 
 def create_session(verbose=False):
@@ -257,8 +258,11 @@ class GenerateJson(object):
 
         table_rows['wiki'] = sanitise_the_rows(rows, except_for_keys=["content"])
 
+        def for_link(link):
+            return Wiki.content_for_link(session, link)
+
         for i, row in enumerate(table_rows['wiki']):
-            row['content'] = wiki_render(row['content'])
+            row['content'] = wiki_render(row['content'], for_link)
             row['content'] = sanitise_html(row['content'])
             wiki[row['link']] = row
 

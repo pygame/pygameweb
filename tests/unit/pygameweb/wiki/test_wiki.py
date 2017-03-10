@@ -6,6 +6,8 @@ def test_render():
 
     assert render('') == ''
     assert render('[[link#section]]') == '<a href="//pygame.org/wiki/link?parent=">link</a>'
+    assert render('<table><tr><td>asdf</td></tr></table>') == '<table class="table"><tr><td>asdf</td></tr></table>'
+    assert render('<div><a href="asdf">asdf</a></div>') == '<div><a href="asdf?parent=" rel="nofollow">asdf</a></div>'
 
 
 def test_wiki_img():
@@ -33,7 +35,6 @@ def test_wiki_href():
 
 def test_wiki_code():
     from pygameweb.wiki.wiki import _wiki_code
-    # import pdb;pdb.set_trace()
     assert (_wiki_code('<code class="python">my_code()</code>') ==
             '<div class="highlight"><pre><span></span>'
             '<span class="n">my_code</span><span class="p">()</span>\n</pre></div>\n')
@@ -44,4 +45,19 @@ def test_wiki_link():
     """
     from pygameweb.wiki.wiki import _wiki_link
     assert _wiki_link('[[link#section]]') == '<a href="//pygame.org/wiki/link?parent=">link</a>'
+
+
+def test_wiki_section():
+    from pygameweb.wiki.wiki import _wiki_section
+    content = """
+
+    <h1>Hello there matey</h1>
+    Pleasure in other peoples leasure.
+
+    <h2>Another section, another day</h2>
+    Pleasure in other peoples leasure.
+    """
+    res = _wiki_section(content).outerHtml()
+    assert '<h1 id="Hello there matey">' in res, 'because headers should have an id'
+    assert '<h2 id="Another section, another day">' in res
 

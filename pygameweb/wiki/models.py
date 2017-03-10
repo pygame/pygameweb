@@ -1,6 +1,6 @@
 """ wiki models
 """
-from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey, inspect
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy.orm import relationship
 
@@ -34,6 +34,24 @@ class Wiki(Base):
                       nullable=True)
     user = relationship(User)
 
+    @classmethod
+    def content_for_link(cls, session, link):
+        """ returns the page content for the link.
+        """
+        page = cls.content_for_link(session, link)
+        return '' if page is None else page.content
+
+    @classmethod
+    def for_link(cls, session, link):
+        """ returns a wiki instance for the link given.
+        """
+        return (session
+                .query(cls)
+                .filter(cls.link == link)
+                .filter(cls.latest == 1)
+                .first())
+
+
     def new_version(self, session):
         """ Create a new version of this page. Leave the old on in the db.
         """
@@ -56,7 +74,11 @@ class Wiki(Base):
     def content_rendered(self):
         """The wiki content is rendered for display.
         """
-        return sanitize_html(render(self.content))
+        session = inspect(self).session
+        def for_link(link):
+            return Wiki.content_for_link(session, link)
+
+        return sanitize_html(render(self.content, for_link))
 
     @property
     def content_sanitized(self):

@@ -13,6 +13,8 @@ Note, that the output of this needs to be run through html sanitizers.
 import sys
 import re
 
+from pyquery import PyQuery as pq
+
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
@@ -122,89 +124,72 @@ def _wiki_link_callback(matchobj):
                                                                         name=name)
 
 
+#quote -- {{link#section}}
+def _wiki_quote(content, for_link_cb):
+    '''
+    >>> _wiki_quote('{{link#section}}')
+    ''
+
+    '''
+    def quote_callback(m):
+        return _wiki_quote_callback(m, for_link_cb)
+
+    return re.sub('/\{\{([^\}]+)\}\}/', quote_callback, content)
 
 
+def _wiki_quote_callback(m, for_link_cb):
+
+    link, section = m[1].split("#")
+    content = '' if for_link_cb is None else for_link_cb(link)
+    content = pq(content).find('#' + section).outerHtml()
+
+    return content if content else '{{' + f'{link}#{section}' + '}}'
 
 
-if 0:
+def _wiki_section(content):
+    """ Find all the sections (header tags), and make a table of contents.
+    """
+    if not content:
+        return content
+    pq_content = pq(content)
+    toc = pq('<nav><ul class="nav nav-pills"></ul></nav>')
+    heading_tags = [f'h{i}' for i in range(1, 5)]
+    found_a_heading = False
+    for heading_tag in heading_tags:
+        for heading in pq_content.find(heading_tag):
+            title = pq(heading).text()
+            pq(heading).attr('id', title)
+            link = pq('<a></a>').text(title).attr('href', '#' + title).wrap('<li class="presentation">')
+            toc.append(link)
+            found_a_heading = True
 
-    from pyquery import PyQuery as pq
+    if found_a_heading:
+        pq_content.prepend(toc)
 
-    # TODO: untested quote stuff.
-    import MySQLdb
-    from generate_json import sanitise_the_rows
-
-    #quote -- {{link#section}}
-    def _wiki_quote(content):
-        '''
-        >>> _wiki_quote('{{link#section}}')
-        ''
-
-        '''
-
-        return re.sub('/\{\{([^\}]+)\}\}/', _wiki_quote_callback, content)
-
-
-    def _wiki_content_for_link(link):
-        ''' returns the wiki content for the given link.
-        '''
-        # $e = $db->query1("select id,content from wiki where".
-        #     " link = ".$db->sqlstring($link)." and latest = 1 limit 1");
-        # $content = $e["content"];
-
-        #TODO: actually link here.
-        return 'The link content.'
-
-        db = MySQLdb.connect(host="localhost",
-                         user="pygame",
-                         passwd="password",
-                         db=self.dbname,
-                         use_unicode = True)
+    return pq_content
 
 
-    def _wiki_getsection(content, section):
-        ''' within the content search for the section
-        '''
-        return pq(content).find('#' + section).outerHtml()
+def render(content, for_link_cb=None):
+    """ render the content, which is wiki markup.
 
+    :param for_link_cb: takes a link and returns the wiki content for it.
+    """
+    if content is None or content is '':
+        return ''
 
-    def _wiki_quote_callback(m):
-    #    global $db;
-
-        link, section = m[1].split("#")
-
-        content = _wiki_content_for_link(link)
-        content = _wiki_getsection(content, section)
-
-        if content:
-            return content
-
-        link = "{link}#{section}".format(link=link,
-                                         section=section)
-        return '{{' + link + '}}'
-
-
-
-
-
-
-def render(content):
-
-    #$content = $e["content"];
-    #$content = _wiki_quote($content);
-    #$content = _wiki_code($content);
-    #$content = _wiki_href($content);
-    #$content = _wiki_img($content);
-    #$content = _wiki_link($content);
-    #$content = _wiki_section($content);
-
-    #content = _wiki_quote(content)
+    content = _wiki_quote(content, for_link_cb)
     content = _wiki_code(content)
     content = _wiki_href(content)
     content = _wiki_img(content)
     content = _wiki_link(content)
-    #content = _wiki_section(content)
-    return content
+    pq_content = _wiki_section(content)
+
+    for anchor in pq_content.find('a'):
+        pq(anchor).attr('rel', 'nofollow')
+    for table in pq_content.find('tr').parent('table'):
+        pq(table).addClass('table')
+
+    return pq_content.outerHtml()
 
 
 
