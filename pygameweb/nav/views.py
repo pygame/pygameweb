@@ -89,7 +89,6 @@ def make_nav(session):
     """
     pages = (session
              .query(Page)
-             .filter(Page.link != '')
              .filter(Page.hidden == 0)
              .order_by(Page.orders)
              .all())
