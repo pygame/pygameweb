@@ -41,11 +41,12 @@ def page_link(link):
     page = (current_session
             .query(Page)
             .filter(Page.link == link)
-            .filter(Page.hidden == 0)
             .first()
            )
-    if not page:
+
+    if page is None:
         abort(404)
+
     if page.uri:
         return redirect(page.uri)
 

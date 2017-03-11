@@ -15,9 +15,17 @@ class Page(Base):
     content = Column(Text)
     summary = Column(Text)
     orders = Column(Integer, nullable=False, default=0)
+    """order to be displayed in the navigation.
+    """
     link = Column(String(255))
+    """ link on the website we register for.
+    """
     hidden = Column(Integer, default=0)
+    """ hidden from the navigation.
+    """
     uri = Column(String(255))
+    """ uri to redirect to.
+    """
     users_id = Column(Integer)
     groups_id = Column(Integer)
     nav_group = Column(String(255))

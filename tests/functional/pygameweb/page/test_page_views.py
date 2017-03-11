@@ -59,7 +59,15 @@ def pages(session):
                  hidden=0,
                  nav_group='Can We Be')
 
-    the_pages = [page1, page2, page3, page4, page5]
+    # don't show this in the navigation.
+    page6 = Page(name='Download Redirect Hidden',
+                 orders=2,
+                 link='hidden-redirect.html',
+                 hidden=1,
+                 uri='/hidden-redirected_to.html')
+
+
+    the_pages = [page1, page2, page3, page4, page5, page6]
     for page in the_pages:
         session.add(page)
     session.commit()
@@ -79,6 +87,10 @@ def test_page(page_client, session, pages):
     resp = page_client.get('redirect.html')
     assert resp.status_code == 302
     assert 'redirected_to.html'  in resp.location, 'redirects'
+
+    resp = page_client.get('hidden-redirect.html')
+    assert resp.status_code == 302
+    assert 'hidden-redirected_to.html'  in resp.location, 'redirects when it is hidden from navigation'
 
 
 def test_nav(pages, session):
