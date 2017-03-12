@@ -9,6 +9,22 @@ def test_render():
     assert render('<table><tr><td>asdf</td></tr></table>') == '<table class="table"><tr><td>asdf</td></tr></table>'
     assert render('<div><a href="asdf">asdf</a></div>') == '<div><a href="asdf?parent=" rel="nofollow">asdf</a></div>'
 
+    table = """
+        <div>
+            <table border="0">
+                <tbody><tr>
+                <td><a href="about?parent=" rel="nofollow">About</a><br/>
+                </td><td><a href="FrequentlyAskedQuestions?parent=" rel="nofollow">FAQ</a><br/>
+                </td><td><a href="info?parent=" rel="nofollow">Help (irc, lists)</a><br/>
+                </td><td><a href="tutorials?parent=" rel="nofollow">Tutorials</a><br/>
+                </td><td><a href="resources?parent=" rel="nofollow">Resources</a><br/>
+                </td><td><a href="interviews?parent=" rel="nofollow">Interviews</a><br/>
+                </td></tr></tbody>
+            </table>
+        </div>
+    """
+    assert '<table border="0" class="table">' in render(table)
+
 
 def test_wiki_img():
     """Returns the changed html for an img tag.
