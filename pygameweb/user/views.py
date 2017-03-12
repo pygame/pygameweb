@@ -69,15 +69,79 @@ class SQLAlchemySessionUserDatastore(SQLAlchemyUserDatastore):
                                          role_model)
 
 
+def monkey_patch_email():
+    """The email validator in wtforms has issues. So we monkey patch it.
+       https://github.com/wtforms/wtforms/pull/294
+    """
+    import re
+    import wtforms.validators
+    from wtforms.validators import HostnameValidation, ValidationError
+
+    class Email(object):
+        """
+        Validates an email address. Note that this uses a very primitive regular
+        expression and should only be used in instances where you later verify by
+        other means, such as email activation or lookups.
+        :param message:
+            Error message to raise in case of a validation error.
+        """
+
+        user_regex = re.compile(
+            r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*\Z"  # dot-atom
+            r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
+            re.IGNORECASE)
+
+        def __init__(self, message=None):
+            self.message = message
+            self.validate_hostname = HostnameValidation(
+                require_tld=True,
+            )
+
+        def __call__(self, form, field):
+            value = field.data
+
+            message = self.message
+            if message is None:
+                message = field.gettext('Invalid email address.')
+
+            if not value or '@' not in value:
+                raise ValidationError(message)
+
+            user_part, domain_part = value.rsplit('@', 1)
+
+            if not self.user_regex.match(user_part):
+                raise ValidationError(message)
+
+            if not self.validate_hostname(domain_part):
+                raise ValidationError(message)
+    wtforms.validators.Email = Email
+
+
+def monkey_patch_email_field(form_class):
+    """ We use our monkey patched Email validator, and also a html5 email input.
+    """
+    from wtforms.fields.html5 import EmailField
+    from flask_security.forms import (email_required,
+                                      unique_user_email,
+                                      get_form_field_label)
+    import wtforms.validators
+    email_validator = wtforms.validators.Email(message='INVALID_EMAIL_ADDRESS')
+    form_class.email = EmailField(get_form_field_label('email'),
+                                  validators=[email_required,
+                                              email_validator,
+                                              unique_user_email])
+
+
 def add_user_blueprint(app):
     """ to the app.
     """
     app.user_datastore = SQLAlchemySessionUserDatastore(current_session, User, Group)
+    monkey_patch_email()
 
     # https://pythonhosted.org/Flask-Security-Fork/customizing.html
     from flask_security.forms import RegisterForm, ConfirmRegisterForm
     from wtforms.fields import StringField
-    from wtforms.validators import Required, Regexp, Length
+    from wtforms.validators import Required, Regexp, Length, Email
 
     username_validators = [
         Required(),
@@ -92,16 +156,33 @@ def add_user_blueprint(app):
         name = StringField('Username', username_validators)
         title = StringField('Title (eg. Real name)', [Required()])
 
-
     class ExtendedConfirmRegisterForm(ConfirmRegisterForm):
         name = StringField('Username', username_validators)
         title = StringField('Title (eg. Real name)', [Required()])
 
+    monkey_patch_email_field(ExtendedRegisterForm)
+    monkey_patch_email_field(ExtendedConfirmRegisterForm)
+
+    # https://flask-wtf.readthedocs.io/en/latest/form.html#recaptcha
+    # https://github.com/mattupstate/flask-security/issues/404
+    # Unfortunately... Google collects private data.
+    #     https://www.google.com/about/company/user-consent-policy.html
+    # So probably won't use this.
+    if app.config.get('SECURITY_RECAPTCHA_ENABLED'):
+        class RecaptchaRegister(ExtendedRegisterForm):
+            recaptcha = RecaptchaField()
+        class RecaptchaConfirmRegister(ExtendedConfirmRegisterForm):
+            recaptcha = RecaptchaField()
+        register_form = RecaptchaRegister
+        confirm_register_form = RecaptchaConfirmRegister
+    else:
+        register_form = ExtendedRegisterForm
+        confirm_register_form = ExtendedConfirmRegisterForm
 
     security = Security(app,
                         app.user_datastore,
-                        register_form=ExtendedRegisterForm,
-                        confirm_register_form=ExtendedConfirmRegisterForm)
+                        register_form=register_form,
+                        confirm_register_form=confirm_register_form)
 
     from pygameweb.cache import limiter
     # login = app.view_functions['security.login']
