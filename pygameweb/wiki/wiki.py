@@ -152,7 +152,7 @@ def _wiki_section(content):
     if not content:
         return content
     pq_content = pq(content)
-    toc = pq('<nav><ul class="nav nav-pills"></ul></nav>')
+    toc = pq('<nav>Table of Contents<ul class="nav nav-pills-horizontal"></ul></nav>')
     heading_tags = [f'h{i}' for i in range(1, 5)]
     found_a_heading = False
     for heading_tag in heading_tags:
