@@ -18,16 +18,17 @@ def project_client(app, session, client):
     return client
 
 
-@pytest.fixture
-def user(app, session, project_client):
+def a_user(app, session, project_client, name, email, logged_in, disabled, active):
     """ gives us a user who is a member.
     """
     from pygameweb.user.models import User, Group
     from flask_security.utils import encrypt_password
     group = Group(name='members', title='Member')
-    user = User(name='joe',
-                email='asdf@example.com',
+    user = User(name=name,
+                email=email,
                 password=encrypt_password('password'),
+                disabled=disabled,
+                active=active,
                 roles=[group])
     session.add(user)
     session.commit()
@@ -37,6 +38,25 @@ def user(app, session, project_client):
         sess['user_id'] = user.id
         sess['_fresh'] = True
     return user
+
+@pytest.fixture
+def user(app, session, project_client):
+    """ gives us a user who is a member.
+    """
+    return a_user(app, session, project_client, 'joe', 'asdf@example.com',
+                  logged_in=True,
+                  disabled=0,
+                  active=True)
+
+
+@pytest.fixture
+def user_banned(app, session, project_client):
+    """ gives us a user who is a member.
+    """
+    return a_user(app, session, project_client, 'joebanned', 'asdf2@example.com',
+                  logged_in=False,
+                  disabled=1,
+                  active=False)
 
 
 @pytest.fixture
@@ -88,8 +108,7 @@ def project(session, user):
     return the_project
 
 
-@pytest.fixture
-def project2(session, project, user):
+def a_project(session, title, version, user):
     """ adds a second project with a couple of tags.
     """
 
@@ -97,7 +116,7 @@ def project2(session, project, user):
     from pygameweb.project.models import Project, Tags, Release
 
     the_project2 = Project(
-        title='Some project title 2',
+        title=title,
         summary='Summary of some project 2.',
         description='Description of some project 2.',
         uri='http://some.example.com/',
@@ -111,20 +130,59 @@ def project2(session, project, user):
                        srcuri='http://example.com/source.tar.gz',
                        winuri='http://example.com/win.exe',
                        macuri='http://example.com/mac.dmg',
-                       version='some version')
+                       version=version)
 
     the_project2.releases.append(release1)
 
 
     tag3 = Tags(project=the_project2, value='2d')
     tag4 = Tags(project=the_project2, value='arcade')
+    return the_project2, release1, tag3, tag4
+
+
+@pytest.fixture
+def project2(session, project, user):
+    """ adds a second project with a couple of tags.
+    """
+    title = 'Some project title 2'
+    version = 'some version'
+    the_project2, release1, tag3, tag4 = a_project(session, title, version, user)
+
+    session.add(release1)
     session.add(tag3)
     session.add(tag4)
     session.add(the_project2)
     return the_project2
 
 
-def test_project_index(project_client, session, project, project2):
+@pytest.fixture
+def project3(session, project, user_banned):
+    """ adds a second project with a couple of tags.
+    """
+    title = 'Some project title 3'
+    version = 'some version 3'
+    the_project2, release1, tag3, tag4 = a_project(session, title, version, user_banned)
+
+    session.add(release1)
+    session.add(tag3)
+    session.add(tag4)
+    session.add(the_project2)
+    return the_project2
+
+
+def test_project_hidden(project_client, session, project, project2, project3):
+    """ when user account has been disabled.
+    """
+    resp = project_client.get(f'/project/{project.id}/')
+    assert resp.status_code == 200
+    resp = project_client.get(f'/project/{project3.id}/')
+    assert resp.status_code == 404
+
+    resp = project_client.get('/tags/all')
+    assert b'Some project title 3' not in resp.data, 'because user is banned'
+
+
+def test_project_index(project_client, session, user, project, project2):
     """ is shown as the default.
     """
     assert project.releases
@@ -135,22 +193,22 @@ def test_project_index(project_client, session, project, project2):
     assert project.user.projectcomments
     assert project.tag_counts == [('arcade', 2, 16), ('game', 1, 14)]
 
-    resp = project_client.get('/project/1/')
+    resp = project_client.get(f'/project/{project.id}/')
     assert resp.status_code == 200
     assert b'<h1>Some project title 1' in resp.data
     assert b'<h1>Some project title 2' not in resp.data
     assert b'game' in resp.data
     assert b'arcade' in resp.data
 
-    resp = project_client.get('/project-blabla+bla-1-.html')
+    resp = project_client.get(f'/project-blabla+bla-{project.id}-.html')
     assert resp.status_code == 200, 'because this url works too.'
     assert b'<h1>Some project title 1' in resp.data
 
-    resp = project_client.get('/project/1/1')
+    resp = project_client.get(f'/project/{project.id}/{project.releases[0].id}')
     assert resp.status_code == 200
     assert b'A release title.' in resp.data
 
-    resp = project_client.get('/project-blabla+blasbla+-1-1.html')
+    resp = project_client.get(f'/project-blabla+blasbla+-{project.id}-{project.releases[0].id}.html')
     assert resp.status_code == 200, 'because this url works too.'
     assert b'A release title.' in resp.data
 

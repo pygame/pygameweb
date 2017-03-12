@@ -24,13 +24,16 @@ project_blueprint = Blueprint('project',
 def project_for(project_id):
     """ gets a project for the given
     """
-    result = (current_session
-              .query(Project)
-              .filter(Project.id == project_id)
-              .first())
-    if not result:
+    project = (current_session
+               .query(Project)
+               .filter(Project.id == project_id)
+               .first())
+    if project is None:
         abort(404)
-    return result
+    if project.user and project.user.disabled != 0:
+        abort(404)
+
+    return project
 
 
 def release_for(release_id):
@@ -450,6 +453,7 @@ def recent_releases():
     return (current_session.query(User, Project, Release)
             .filter(Release.project_id == Project.id)
             .filter(User.id == Project.users_id)
+            .filter(User.disabled == 0)
             .order_by(Release.datetimeon.desc())
             .limit(20)
             .all())
