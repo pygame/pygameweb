@@ -186,10 +186,8 @@ def render(content, for_link_cb=None):
 
     for anchor in pq_content.find('a'):
         pq(anchor).attr('rel', 'nofollow')
-    for table in pq_content.find('tr').parent('table'):
-        pq(table).addClass('table')
     for table in pq_content.find('table'):
-        pq(table).addClass('table')
+        pq(table).addClass('table').wrap('<div class="table-responsive">')
 
     return pq_content.outerHtml()
 

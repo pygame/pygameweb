@@ -6,12 +6,13 @@ def test_render():
 
     assert render('') == ''
     assert render('[[link#section]]') == '<a href="//pygame.org/wiki/link?parent=">link</a>'
-    assert render('<table><tr><td>asdf</td></tr></table>') == '<table class="table"><tr><td>asdf</td></tr></table>'
-    assert render('<div><a href="asdf">asdf</a></div>') == '<div><a href="asdf?parent=" rel="nofollow">asdf</a></div>'
+    assert (render('<div><table><tr><td>asdf</td></tr></table></div>') ==
+            '<div><div class="table-responsive"><table class="table"><tr><td>asdf</td></tr></table></div></div>')
+    assert (render('<div><a href="asdf">asdf</a></div>') ==
+            '<div><a href="asdf?parent=" rel="nofollow">asdf</a></div>')
 
     table = """
-        <div>
-            <table border="0">
+        <div><table border="0">
                 <tbody><tr>
                 <td><a href="about?parent=" rel="nofollow">About</a><br/>
                 </td><td><a href="FrequentlyAskedQuestions?parent=" rel="nofollow">FAQ</a><br/>
@@ -20,10 +21,10 @@ def test_render():
                 </td><td><a href="resources?parent=" rel="nofollow">Resources</a><br/>
                 </td><td><a href="interviews?parent=" rel="nofollow">Interviews</a><br/>
                 </td></tr></tbody>
-            </table>
-        </div>
+            </table></div>
     """
-    assert '<table border="0" class="table">' in render(table)
+    assert ('<div class="table-responsive"><table border="0" class="table">' in
+            render(table))
 
 
 def test_wiki_img():
