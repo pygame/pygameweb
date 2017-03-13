@@ -225,21 +225,17 @@ def test_tags(project_client, session, project, project2):
     resp = project_client.get('/tags/game')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
-    assert (project2.title.encode('utf-8') not in resp.data,
-            'because only first tagged.')
+    assert project2.title.encode('utf-8') not in resp.data, 'because only first tagged.'
 
     resp = project_client.get('/tags/arcade')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') in resp.data
-    assert (project2.title.encode('utf-8') in resp.data,
-            'because both are in arcade.')
+    assert project2.title.encode('utf-8') in resp.data, 'because both are in arcade.'
 
     resp = project_client.get('/tags/all')
-    assert (resp.status_code == 200,
-            'because all is a special tag meaning show all.')
+    assert resp.status_code == 200, 'because all is a special tag meaning show all.'
     assert project.title.encode('utf-8') in resp.data
     assert project2.title.encode('utf-8') in resp.data, 'both are in all'
-
 
 
 def test_project_new(project_client, session, user):
@@ -311,8 +307,7 @@ def test_project_new(project_client, session, user):
                    .query(Project)
                    .filter(Project.title == 'titlechangedagain')
                    .first())
-        assert (not save_image.called,
-                'no image was sent, and we do not save one')
+        assert not save_image.called, 'no image was sent, and we do not save one'
 
         tags = (session
                 .query(Tags)
@@ -336,8 +331,7 @@ def test_project_new(project_client, session, user):
 
     session.refresh(project)
     session.refresh(project.releases[0])
-    assert (project.releases[0].version ==
-            '2.0.0', 'we edited a release version')
+    assert project.releases[0].version == '2.0.0', 'we edited a release version'
     assert len(project.releases) == 1
 
     data = dict(description='new release',
@@ -355,8 +349,11 @@ def test_new_project_comment(project_client, session, project, project2, user):
     """ adds the thoughtful and supportive comment to the project page for the
         interesting creative work someone is trying to share with the world.
     """
-    url = f'/project/{project.id}/comment'
-    data = dict(message='<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>')
-    resp = project_client.post(url, data=data, follow_redirects=True)
-    assert resp.status_code == 200
-    assert b'Gidday matey.' in resp.data, 'because the comment should be there.'
+    with mock.patch('pygameweb.project.views.classify_comment') as classify_comment:
+
+        url = f'/project/{project.id}/comment'
+        data = dict(message='<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>')
+        resp = project_client.post(url, data=data, follow_redirects=True)
+        assert resp.status_code == 200
+        assert b'Gidday matey.' in resp.data, 'because the comment should be there.'
+

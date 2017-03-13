@@ -69,6 +69,7 @@ setup(
             'pygameweb_update_docs=pygameweb.builds.update_docs:update_docs',
             'pygameweb_stackoverflow=pygameweb.builds.stackoverflow:download_stack_json',
             'pygameweb_loadcomments=pygameweb.comment.models:load_comments',
+            'pygameweb_trainclassifier=pygameweb.comment.classifier_train:classify_comments',
         ],
     },
 )

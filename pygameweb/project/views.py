@@ -16,6 +16,7 @@ from pygameweb.project.forms import (FirstReleaseForm,
                                      ProjectCommentForm)
 from pygameweb.comment.models import CommentPost, CommentAuthor, CommentThread
 from pygameweb.sanitize import sanitize_html
+from pygameweb.comment.classifier import classify_comment
 
 project_blueprint = Blueprint('project',
                               __name__,
@@ -192,6 +193,7 @@ def tags(tag):
   </post>
 """
 
+
 @project_blueprint.route('/project/<int:project_id>/comment', methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
@@ -239,6 +241,9 @@ def new_comment(project_id):
                            created_at=created_at,
                            is_deleted=False,
                            is_spam=False)
+        if classify_comment(post) == 'spam':
+            post.is_spam = True
+
         if thread_id is None:
             post.thread = thread
         else:
