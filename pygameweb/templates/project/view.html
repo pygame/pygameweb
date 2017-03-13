@@ -106,6 +106,7 @@
     {{ post_reply_part(post, comment_url, commentform, True) }}
     {{ post_toplevel(comments, comment_url, commentform) }}
 
+    {# Disable old comments until fixed.
     <table class="comments">
       <tbody>
       {% for comment in project.comments %}
@@ -120,6 +121,7 @@
       {%endfor %}
       </tbody>
     </table>
+    #}
 
   {% endcache %}
 {% endblock %}
