@@ -14,8 +14,12 @@ Flask-Security-Fork==2.0.1
 flask_sqlalchemy_session
 Flask-WTF
 ghdiff
+numpy
+pandas
 psycopg2
 pyquery
 pygments
 pq
+scikit-learn
+scipy
 sphinx
