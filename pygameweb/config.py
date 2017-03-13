@@ -64,3 +64,9 @@ class Config(object):
                         else '200 per day, 50 per hour')
 
     STACK_KEY = os.getenv('APP_STACK_KEY', '')
+
+
+    COMMENT_MODEL = os.getenv('APP_COMMENT_MODEL', 'comment_spam_model.pkl')
+    """For the comment spam classifier model file.
+    """
+
