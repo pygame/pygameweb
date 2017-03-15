@@ -49,12 +49,15 @@ def add_views_front(app):
 
     Kept separate from create_app so we can test individual views.
     """
+    # add_user_blueprint does some monkey patching, so it needs to be first.
+    from pygameweb.user.views import add_user_blueprint
+    add_user_blueprint(app)
+
     from pygameweb.wiki.views import add_wiki_blueprint
     from pygameweb.project.views import add_project_blueprint
     from pygameweb.static.views import add_static_blueprint
     from pygameweb.thumb.views import add_thumb_blueprint
     from pygameweb.news.views import add_news_blueprint
-    from pygameweb.user.views import add_user_blueprint
     from pygameweb.nav.views import add_nav
     from pygameweb.page.views import add_page
     from pygameweb.sidebar.views import add_sidebar
@@ -62,9 +65,7 @@ def add_views_front(app):
     from pygameweb.builds.views import add_builds
 
 
-
     from pygameweb.admin.views import add_admin
-    add_user_blueprint(app)
     add_wiki_blueprint(app)
     add_project_blueprint(app)
     add_thumb_blueprint(app)
