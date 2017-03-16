@@ -2,7 +2,10 @@
 
 {% macro post_left(post) %}
   <a class="media-left" href="#">
+    {% if post.author.email %}
     <img src="{{ post.author.email | gravatar }}">
+    {% endif %}
+    }
   </a>
 {% endmacro %}
 
