@@ -59,14 +59,17 @@ class Config(object):
     """ flask_caching is off in debug mode.
     """
 
+    # Disable the flask-caching warning message.
+    # https://pythonhosted.org/Flask-Caching/#configuring-flask-caching
+    if CACHE_TYPE == 'null':
+        CACHE_NO_NULL_WARNING = True
+
     RATELIMIT_GLOBAL = ('5000 per day, 5000 per hour'
                         if truthy_config('APP_DEBUG')
                         else '200 per day, 50 per hour')
 
     STACK_KEY = os.getenv('APP_STACK_KEY', '')
 
-
     COMMENT_MODEL = os.getenv('APP_COMMENT_MODEL', 'comment_spam_model.pkl')
     """For the comment spam classifier model file.
     """
-
