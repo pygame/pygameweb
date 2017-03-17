@@ -56,26 +56,24 @@ class User(Base, UserMixin):
     last_login_ip = Column(String(80))
     current_login_ip = Column(String(80))
     login_count = Column(Integer)
-    # registered_at = Column(DateTime(timezone=True), server_default=func.now())
-    # """ When they registered.
-    # """
-    # registered_ip = Column(String(80))
-    # """ Ip when they registered.
-    # """
-    # twitter_user = Column(String(255))
-    # """ Twitter username.
-    # """
-    # github_user = Column(String(255))
-    # """ Github username.
-    # """
-    # bitbucket_user = Column(String(255))
-    # """ Bitbucket username.
-    # """
-    # blog_url = Column(String(255))
-    # """ Web log url.
-    # """
-
-
+    registered_at = Column(DateTime(timezone=True), server_default=func.now())
+    """ When they registered.
+    """
+    registered_ip = Column(String(80))
+    """ Ip when they registered. For spam battles.
+    """
+    twitter_user = Column(String(255))
+    """ Twitter username.
+    """
+    github_user = Column(String(255))
+    """ Github username.
+    """
+    bitbucket_user = Column(String(255))
+    """ Bitbucket username.
+    """
+    blog_url = Column(String(255))
+    """ Web log url.
+    """
 
 
 class Group(Base, RoleMixin):
@@ -85,7 +83,6 @@ class Group(Base, RoleMixin):
     name = Column(String(80))
     title = Column(String(80))
     orders = Column(Integer)
-
 
     # https://flask-security-fork.readthedocs.io/en/latest/models.html#additional-functionality
     description = Column(String(80))

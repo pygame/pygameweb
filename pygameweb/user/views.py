@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_sqlalchemy_session import current_session
 
 
@@ -142,6 +142,17 @@ def add_user_blueprint(app):
 
     monkey_patch_sqlstore(app)
 
+    def unique_user_name(form, field):
+        """ Make sure it is a unique user name.
+        """
+        from wtforms import ValidationError
+        from pygameweb.user.models import User
+        user = (current_session
+                .query(User).filter(User.name == field.data).first())
+        if user is not None:
+            msg = f'{field.data} is already associated with an account.'
+            raise ValidationError(msg)
+
     username_msg = 'Username must contain only letters numbers or underscore'
     username_validators = [
         Required(),
@@ -149,7 +160,8 @@ def add_user_blueprint(app):
                message=username_msg),
         Length(min=5,
                max=25,
-               message='Username must be betwen 5 & 25 characters')
+               message='Username must be betwen 5 & 25 characters'),
+        unique_user_name
     ]
 
     class ExtendedRegisterForm(RegisterForm):
@@ -181,7 +193,8 @@ def add_user_blueprint(app):
              use_ssl=True,
              base_url=None)
 
-    from flask_security import user_confirmed
+    # http://flask-security-fork.readthedocs.io/en/latest/api.html#signals
+    from flask_security import user_confirmed, user_registered
 
     @user_confirmed.connect_via(app)
     def when_the_user_is_confirmed(app, user):
@@ -196,7 +209,15 @@ def add_user_blueprint(app):
         #   The idea with this magic spell would be to ward off spam a bit.
         member_role = app.user_datastore.find_role("members")
         app.user_datastore.add_role_to_user(user, member_role)
+        current_session.commit()
 
+    @user_registered.connect_via(app)
+    def when_user_is_registered(app, user, confirm_token):
+        """ we log their ip address so as to try and block spammers.
+        """
+        remote_addr = request.remote_addr or None
+        user.registered_ip = remote_addr
+        current_session.add(user)
         current_session.commit()
 
     app.register_blueprint(user_blueprint)
