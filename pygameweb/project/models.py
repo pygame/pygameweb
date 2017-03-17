@@ -4,16 +4,16 @@ from math import sqrt
 from pathlib import Path
 from email.utils import formatdate
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, Text, inspect
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
+                        String, Text, inspect)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import count
 
-from pygameweb.models import Base, metadata
+from pygameweb.models import Base
 from pygameweb.user.models import User
 from pygameweb.config import Config
 from pygameweb.thumb import image_thumb
 from pygameweb.sanitize import sanitize_html
-
 
 
 class Project(Base):
@@ -31,7 +31,6 @@ class Project(Base):
     uri = Column(String(255))
     datetimeon = Column(DateTime)
     image = Column(String(80))
-
 
     @property
     def summary_html(self):
@@ -51,7 +50,9 @@ class Project(Base):
 
     @property
     def tag_counts(self):
-        """ Return a list of counts for the tags this project has. [('arcade', 2), ('opengl', 1)]
+        """ Return a list of counts for the tags this project has.
+
+        [('arcade', 2), ('opengl', 1)]
         """
 
         tags = [t.value for t in self.tags]
@@ -62,7 +63,8 @@ class Project(Base):
                       .group_by(Tags.value)
                       .filter(Tags.value.in_(tags))
                       .order_by(cnt.desc())).all()
-        return [(tag, cnt, (int(10+min(24, sqrt(cnt)*24/5)))) for tag, cnt in tag_counts]
+        return [(tag, cnt, (int(10 + min(24, sqrt(cnt) * 24 / 5))))
+                for tag, cnt in tag_counts]
 
 
 def top_tags(session):
@@ -75,9 +77,8 @@ def top_tags(session):
                   .group_by(Tags.value)
                   .order_by(cnt.desc())
                   .limit(30)).all()
-    return [(tag, cnt, (int(10+min(24, sqrt(cnt)*24/5)))) for tag, cnt in tag_counts]
-
-
+    return [(tag, cnt, (int(10 + min(24, sqrt(cnt) * 24 / 5))))
+            for tag, cnt in tag_counts]
 
 
 class Tags(Base):
@@ -96,12 +97,12 @@ class Projectcomment(Base):
 
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer,
-                        ForeignKey(Project.id, name='projectcomment_project_id_fkey'),
+                        ForeignKey(Project.id,
+                                   name='projectcomment_project_id_fkey'),
                         nullable=False)
     users_id = Column(Integer,
                       ForeignKey(User.id, name='projectcomment_users_id_fkey'),
                       nullable=False)
-
 
     datetimeon = Column(DateTime)
     content = Column(Text)
@@ -131,4 +132,3 @@ class Release(Base):
     @property
     def datetimeon_2882(self):
         return formatdate(self.datetimeon.timestamp())
-

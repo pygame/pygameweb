@@ -6,7 +6,10 @@
 {% block content %}
 	<h1>New Project</h1>
 
-    <form class="form" method="post" action="{{ url_for('project.new_project') }}">
+    <form class="form"
+          method="post"
+          action="{{ url_for('project.new_project') }}"
+          enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}
         {{ wtf.form_errors(form, hiddens="only") }}
