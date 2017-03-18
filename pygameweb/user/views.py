@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, abort
 from flask_sqlalchemy_session import current_session
 
 
@@ -49,12 +49,23 @@ def monkey_patch_email_field(form_class):
                                       unique_user_email,
                                       get_form_field_label)
     import wtforms.validators
+
+    from pygameweb.user.rbl import rbl
+
+    def rbl_spamlist_validator(form, field):
+        """ If the ip address of the person signing up is listed in a spam list,
+            we abort with an error.
+        """
+        remote_addr = request.remote_addr or None
+        if rbl(remote_addr):
+            abort(500)
+
     email_validator = wtforms.validators.Email(message='INVALID_EMAIL_ADDRESS')
     form_class.email = EmailField(get_form_field_label('email'),
                                   validators=[email_required,
                                               email_validator,
+                                              rbl_spamlist_validator,
                                               unique_user_email])
-
 
 
 def monkey_patch_sqlstore(app):
@@ -161,7 +172,7 @@ def add_user_blueprint(app):
         Length(min=5,
                max=25,
                message='Username must be betwen 5 & 25 characters'),
-        unique_user_name
+        unique_user_name,
     ]
 
     class ExtendedRegisterForm(RegisterForm):

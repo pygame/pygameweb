@@ -1,6 +1,7 @@
 alembic
 bcrypt
 click
+dnspython
 feedparser
 Flask
 flask_admin
