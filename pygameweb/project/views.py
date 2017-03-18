@@ -143,7 +143,9 @@ def tags(tag):
 
     per_page = 30
     start = int(request.args.get('start', 0))
-    prev_start = max(start - per_page, 0)
+    prev_start = start - per_page
+    if prev_start < 0:
+        prev_start = None
     next_start = start + per_page
 
     # all is a special tag, meaning show all.

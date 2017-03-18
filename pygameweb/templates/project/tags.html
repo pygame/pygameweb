@@ -37,7 +37,7 @@
     </div>
     {% endfor %}
 
-    {% if prev_start %}
+    {% if prev_start != None %}
         <a href='?start={{prev_start}}'>previous</a>
     {% endif %}
     <a href='?start={{next_start}}'>next</a>
