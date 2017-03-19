@@ -4,17 +4,41 @@
 {% block title %}{{ wiki.title }} - Edit{% endblock title %}
 {% block content %}
 
-    <h1>{{ wiki.title }} - Edit</h1>
+  <h1>{{ wiki.title }} - Edit</h1>
 
-    <form class="form" method="post" action="{{ url_for('wiki.edit', link=wiki.link) }}">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
-        {{ wtf.form_errors(form, hiddens="only") }}
+  <form class="form" method="post" action="{{ url_for('wiki.edit', link=wiki.link) }}">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    {{ wtf.form_errors(form, hiddens="only") }}
 
-        {{ wtf.form_field(form.content, rows=15) }}
-        {{ wtf.form_field(form.changes) }}
+    <a href="#" id="richtext">Enable rich text editor</a>
+    {{ wtf.form_field(form.content, rows=15) }}
+    {{ wtf.form_field(form.changes) }}
 
-        <button class="btn btn-lg btn-primary" type="submit">Continue</button>
-    </form>
+    <button class="btn btn-lg btn-primary" type="submit">Continue</button>
+  </form>
 
+{% endblock %}
+{% block scripts %}
+  {# FIXME:
+
+    Tinymce doesn't handle code tags properly.
+    Might want to change away from using <code> tags.
+    Doesn't really work with tinymce editing.
+      https://www.tinymce.com/docs/plugins/codesample/
+
+    If we wrap everything in <pre><code></code></pre> it works ok.
+  #}
+  {{ super() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.5/tinymce.min.js"></script>
+  <script type="text/javascript" >
+  $(document).ready(function() {
+    $('#richtext').on('click', function() {
+      tinyMCE.init({
+        selector: 'textarea',
+        plugins: "code"
+        });
+    });
+  })
+  </script>
 {% endblock %}
