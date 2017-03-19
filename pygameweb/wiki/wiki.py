@@ -84,13 +84,18 @@ def _wiki_code(content):
     return re.sub(r'\<code\s+class\s*\=\s*\"([^\"]+)\"\>(.*?)\<\/code>',
                   _wiki_code_callback, content, flags=re.I | re.S)
 
+
 def _wiki_code_callback(matchobj):
     m = matchobj.groups()
     content = m[1]
     content = re.sub(r'^\s*', '', content, re.S)
     content = re.sub(r'\s*$', '', content, re.S)
     # code_class = m[0]
-    return highlight(content, PythonLexer(), HtmlFormatter())
+    formatter = HtmlFormatter()
+    styles = formatter.get_style_defs('.highlight')
+    code = highlight(content, PythonLexer(), formatter)
+
+    return f'<style>{styles}</style>{code}'
 
 
 #link -- [[link#section]]

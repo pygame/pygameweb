@@ -52,16 +52,21 @@ def test_wiki_href():
 
 def test_wiki_code():
     from pygameweb.wiki.wiki import _wiki_code
-    assert (_wiki_code('<code class="python">my_code()</code>') ==
-            '<div class="highlight"><pre><span></span>'
-            '<span class="n">my_code</span><span class="p">()</span>\n</pre></div>\n')
+    code = _wiki_code('<code class="python">my_code()</code>')
+    should_be = ('<div class="highlight"><pre><span></span>'
+                 '<span class="n">my_code</span><span class="p">()</span>'
+                 '\n</pre></div>\n')
+
+    assert code.endswith(should_be), 'because code should be annotated'
+    assert '<style>' in code, 'because there should be css'
 
 
 def test_wiki_link():
     """turns the markup using [] into a html anchor tag.
     """
     from pygameweb.wiki.wiki import _wiki_link
-    assert _wiki_link('[[link#section]]') == '<a href="//pygame.org/wiki/link?parent=">link</a>'
+    should_be = '<a href="//pygame.org/wiki/link?parent=">link</a>'
+    assert _wiki_link('[[link#section]]') == should_be
 
 
 def test_wiki_section():
