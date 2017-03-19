@@ -98,13 +98,13 @@ def _wiki_code_callback(matchobj):
     return f'<style>{styles}</style>{code}'
 
 
-#link -- [[link#section]]
 def _wiki_link(content):
     """
     #>>> _wiki_link('[[link#section]]')
     #'<a href="link?parent=">link</a>'
     """
     return re.sub('\[\[([^\]]+)\]\]', _wiki_link_callback, content)
+
 
 def _wiki_link_callback(matchobj):
     global _wiki_parent
@@ -113,23 +113,19 @@ def _wiki_link_callback(matchobj):
     parts = m[0].split("#")
     if parts and len(parts) == 2:
         link, section = parts
+        section = '#' + section
     else:
         link = parts[0]
-        section = ""
+        section = ''
 
-    #$e = $db->query1("select id,name from wiki where".
-    #    " link = ".$db->sqlstring($link)." and latest = 1 limit 1");
-    #if (!$e["id"]) {
-    #        $e["name"] = $link;
-    #}
     name = link
-    link = "//pygame.org/wiki/" + link
-    return "<a href=\"{link}?parent={_wiki_parent}\">{name}</a>".format(link=link,
-                                                                        _wiki_parent=_wiki_parent,
-                                                                        name=name)
+    link = '/wiki/' + link
+    if _wiki_parent:
+        return f'<a href="{link}?parent={_wiki_parent}{section}">{name}</a>'
+    else:
+        return f'<a href="{link}{section}">{name}</a>'
 
 
-#quote -- {{link#section}}
 def _wiki_quote(content, for_link_cb):
     '''
     >>> _wiki_quote('{{link#section}}')
@@ -197,9 +193,7 @@ def render(content, for_link_cb=None):
     return pq_content.outerHtml()
 
 
-
 if __name__ == "__main__":
-
 
     if "--test" in sys.argv:
         def _test():

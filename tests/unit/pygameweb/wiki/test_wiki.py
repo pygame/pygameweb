@@ -5,7 +5,7 @@ def test_render():
     from pygameweb.wiki.wiki import render
 
     assert render('') == ''
-    assert render('[[link#section]]') == '<a href="//pygame.org/wiki/link?parent=">link</a>'
+    assert render('[[link#section]]') == '<a href="/wiki/link#section">link</a>'
     assert (render('<div><table><tr><td>asdf</td></tr></table></div>') ==
             '<div><div class="table-responsive"><table class="table"><tr><td>asdf</td></tr></table></div></div>')
     assert (render('<div><a href="asdf">asdf</a></div>') ==
@@ -65,7 +65,7 @@ def test_wiki_link():
     """turns the markup using [] into a html anchor tag.
     """
     from pygameweb.wiki.wiki import _wiki_link
-    should_be = '<a href="//pygame.org/wiki/link?parent=">link</a>'
+    should_be = '<a href="/wiki/link#section">link</a>'
     assert _wiki_link('[[link#section]]') == should_be
 
 
