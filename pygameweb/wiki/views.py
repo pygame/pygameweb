@@ -4,7 +4,6 @@ from flask import (Blueprint, render_template, abort,
 from flask_sqlalchemy_session import current_session
 import ghdiff
 from flask_security import login_required, roles_required
-import sqlalchemy
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
@@ -30,6 +29,7 @@ def wiki_for(link):
 
 
 @wiki_blueprint.route('/wiki/', methods=['GET'])
+@wiki_blueprint.route('/wiki/<link>/', methods=['GET'])
 @wiki_blueprint.route('/wiki/<link>', methods=['GET'])
 def index(link='index'):
     """ of the wiki page.

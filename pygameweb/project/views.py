@@ -22,6 +22,7 @@ project_blueprint = Blueprint('project',
                               __name__,
                               template_folder='../templates/')
 
+
 def project_for(project_id):
     """ gets a project for the given
     """
@@ -209,7 +210,9 @@ def new_comment(project_id):
         author = CommentAuthor.from_user(current_session, current_user)
         parent_id = int(form.parent_id.data) if form.parent_id.data else None
         thread_id = int(form.thread_id.data) if form.thread_id.data else None
-        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+        # we have proxy fix for remote_addr.
+        ip_address = request.remote_addr
         created_at = datetime.datetime.now()
 
         # hardcoded pygame forum id.

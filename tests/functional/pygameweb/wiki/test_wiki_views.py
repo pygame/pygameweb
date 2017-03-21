@@ -92,6 +92,11 @@ def test_wiki_link(wiki_client, session, wiki_page_info):
     assert resp.status_code == 200
     assert b'A new title for a new day' in resp.data
 
+    resp = wiki_client.get('/wiki/blablabla/')
+    assert resp.status_code == 200, 'because trailing slash should work'
+    assert b'A new title for a new day' in resp.data
+
+
     resp = wiki_client.get('/wiki/blablabla?action=source')
     assert resp.status_code == 200
     assert (b'A new title for a new day' not in resp.data,
