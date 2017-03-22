@@ -1,0 +1,47 @@
+{% cache 60*5 %}
+  {% set side_stuff = sidebar() %}
+  {% set recent_releases = side_stuff.recent_releases %}
+  {% set top_tag_counts = side_stuff.top_tag_counts %}
+
+  <style>
+    .project-released {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .project-title {
+      position: absolute;
+      bottom:6px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .project-releases .list-group-item {
+      min-height: 57px;
+    }
+  </style>
+
+  <h2>Recent Releases</h2>
+  <div class="list-group project-releases">
+  {% for user, project, release in recent_releases %}
+
+    <a href="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}"
+       class="list-group-item">
+      <span class="project-released">{{ release.datetimeon.strftime('%-d %b, %Y') }}</span>
+      {% set thumb = project.image_thumb(230,230) %}
+      {% if thumb %}
+        <img class="img-responsive" src="{{ thumb }}">
+      {% endif %}
+      <span class="project-title">
+        {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
+      </span>
+    </a>
+
+  {% endfor %}
+  </div>
+
+
+  <div>
+  {% for value, count, size in top_tag_counts %}
+      <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
+  {% endfor %}
+  </div>
+
+{% endcache %}

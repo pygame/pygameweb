@@ -59,54 +59,23 @@
         {% block sidebar -%}
 
           {% if sidebar %}
-          {% if current_user and url_for_security %}
-          <div class="list-group">
-
-            {% if current_user.is_authenticated %}
-              <a class="list-group-item" href="{{ url_for_security('logout') }}">Log Out</a>
-              <a class="list-group-item" href="{{ url_for('project.new_project') }}">Add a new project</a>
-              <a class="list-group-item" href="{{ url_for('project.projects') }}">Your projects</a>
-
-            {% else %}
-              <a class="list-group-item" href="{{ url_for_security('register') }}">New members signup</a>
-              <a class="list-group-item" href="{{ url_for_security('login') }}">Log In</a>
-            {% endif %}
-          </div>
-          {% endif %}
-
-
-          {% cache 60*5 %}
-            {% set side_stuff = sidebar() %}
-            {% set recent_releases = side_stuff.recent_releases %}
-            {% set top_tag_counts = side_stuff.top_tag_counts %}
-
-            <h2>Recent Releases</h2>
+            {% if current_user and url_for_security %}
             <div class="list-group">
-            {% for user, project, release in recent_releases %}
 
-              <a href="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}"
-                 class="list-group-item">
-                <span>{{ release.datetimeon.strftime('%-d %b, %Y') }}<span>
-                {% set thumb = project.image_thumb(230,230) %}
-                {% if thumb %}
-                  <img class="img-responsive" src="{{ thumb }}">
-                {% endif %}
-                <br>
-                {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
-                {# <span>{{ user.title }}</span>#}
-              </a>
+              {% if current_user.is_authenticated %}
+                <a class="list-group-item" href="{{ url_for_security('logout') }}">Log Out</a>
+                <a class="list-group-item" href="{{ url_for('project.new_project') }}">Add a new project</a>
+                <a class="list-group-item" href="{{ url_for('project.projects') }}">Your projects</a>
 
-            {% endfor %}
+              {% else %}
+                <a class="list-group-item" href="{{ url_for_security('register') }}">New members signup</a>
+                <a class="list-group-item" href="{{ url_for_security('login') }}">Log In</a>
+              {% endif %}
             </div>
+            {% endif %}
 
+            {% include 'recent-releases.html' %}
 
-            <div>
-            {% for value, count, size in top_tag_counts %}
-                <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
-            {% endfor %}
-            </div>
-
-          {% endcache %}
           {% endif %}
 
         {%- endblock sidebar %}
