@@ -1,9 +1,10 @@
-"""
+"""The dashboard shows a collection of pygame modules.
 """
 
 from pathlib import Path
 
-from flask import Blueprint, render_template, abort, current_app, send_from_directory, request
+from flask import (Blueprint, render_template, abort, current_app,
+                   send_from_directory, request)
 from pygameweb.thumb import image_thumb
 
 dashboard_blueprint = Blueprint('dashboard',
@@ -27,7 +28,9 @@ def dashboard():
     """
     full_path = Path(current_app.config['WWW'])
     full_path_str = str(full_path.absolute())
-    return send_from_directory(full_path_str, 'dashboard-dev', mimetype='text/html')
+    return send_from_directory(full_path_str,
+                               'dashboard-dev',
+                               mimetype='text/html')
 
 
 @dashboard_blueprint.route('/screens-300/<path:fname>', methods=['GET'])
