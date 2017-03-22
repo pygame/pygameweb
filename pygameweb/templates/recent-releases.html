@@ -50,6 +50,8 @@
   {% for value, count, size in top_tag_counts -%}
     <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
   {% endfor -%}
+    <br/><br/>
+    <a href='/tags' class="btn btn-default" role="button">ALL the tags!</a>
   </div>
 
 {% endcache %}

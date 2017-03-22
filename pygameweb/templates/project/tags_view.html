@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+    ALL the Tags! - pygame
+{% endblock title %}
+
+{% block content %}
+  {% cache 60*5 %}
+  <h1>ALL the Tags!</h1>
+
+  {% for value, count, size in tag_counts -%}
+    <a href='/tags/{{value}}' class="btn btn-default" role="button">
+      {{value}}
+      <span class="badge">{{ count }}</span>
+    </a>
+  {% endfor -%}
+
+  {% endcache %}
+{% endblock %}
