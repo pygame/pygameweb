@@ -88,14 +88,10 @@ def test_wiki_link(wiki_client, session, wiki_page_info):
     second_id = wiki_page.id
     assert second_id != first_id
 
-    resp = wiki_client.get('/wiki/blablabla')
-    assert resp.status_code == 200
-    assert b'A new title for a new day' in resp.data
-
-    resp = wiki_client.get('/wiki/blablabla/')
-    assert resp.status_code == 200, 'because trailing slash should work'
-    assert b'A new title for a new day' in resp.data
-
+    for link in ['/wiki/blablabla', '/wiki/blablabla/']:
+        resp = wiki_client.get(link)
+        assert resp.status_code == 200
+        assert b'A new title for a new day' in resp.data
 
     resp = wiki_client.get('/wiki/blablabla?action=source')
     assert resp.status_code == 200
