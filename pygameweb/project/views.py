@@ -17,6 +17,8 @@ from pygameweb.project.forms import (FirstReleaseForm,
 from pygameweb.comment.models import CommentPost, CommentAuthor, CommentThread
 from pygameweb.sanitize import sanitize_html
 from pygameweb.comment.classifier import classify_comment
+from pygameweb.user.models import User
+
 
 project_blueprint = Blueprint('project',
                               __name__,
@@ -177,6 +179,17 @@ def tags(tag):
                            next_start=next_start)
 
 
+@project_blueprint.route('/tags/', methods=['GET'])
+@project_blueprint.route('/tags', methods=['GET'])
+def all_tags():
+    """ On this view we list ALL the tags.
+    """
+    tag_counts = top_tags(current_session, limit=None)
+    return render_template('project/tags_view.html',
+                           tag_counts=tag_counts,
+                           title='Tags')
+
+
 """
   <post dsq:id="194253444">
     <id/>
@@ -197,7 +210,8 @@ def tags(tag):
 """
 
 
-@project_blueprint.route('/project/<int:project_id>/comment', methods=['GET', 'POST'])
+@project_blueprint.route('/project/<int:project_id>/comment',
+                         methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
 def new_comment(project_id):
@@ -454,10 +468,6 @@ def delete_release(project_id, release_id):
     """
     raise NotImplementedError()
 
-
-
-from pygameweb.project.models import top_tags, Project, Release
-from pygameweb.user.models import User
 
 def recent_releases():
     return (current_session.query(User, Project, Release)

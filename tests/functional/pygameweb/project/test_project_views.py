@@ -18,7 +18,8 @@ def project_client(app, session, client):
     return client
 
 
-def a_user(app, session, project_client, name, email, logged_in, disabled, active):
+def a_user(app, session, project_client, name, email,
+           logged_in, disabled, active):
     """ gives us a user who is a member.
     """
     from pygameweb.user.models import User, Group
@@ -39,6 +40,7 @@ def a_user(app, session, project_client, name, email, logged_in, disabled, activ
         sess['_fresh'] = True
     return user
 
+
 @pytest.fixture
 def user(app, session, project_client):
     """ gives us a user who is a member.
@@ -53,7 +55,9 @@ def user(app, session, project_client):
 def user_banned(app, session, project_client):
     """ gives us a user who is a member.
     """
-    return a_user(app, session, project_client, 'joebanned', 'asdf2@example.com',
+    return a_user(app, session, project_client,
+                  'joebanned',
+                  'asdf2@example.com',
                   logged_in=False,
                   disabled=1,
                   active=False)
@@ -134,7 +138,6 @@ def a_project(session, title, version, user):
 
     the_project2.releases.append(release1)
 
-
     tag3 = Tags(project=the_project2, value='2d')
     tag4 = Tags(project=the_project2, value='arcade')
     return the_project2, release1, tag3, tag4
@@ -146,7 +149,10 @@ def project2(session, project, user):
     """
     title = 'Some project title 2'
     version = 'some version'
-    the_project2, release1, tag3, tag4 = a_project(session, title, version, user)
+    (the_project2,
+     release1,
+     tag3,
+     tag4) = a_project(session, title, version, user)
 
     session.add(release1)
     session.add(tag3)
@@ -161,7 +167,10 @@ def project3(session, project, user_banned):
     """
     title = 'Some project title 3'
     version = 'some version 3'
-    the_project2, release1, tag3, tag4 = a_project(session, title, version, user_banned)
+    (the_project2,
+     release1,
+     tag3,
+     tag4) = a_project(session, title, version, user_banned)
 
     session.add(release1)
     session.add(tag3)
@@ -204,11 +213,14 @@ def test_project_index(project_client, session, user, project, project2):
     assert resp.status_code == 200, 'because this url works too.'
     assert b'<h1>Some project title 1' in resp.data
 
-    resp = project_client.get(f'/project/{project.id}/{project.releases[0].id}')
+    url = f'/project/{project.id}/{project.releases[0].id}'
+    resp = project_client.get(url)
     assert resp.status_code == 200
     assert b'A release title.' in resp.data
 
-    resp = project_client.get(f'/project-blabla+blasbla+-{project.id}-{project.releases[0].id}.html')
+    url = (f'/project-blabla+blasbla+-'
+           f'{project.id}-{project.releases[0].id}.html')
+    resp = project_client.get(url)
     assert resp.status_code == 200, 'because this url works too.'
     assert b'A release title.' in resp.data
 
@@ -225,17 +237,24 @@ def test_tags(project_client, session, project, project2):
     resp = project_client.get('/tags/game')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') + b'</a>' in resp.data
-    assert project2.title.encode('utf-8') + b'</a>' not in resp.data, 'because only first tagged.'
+    assert (project2.title.encode('utf-8') +
+            b'</a>') not in resp.data, 'because only first tagged.'
 
     resp = project_client.get('/tags/arcade')
     assert resp.status_code == 200
     assert project.title.encode('utf-8') + b'</a>' in resp.data
-    assert project2.title.encode('utf-8') + b'</a>' in resp.data, 'because both are in arcade.'
+    assert (project2.title.encode('utf-8') +
+            b'</a>') in resp.data, 'because both are in arcade.'
 
     resp = project_client.get('/tags/all')
-    assert resp.status_code == 200, 'because all is a special tag meaning show all.'
+    assert (resp.status_code ==
+            200), 'because all is a special tag meaning show all.'
     assert project.title.encode('utf-8') + b'</a>' in resp.data
-    assert project2.title.encode('utf-8') + b'</a>' in resp.data, 'both are in all'
+    assert (project2.title.encode('utf-8') +
+            b'</a>') in resp.data, 'both are in all'
+
+    assert project_client.get('/tags/').status_code == 200, 'big list of tags'
+    assert project_client.get('/tags').status_code == 200
 
 
 def test_project_new(project_client, session, user):
@@ -307,7 +326,7 @@ def test_project_new(project_client, session, user):
                    .query(Project)
                    .filter(Project.title == 'titlechangedagain')
                    .first())
-        assert not save_image.called, 'no image was sent, and we do not save one'
+        assert not save_image.called, 'no image sent or saved'
 
         tags = (session
                 .query(Tags)
@@ -331,7 +350,7 @@ def test_project_new(project_client, session, user):
 
     session.refresh(project)
     session.refresh(project.releases[0])
-    assert project.releases[0].version == '2.0.0', 'we edited a release version'
+    assert project.releases[0].version == '2.0.0', 'edited a release version'
     assert len(project.releases) == 1
 
     data = dict(description='new release',
@@ -349,11 +368,12 @@ def test_new_project_comment(project_client, session, project, project2, user):
     """ adds the thoughtful and supportive comment to the project page for the
         interesting creative work someone is trying to share with the world.
     """
-    with mock.patch('pygameweb.project.views.classify_comment') as classify_comment:
+    with mock.patch('pygameweb.project.views.classify_comment'):
 
         url = f'/project/{project.id}/comment'
-        data = dict(message='<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>')
+        data = {'message':
+                '<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>'}
         resp = project_client.post(url, data=data, follow_redirects=True)
         assert resp.status_code == 200
-        assert b'Gidday matey.' in resp.data, 'because the comment should be there.'
-
+        assert (b'Gidday matey.' in
+                resp.data), 'because the comment should be there.'

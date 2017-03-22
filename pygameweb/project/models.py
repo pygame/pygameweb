@@ -67,7 +67,7 @@ class Project(Base):
                 for tag, cnt in tag_counts]
 
 
-def top_tags(session):
+def top_tags(session, limit=30):
     """
     """
     cnt = count(Tags.value)
@@ -76,7 +76,7 @@ def top_tags(session):
                   .query(Tags.value, cnt)
                   .group_by(Tags.value)
                   .order_by(cnt.desc())
-                  .limit(30)).all()
+                  .limit(limit)).all()
     return [(tag, cnt, (int(10 + min(24, sqrt(cnt) * 24 / 5))))
             for tag, cnt in tag_counts]
 
