@@ -31,12 +31,13 @@
     {% set style_released = ' style=position:inherit;display:block;' if not thumb and project_title|length > 30 else '' -%}
     {% set style_title = ' style=position:inherit;bottom:auto' if project_title|length > 30 else '' -%}
     <a href="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}"
-       class="list-group-item">
+       class="list-group-item"
+       title="{{ project.summary }}">
       <span class="project-released"{{ style_released }}>
         {{ release.datetimeon.strftime('%-d %b, %Y') }}
       </span>
       {% if thumb -%}
-	      <img class="img-responsive" src="{{ thumb }}">
+	      <img class="img-responsive" src="{{ thumb }}" alt="{{ project.summary }}">
       {% endif -%}
       <span class="project-title dont-break-out"{{ style_title }}>
         {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
