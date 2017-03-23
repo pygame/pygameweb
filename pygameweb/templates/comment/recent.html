@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Newest Comments{% endblock title %}
+
+{% block content %}
+  {% cache 60*5, current_user.id, forum %}
+
+{%set posts = comments_for(forum) %}
+
+{% macro mark_post_button(post, action, label) %}
+  {% if current_user.is_authenticated and current_user.has_role('moderator') %}
+    <form method="post" action="/comment/{{ post.id }}/{{ action }}">
+      <input type="hidden" name="back_to" value="comments">
+      <button class="btn btn-lg btn-primary" type="submit">{{ label }}</button>
+    </form>
+  {% endif %}
+{% endmacro %}
+
+<h1>Newest Comments</h1>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>message</th>
+      <th>created_at</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in posts if ((not post.is_spam) and (not post.is_deleted)) %}
+      <tr>
+        <td>{{ post.author.name }}
+        <a href="{{ post.thread.link_path }}">{{ post.thread.link_path }}</a>
+        </td>
+        <td>{{ post.message_html | safe }}</td>
+        <td>{{ post.created_at }}</td>
+        <td>{{ mark_post_button(post, 'spam', 'Spam') }}</td>
+        <td>{{ mark_post_button(post, 'delete', 'Delete') }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+  {% endcache %}
+{% endblock %}

@@ -1,6 +1,8 @@
 """ For website comments.
 """
 
+from urllib.parse import urlparse
+
 from sqlalchemy import (Column, DateTime, ForeignKey, String, Text,
                         Boolean, UniqueConstraint, BigInteger)
 from sqlalchemy.orm import relationship, backref
@@ -102,6 +104,12 @@ class CommentThread(Base):
     is_closed = Column(Boolean)
     is_deleted = Column(Boolean)
 
+    @property
+    def link_path(self):
+        """ is the path part of the link, not including the domain.
+        """
+        return urlparse(self.link).path
+
 
 class CommentPost(Base):
     __tablename__ = 'comment_post'
@@ -121,14 +129,13 @@ class CommentPost(Base):
                                   name='comment_post_thread_id_fkey'),
                        nullable=False)
     thread = relationship(CommentThread)
-
     message = Column(Text)
+
     @property
     def message_html(self):
         """
         """
         return sanitize_html(self.message, force_https=False)
-
 
     ip_address = Column(String(80))
     created_at = Column(DateTime)

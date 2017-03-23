@@ -1,6 +1,51 @@
 """ Load comments from xml into the db.
 """
 
+import pytest
+
+
+@pytest.fixture
+def comment_client(app, session, client):
+    """Fixture for wiki tests.
+    """
+    from pygameweb.comment.views import add_comment
+    from pygameweb.user.views import add_user_blueprint
+    add_user_blueprint(app)
+    add_comment(app)
+    return client
+
+
+@pytest.fixture
+def user(app, session, comment_client):
+    """ gives us a user who is a member.
+    """
+    from pygameweb.user.models import User
+    from flask_security.utils import encrypt_password
+    user = User(name='joe',
+                email='asdf@example.com',
+                password=encrypt_password('password'))
+    session.add(user)
+    session.commit()
+    # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+    with comment_client.session_transaction() as sess:
+        sess['user_id'] = user.id
+        sess['_fresh'] = True
+
+    return user
+
+
+@pytest.fixture
+def moderator(session, user):
+    """
+    """
+    from pygameweb.user.models import Group
+    group = Group(name='moderator', title='Moderator')
+    user.roles.append(group)
+    session.add(group)
+    session.commit()
+    return group
+
+
 xml_example = """<?xml version="1.0" encoding="utf-8"?>
 <disqus xmlns:dsq="http://disqus.com/disqus-internals"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -128,7 +173,7 @@ xml_example = """<?xml version="1.0" encoding="utf-8"?>
 def test_comment_load(session):
     """
     """
-    from pygameweb.comment.models import load_xml, CommentPost, CommentThread
+    from pygameweb.comment.models import load_xml, CommentPost
     from io import BytesIO
 
     # load_xml(session, 'comments.xml')
@@ -171,3 +216,20 @@ def test_comment_load(session):
     assert (len(posts)) == num_top_level_posts
     assert posts[0].id == first_post_id
     assert posts[1].children[0].children[0].id == 194253444
+
+    assert posts[0].thread.link == 'http://example.com/project/1820/'
+    assert posts[0].thread.link_path == '/project/1820/', 'just the path'
+
+
+def test_recent_comments(session, comment_client):
+    """ are being rendered.
+    """
+
+    from pygameweb.comment.models import load_xml
+    from io import BytesIO
+
+    # load_xml(session, 'comments.xml')
+    load_xml(session, BytesIO(xml_example.encode('utf8')))
+
+    resp = comment_client.get('/comments/pygame')
+    assert resp.status_code == 200

@@ -4,7 +4,8 @@ import datetime
 from email.utils import formatdate
 
 from flask import (Blueprint, render_template, abort,
-                   redirect, url_for, request, current_app, make_response)
+                   redirect, url_for, request, current_app,
+                   make_response, flash)
 from flask_sqlalchemy_session import current_session
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
@@ -208,7 +209,6 @@ def all_tags():
     <parent dsq:id="194253320"/>
   </post>
 """
-
 
 @project_blueprint.route('/project/<int:project_id>/comment',
                          methods=['GET', 'POST'])
