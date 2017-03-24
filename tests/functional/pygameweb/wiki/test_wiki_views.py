@@ -95,13 +95,13 @@ def test_wiki_link(wiki_client, session, wiki_page_info):
 
     resp = wiki_client.get('/wiki/blablabla?action=source')
     assert resp.status_code == 200
-    assert (b'A new title for a new day' not in resp.data,
-            'because only the content is shown')
+    expected = b'A new title for a new day'
+    assert expected not in resp.data, 'because only the content is shown'
     assert second_content in resp.data.decode('utf-8')
 
     resp = wiki_client.get(f'/wiki/blablabla?action=source&id={first_id}')
-    assert (first_content in resp.data.decode('utf-8'),
-            'because the old version of page is still there')
+    assert (first_content in
+            resp.data.decode('utf-8')), 'because old page version still there'
 
     url = ('/wiki/blablabla?action=diff&oldid={oldid}&newid={newid}'
            .format(oldid=first_id, newid=second_id))
@@ -133,9 +133,11 @@ def test_wiki_link_login(wiki_client, session, wiki_page_info, member):
     assert b'first wiki page version is done' in resp.data
 
 
-def test_wiki_new_page(wiki_client, session, member):
+def test_wiki_new_page(wiki_client, session, member, user):
     """ is editable when we go there.
     """
+    from pygameweb.wiki.models import Wiki
+
     resp = wiki_client.get('/wiki/blabla')
     assert resp.status_code == 404, 'now there is no blabla page.'
 
@@ -151,6 +153,9 @@ def test_wiki_new_page(wiki_client, session, member):
     assert resp.status_code == 200
     assert b'blabla' in resp.data
     assert b'some content' in resp.data
+
+    wik = session.query(Wiki).filter(Wiki.users_id == user.id).first()
+    assert wik.content == data['content'], 'user id added to this version'
 
     resp = wiki_client.get('/wiki/blabla')
     assert resp.status_code == 200

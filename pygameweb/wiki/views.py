@@ -3,7 +3,7 @@ from flask import (Blueprint, render_template, abort,
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_sqlalchemy_session import current_session
 import ghdiff
-from flask_security import login_required, roles_required
+from flask_security import login_required, roles_required, current_user
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
@@ -169,7 +169,6 @@ def recent():
                            day_groups=day_groups)
 
 
-
 @wiki_blueprint.route('/wiki/<link>/edit', methods=['GET', 'POST'])
 @login_required
 @roles_required('members')
@@ -193,6 +192,7 @@ def edit(link):
             page.new_version(current_session)
             page.content = form.content.data
             page.changes = form.changes.data
+            page.users_id = current_user.id
             current_session.add(page)
             current_session.commit()
 

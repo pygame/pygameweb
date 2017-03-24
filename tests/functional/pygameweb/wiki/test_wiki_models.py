@@ -33,7 +33,7 @@ def test_wiki_models_new_version(session):
                .filter(Wiki.latest == 1)
                .first())
     assert new_one.changes == what_changed, 'double check it is ok'
-    assert new_one.datetimeon > first_edit
+    assert new_one.datetimeon > first_edit, 'date updated'
 
     pages = (session
              .query(Wiki)
