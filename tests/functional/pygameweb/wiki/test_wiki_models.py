@@ -5,10 +5,15 @@
 def test_wiki_models_new_version(session):
     """ creates a new version of the existing page.
     """
-
+    import datetime
     from pygameweb.wiki.models import Wiki
     link = 'somelink'
-    wiki_entry = Wiki(link=link, title='some title', content='some content', latest=1)
+    first_edit = datetime.datetime(2017, 1, 1)
+    wiki_entry = Wiki(link=link,
+                      title='some title',
+                      content='some content',
+                      datetimeon=first_edit,
+                      latest=1)
 
     session.add(wiki_entry)
     session.commit()
@@ -20,17 +25,15 @@ def test_wiki_models_new_version(session):
     wiki_entry.changes = what_changed
     session.commit()
 
-    # we see we have a new database row.
-    assert old_id != wiki_entry.id
+    assert old_id != wiki_entry.id, 'we see we have a new database row.'
 
-
-    # double check it's ok when we query it.
     new_one = (session
                .query(Wiki)
                .filter(Wiki.link == link)
                .filter(Wiki.latest == 1)
                .first())
-    assert new_one.changes == what_changed
+    assert new_one.changes == what_changed, 'double check it is ok'
+    assert new_one.datetimeon > first_edit
 
     pages = (session
              .query(Wiki)
@@ -39,5 +42,6 @@ def test_wiki_models_new_version(session):
 
     assert len(pages) == 2
     assert [p.id for p in pages].count(old_id) == 1
-    assert [p.latest for p in pages].count(1) == 1
-    assert [p.latest for p in pages].count(0) == 1, 'the old one is there too with latest set to 0'
+    latest_list = [p.latest for p in pages]
+    assert latest_list.count(1) == 1
+    assert latest_list.count(0) == 1, 'old one is there with latest set to 0'

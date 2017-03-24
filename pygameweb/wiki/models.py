@@ -1,6 +1,9 @@
 """ wiki models
 """
-from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey, inspect
+import datetime
+
+from sqlalchemy import (Column, DateTime, Integer, String,
+                        Text, ForeignKey, inspect)
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy.orm import relationship
 
@@ -51,7 +54,6 @@ class Wiki(Base):
                 .filter(cls.latest == 1)
                 .first())
 
-
     def new_version(self, session):
         """ Create a new version of this page. Leave the old on in the db.
         """
@@ -68,6 +70,7 @@ class Wiki(Base):
 
         del self.id
         self.latest = 1
+        self.datetimeon = datetime.datetime.now()
         session.add(self)
 
     @property
@@ -75,6 +78,7 @@ class Wiki(Base):
         """The wiki content is rendered for display.
         """
         session = inspect(self).session
+
         def for_link(link):
             return Wiki.content_for_link(session, link)
 
