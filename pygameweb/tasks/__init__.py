@@ -4,7 +4,10 @@ https://pypi.python.org/pypi/pq
 """
 
 from pygameweb.config import Config
-from pq import PQ
+# from pq import PQ
+from pq.tasks import Queue
+from sqlalchemy import create_engine
+
 
 def put(name, what, when=None):
     """ Put something on a queue
@@ -40,7 +43,11 @@ def queue(name, session=None, engine=None):
 
     """
     if engine is None:
-        engine = session.get_bind()
+        if session is None:
+            engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+        else:
+            engine = session.get_bind()
 
     connection = engine.raw_connection()
-    return PQ(connection.connection)
+    return Queue(name, conn=connection.connection)
+    # return PQ(connection.connection)

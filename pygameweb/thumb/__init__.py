@@ -6,7 +6,22 @@ from pathlib import Path
 import os
 import subprocess
 
-def image_thumb(www_path:Path, fname, width:int, height:int, itype="jpg", quality:int=50):
+
+def compress_later(fname):
+    """ If we can compress the thumbnail later.
+
+    :param fname: filename to compress.
+    """
+    from pygameweb.tasks.worker import compress_png
+    compress_png(fname)
+
+
+def image_thumb(www_path: Path,
+                fname,
+                width: int,
+                height: int,
+                itype="jpg",
+                quality: int=80):
     """Get the thumbnail fname. Make a thumbnail the image if it is not there.
 
     :param www_path: where the thumbnails live.
@@ -32,12 +47,27 @@ def image_thumb(www_path:Path, fname, width:int, height:int, itype="jpg", qualit
     except FileNotFoundError:
         return
 
+    imagel = str(image).lower()
+    if imagel.endswith('.jpg'):
+        itype = 'jpg'
+    elif imagel.endswith('.png'):
+        itype = 'png'
+
     the_string = f'thumb {fname} {width} {height} {filesize}'.encode('utf-8')
     hash_fname = md5(the_string).hexdigest() + '.' + itype
     dest = str(thumb_path / hash_fname)
 
     if not os.path.exists(dest):
-        cmd = ['convert', '-quality', '50', str(image), '-resize', f'{width}x{height}', '+profile', '"*"', dest]
+        cmd = ['convert',
+               '-quality',
+               str(quality),
+               str(image),
+               '-resize',
+               f'{width}x{height}',
+               '+profile',
+               '"*"',
+               dest]
         subprocess.check_call(cmd)
+        compress_later(dest)
 
     return f'/thumb/{hash_fname}'

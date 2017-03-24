@@ -32,8 +32,8 @@ Set up the required packages::
 
 For now yuicompressor is needed for css compression::
 
-    brew install yuicompressor node
-    apt-get install yui-compressor node
+    brew install yuicompressor node optipng
+    apt-get install yui-compressor node optipng
 
 
 Environment setup
