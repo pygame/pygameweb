@@ -18,10 +18,14 @@ def update_docs():
     docs_path = www / 'docs'
     cwd = str(pygame_dir.absolute())
 
+    update_file = pygame_dir / 'docs/reST/themes/classic/elements.html'
+
     assert www.exists()
     assert pygame_dir.exists()
     assert venv_python.exists()
+    assert update_file.exists()
 
+    run(['touch', str(update_file)], cwd=cwd)
     run(['hg', 'pull'], cwd=cwd)
     run(['hg', 'update'], cwd=cwd)
     run([str(venv_python.absolute()), 'makeref.py'], cwd=cwd)
