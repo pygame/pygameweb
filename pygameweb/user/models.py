@@ -75,6 +75,9 @@ class User(Base, UserMixin):
     """ Web log url.
     """
 
+    def __repr__(self):
+        return f'<User object with id={self.id!r}, name={self.name!r}>'
+
 
 class Group(Base, RoleMixin):
     __tablename__ = 'groups'
