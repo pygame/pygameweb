@@ -83,6 +83,13 @@ class ReleaseAdmin(ModelView):
         return current_user.has_role('admin')
 
 class PageAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['content']
+
+    # Allow search by title and name
+    column_searchable_list = ['name', 'title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
