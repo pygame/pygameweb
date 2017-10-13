@@ -117,7 +117,18 @@ We use various fixtures to make writing the tests easier and faster.
 Running the webserver locally
 =============================
 
-can be done by using the executable pygameweb_front.
+Use an environment variable to configure the database connection (see the
+database setup steps above)::
+
+    export APP_DATABASE_URL="postgresql://pygame:password@localhost/pygame"
+
+Configure a directory containing static files::
+
+    export APP_WWW="static/""
+
+Then run::
+
+    pygameweb_front
 
 
 Templates with jinja2 and bootstrap
