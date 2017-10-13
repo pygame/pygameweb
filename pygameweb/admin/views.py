@@ -11,7 +11,7 @@ from pygameweb.user.models import User, Group
 from pygameweb.page.models import Page
 
 from pygameweb.news.models import News
-from pygameweb.project.models import Project, Release
+from pygameweb.project.models import Project, Release, Tags
 
 
 
@@ -67,6 +67,12 @@ class ProjectAdmin(ModelView):
 
     def is_accessible(self):
         return current_user.has_role('admin')
+
+    def on_model_delete(self, project):
+        # Delete associated tags and releases so we can delete the project.
+        p = project
+        self.session.query(Tags).filter(Tags.project_id == p.id).delete()
+        self.session.query(Release).filter(Release.project_id == p.id).delete()
 
 class ReleaseAdmin(ModelView):
     # Don't show the long text fields in the list, but allow a details view
