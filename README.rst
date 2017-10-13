@@ -124,7 +124,17 @@ database setup steps above)::
 
 Configure a directory containing static files::
 
-    export APP_WWW="static/""
+    export APP_WWW="static/"
+
+The application may need a secure key, but for debugging it's not important
+that it's properly random::
+
+    export APP_SECRET_KEY="s3cret-stuff-blah"
+
+Finally, you can enable some Flask debugging machinery (which should be off for
+the site in production)::
+
+    export APP_DEBUG=1
 
 Then run::
 
