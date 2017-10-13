@@ -29,6 +29,9 @@ class UserAdmin(ModelView):
     form_excluded_columns = ('password',)
     column_auto_select_related = True
 
+    # Allow search by name (username), email or title (real name)
+    column_searchable_list = ['name', 'email', 'title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
