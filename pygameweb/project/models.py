@@ -32,6 +32,9 @@ class Project(Base):
     datetimeon = Column(DateTime)
     image = Column(String(80))
 
+    def __repr__(self):
+        return "<Project with title=%r>" % self.title
+
     @property
     def summary_html(self):
         return sanitize_html(self.summary)
