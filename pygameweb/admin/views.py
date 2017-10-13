@@ -47,14 +47,32 @@ class GroupAdmin(ModelView):
         return current_user.has_role('admin')
 
 class NewsAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['description']
+
+    # Allow search by title
+    column_searchable_list = ['title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
 class ProjectAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['summary', 'description']
+
+    # Allow search by title
+    column_searchable_list = ['title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
 class ReleaseAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['description']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
