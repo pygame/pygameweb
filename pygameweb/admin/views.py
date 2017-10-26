@@ -11,7 +11,7 @@ from pygameweb.user.models import User, Group
 from pygameweb.page.models import Page
 
 from pygameweb.news.models import News
-from pygameweb.project.models import Project, Release
+from pygameweb.project.models import Project, Release, Tags
 
 
 
@@ -28,6 +28,9 @@ class UserAdmin(ModelView):
     column_exclude_list = list = ('password',)
     form_excluded_columns = ('password',)
     column_auto_select_related = True
+
+    # Allow search by name (username), email or title (real name)
+    column_searchable_list = ['name', 'email', 'title']
 
     def is_accessible(self):
         return current_user.has_role('admin')
@@ -47,18 +50,49 @@ class GroupAdmin(ModelView):
         return current_user.has_role('admin')
 
 class NewsAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['description']
+
+    # Allow search by title
+    column_searchable_list = ['title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
 class ProjectAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['summary', 'description']
+
+    # Allow search by title
+    column_searchable_list = ['title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
+    def on_model_delete(self, project):
+        # Delete associated tags and releases so we can delete the project.
+        p = project
+        self.session.query(Tags).filter(Tags.project_id == p.id).delete()
+        self.session.query(Release).filter(Release.project_id == p.id).delete()
+
 class ReleaseAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['description']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
 class PageAdmin(ModelView):
+    # Don't show the long text fields in the list, but allow a details view
+    can_view_details = True
+    column_exclude_list = ['content']
+
+    # Allow search by title and name
+    column_searchable_list = ['name', 'title']
+
     def is_accessible(self):
         return current_user.has_role('admin')
 
