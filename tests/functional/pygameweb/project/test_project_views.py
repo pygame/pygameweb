@@ -369,6 +369,13 @@ def test_project_new(project_client, session, user):
     assert len(project.releases) == 2
     assert project.releases[1].version == '3.0.0', 'we added a release version'
 
+    url = f'/members/projects/{project.id}/releases'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+    resp = project_client.get('/members/projects')
+    assert resp.status_code == 200
+
 
 def test_new_project_comment(project_client, session, project, project2, user):
     """ adds the thoughtful and supportive comment to the project page for the
@@ -383,3 +390,13 @@ def test_new_project_comment(project_client, session, project, project2, user):
         assert resp.status_code == 200
         assert (b'Gidday matey.' in
                 resp.data), 'because the comment should be there.'
+
+@pytest.mark.parametrize("feed_url", [
+    '/feed/releases.php?format=ATOM',
+    '/feed/releases.php?format=RSS2.0',
+    '/project/feed/rss',
+    '/project/feed/atom'
+])
+def test_feeds(project_client, session, project, project2, feed_url):
+    resp = project_client.get(feed_url)
+    assert resp.status_code == 200
