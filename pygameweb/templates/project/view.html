@@ -39,6 +39,15 @@
       </div>
     </div>
 
+    <h3>Changes</h3>
+    {% if release %}
+      <div class="row description">
+        <div class="col-md-12">
+          {{ release.description_html|safe }}
+        </div>
+      </div>
+    {% endif %}
+
     <div class="row">
       <div class="col-md-6">
         {% set thumb_img = project.image_thumb(400,400) %}
@@ -53,8 +62,6 @@
       </div>
     </div>
 
-    <div class="row">
-    </div>
 
     <h3>Links</h3>
     <div>
