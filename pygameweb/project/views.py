@@ -5,7 +5,7 @@ from email.utils import formatdate
 
 from flask import (Blueprint, render_template, abort,
                    redirect, url_for, request, current_app,
-                   make_response, flash)
+                   make_response)
 from flask_sqlalchemy_session import current_session
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
@@ -209,6 +209,7 @@ def all_tags():
     <parent dsq:id="194253320"/>
   </post>
 """
+
 
 @project_blueprint.route('/project/<int:project_id>/comment',
                          methods=['GET', 'POST'])
@@ -483,9 +484,11 @@ def recent_releases():
 def atom():
     """ of recent releases
     """
-    resp = render_template('project/atom.xml', recent_releases=recent_releases())
+    resp = render_template('project/atom.xml',
+                           recent_releases=recent_releases())
     response = make_response(resp)
-    response.headers['Content-Type'] = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
+    content_type = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
+    response.headers['Content-Type'] = content_type
     return response
 
 
@@ -494,9 +497,12 @@ def rss():
     """ of recent releases
     """
     build_date = formatdate(datetime.datetime.now().timestamp())
-    resp = render_template('project/rss.xml', recent_releases=recent_releases(), build_date=build_date)
+    resp = render_template('project/rss.xml',
+                           recent_releases=recent_releases(),
+                           build_date=build_date)
     response = make_response(resp)
-    response.headers['Content-Type'] = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
+    content_type = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
+    response.headers['Content-Type'] = content_type
     return response
 
 
@@ -508,13 +514,6 @@ def legacy_feeds():
     elif feed_type == 'RSS2.0':
         return rss()
     return ''
-
-
-
-
-
-
-
 
 
 def add_project_blueprint(app):

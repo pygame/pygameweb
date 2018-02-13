@@ -135,3 +135,7 @@ class Release(Base):
     @property
     def datetimeon_2882(self):
         return formatdate(self.datetimeon.timestamp())
+
+    @property
+    def description_html(self):
+        return sanitize_html(self.description)

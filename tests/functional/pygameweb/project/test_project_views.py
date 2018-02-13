@@ -130,7 +130,7 @@ def a_project(session, title, version, user):
     )
 
     release1 = Release(datetimeon=datetime.datetime(2017, 1, 5),
-                       description='Description of some project 2.',
+                       description='Description of some release 2.',
                        srcuri='http://example.com/source.tar.gz',
                        winuri='http://example.com/win.exe',
                        macuri='http://example.com/mac.dmg',
@@ -206,6 +206,7 @@ def test_project_index(project_client, session, user, project, project2):
     assert resp.status_code == 200
     assert b'<h1>Some project title 1' in resp.data
     assert b'<h1>Some project title 2' not in resp.data
+    assert project.description.encode('utf8') in resp.data
     assert b'game' in resp.data
     assert b'arcade' in resp.data
 
@@ -217,6 +218,7 @@ def test_project_index(project_client, session, user, project, project2):
     resp = project_client.get(url)
     assert resp.status_code == 200
     assert b'A release title.' in resp.data
+    assert b'Some release.' in resp.data
 
     url = (f'/project-blabla+blasbla+-'
            f'{project.id}-{project.releases[0].id}.html')
@@ -277,7 +279,8 @@ def test_project_new(project_client, session, user):
     image = (BytesIO(png), 'helloworld.png')
     data = dict(image=image, title='title', version='1.0.2',
                 tags='tags', summary='summary',
-                description='description', uri='http://example.com/')
+                description='description of project',
+                uri='http://example.com/')
 
     with mock.patch('pygameweb.project.views.save_image') as save_image:
         resp = project_client.post('/members/projects/new',
@@ -289,6 +292,8 @@ def test_project_new(project_client, session, user):
                    .first())
         assert (save_image.call_args[0][1] ==
                 f'frontend/www/shots/{project.id}.png')
+        resp = project_client.get(f'/project/{project.id}/')
+        assert project.description.encode('utf8') in resp.data
 
     assert resp.status_code == 200
     assert project.title == 'title'
@@ -350,6 +355,7 @@ def test_project_new(project_client, session, user):
 
     session.refresh(project)
     session.refresh(project.releases[0])
+    assert data['description'] == project.releases[0].description
     assert project.releases[0].version == '2.0.0', 'edited a release version'
     assert len(project.releases) == 1
 
