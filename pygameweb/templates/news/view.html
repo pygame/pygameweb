@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+
+{%- block feeds %}
+    <link rel="alternate" type="application/atom+xml" title="pygame.org news (ATOM feed)" href="http://www.pygame.org/feed/news.php?format=ATOM"/>
+    <link rel="alternate" type="application/rss+xml" title="pygame.org news (RSS 2.0 feed)" href="http://www.pygame.org/feed/news.php?format=RSS2.0" />
+{%- endblock feeds %}
+
 {% block content %}
   {% cache 60*5 %}
     <div class="row">
