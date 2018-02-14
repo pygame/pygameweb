@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{% cache 60*5, link, 'title' %}
+{% block title %}{% cache 60*5, 'wiki_title', link %}
     {% set wiki = wiki_for(link) %}
     {{ wiki.title }} - pygame wiki
 {% endcache %}{% endblock title %}
 
 {% block content %}
-  {% cache 60*5, link %}
+  {% cache 60*5, 'wiki_content', link %}
   {% set wiki = wiki_for(link) %}
   {% set content_rendered, toc_rendered = wiki.content_toc %}
   {% if toc_rendered %}
