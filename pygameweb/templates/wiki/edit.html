@@ -12,6 +12,8 @@
     {{ wtf.form_errors(form, hiddens="only") }}
 
     <a href="#" id="richtext">Enable rich text editor</a>
+    <a href="/wiki/syntax" class="pull-right" title="view how to format things" target="_blank">syntax formatting help</a>
+
     {{ wtf.form_field(form.content, rows=15) }}
     {{ wtf.form_field(form.changes) }}
 
