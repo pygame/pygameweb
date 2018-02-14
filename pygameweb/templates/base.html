@@ -63,7 +63,7 @@
               {% if current_user and url_for_security %}
               <div class="list-group">
                 {% if current_user.is_authenticated %}
-                  <a class="list-group-item" href="{{ url_for_security('logout') }}, _external=True">Log Out</a>
+                  <a class="list-group-item" href="{{ url_for_security('logout', _external=True) }}">Log Out</a>
                   <a class="list-group-item" href="{{ url_for('project.new_project') }}">Add a new project</a>
                   <a class="list-group-item" href="{{ url_for('project.projects') }}">Your projects</a>
                 {% else %}
