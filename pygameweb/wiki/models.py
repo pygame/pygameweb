@@ -8,7 +8,7 @@ from sqlalchemy.orm.session import make_transient
 from sqlalchemy.orm import relationship
 
 from pygameweb.models import Base
-from pygameweb.wiki.wiki import render
+from pygameweb.wiki.wiki import render, render_pq
 from pygameweb.user.models import User
 from pygameweb.sanitize import sanitize_html
 
@@ -83,6 +83,22 @@ class Wiki(Base):
             return Wiki.content_for_link(session, link)
 
         return sanitize_html(render(self.content, for_link))
+
+    @property
+    def content_toc(self):
+        """The wiki content is rendered for display.
+        """
+        session = inspect(self).session
+
+        def for_link(link):
+            return Wiki.content_for_link(session, link)
+
+        if not self.content:
+            return '', ''
+        content, toc = render_pq(self.content, for_link, toc_separate=True)
+        return (sanitize_html(content.outerHtml() if content is not None else ''),
+                sanitize_html(toc.outerHtml() if toc is not None else ''))
+
 
     @property
     def content_sanitized(self):

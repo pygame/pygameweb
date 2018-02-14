@@ -1,12 +1,14 @@
 from flask import (Blueprint, render_template, abort,
                    redirect, url_for, request, Response)
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
+from flask_caching import make_template_fragment_key
 from flask_sqlalchemy_session import current_session
 import ghdiff
 from flask_security import login_required, roles_required, current_user
 
 from pygameweb.wiki.models import Wiki
 from pygameweb.wiki.forms import WikiForm
+from pygameweb.cache import cache
 
 
 wiki_blueprint = Blueprint('wiki',
@@ -195,9 +197,21 @@ def edit(link):
             page.users_id = current_user.id
             current_session.add(page)
             current_session.commit()
+            delete_view_wiki_cache(link)
 
             return redirect(url_for('wiki.index', link=page.link))
     return render_template('wiki/edit.html', form=form, wiki=page)
+
+
+def delete_view_wiki_cache(link):
+    """ Delete the template cache for this wiki page.
+
+    http://pythonhosted.org/Flask-Caching/#caching-jinja2-snippets
+    """
+    key = make_template_fragment_key("wiki_title", vary_on=[link])
+    cache.delete(key)
+    key2 = make_template_fragment_key("wiki_content", vary_on=[link])
+    cache.delete(key2)
 
 
 def add_wiki_blueprint(app):

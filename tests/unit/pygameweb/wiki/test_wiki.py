@@ -56,7 +56,6 @@ def test_wiki_code():
     should_be = ('<div class="highlight"><pre><span></span>'
                  '<span class="n">my_code</span><span class="p">()</span>'
                  '\n</pre></div>\n')
-
     assert code.endswith(should_be), 'because code should be annotated'
     assert '<style>' in code, 'because there should be css'
 
@@ -78,8 +77,13 @@ def test_wiki_section():
 
     <h2>Another section, another day</h2>
     Pleasure in other peoples leasure.
+
+    <h3>Three levels deep</h3>
+    On top of Prenzlauer Berg Berg.
+
+    <h2>And finally the last one</h2>
+
     """
     res = _wiki_section(content).outerHtml()
     assert '<h1 id="Hello there matey">' in res, 'because headers should have an id'
     assert '<h2 id="Another section, another day">' in res
-

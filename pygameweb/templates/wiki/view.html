@@ -1,27 +1,133 @@
 {% extends "base.html" %}
 
-{% block title %}{% cache 60*5, link, 'title' %}
+{% block title %}{% cache 60*5, 'wiki_title', link %}
     {% set wiki = wiki_for(link) %}
     {{ wiki.title }} - pygame wiki
 {% endcache %}{% endblock title %}
 
 {% block content %}
-  {% cache 60*5, link %}
+  {% cache 60*5, 'wiki_content', link %}
   {% set wiki = wiki_for(link) %}
-  <h1>{{ wiki.title }} &mdash; <a href="/wiki">wiki</a></h1>
+  {% set content_rendered, toc_rendered = wiki.content_toc %}
+  {% if toc_rendered %}
+    <div class="row">
+      <div class="col-sm-3 wiki-toc-nav">
+        {{ toc_rendered | safe }}
+      </div>
+      <div class="col-sm-9">
+  {% endif %}
 
-  <nav>
-    <a class="btn btn-default" href="{{ url_for('wiki.edit', link=link) }}" role="button">Edit</a>
-    <a class="btn btn-default" href="{{ url_for('wiki.source', link=link) }}" role="button">Source</a>
-    <a class="btn btn-default" href="{{ url_for('wiki.history', link=link) }}" role="button">History</a>
-    {#- <a class="btn btn-default" href="#" role="button">Links</a> -#}
-    {#- <a class="btn btn-default" href="#" role="button">Wiki Map</a> -#}
-    <a class="btn btn-default" href="{{ url_for('wiki.recent') }}" role="button">Recent Changes</a>
-  </nav>
+        <h1>{{ wiki.title }} &mdash; <a href="/wiki">wiki</a></h1>
 
-  <div>
-  {{ wiki.content_rendered | safe }}
-  </div>
+        <nav>
+          <a class="btn btn-default" href="{{ url_for('wiki.edit', link=link) }}" role="button">Edit</a>
+          <a class="btn btn-default" href="{{ url_for('wiki.source', link=link) }}" role="button">Source</a>
+          <a class="btn btn-default" href="{{ url_for('wiki.history', link=link) }}" role="button">History</a>
+          {#- <a class="btn btn-default" href="#" role="button">Links</a> -#}
+          {#- <a class="btn btn-default" href="#" role="button">Wiki Map</a> -#}
+          <a class="btn btn-default" href="{{ url_for('wiki.recent') }}" role="button">Recent Changes</a>
+        </nav>
+
+        <div class="wiki-content">
+          {{ content_rendered | safe }}
+        </div>
+
+  {% if toc_rendered %}
+      </div>
+    </div>
+  {% endif %}
 
   {% endcache %}
+{% endblock %}
+
+
+{#
+  Use a nicer side bar table of contents navigation component.
+  https://afeld.github.io/bootstrap-toc/
+#}
+
+
+
+{% block body_attribs %}{{ super() }}{% endblock body_attribs %}
+
+{%- block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.css">
+  <style>
+
+
+    .wiki-toc-nav .nav {
+      max-width: 170px;
+    }
+    @media(max-width:768px){
+      .wiki-toc-nav .nav {
+        max-width: inherit;
+      }
+    }
+    @media(min-width:1200px){
+      .wiki-toc-nav .nav {
+        max-width: 250px;
+      }
+    }
+    .wiki-toc-nav .nav>li>a{
+      display:block;padding:4px 20px;font-size:13px;font-weight:500;color:#767676
+    }
+    .wiki-toc-nav .nav>li>a:focus,.wiki-toc-nav .nav>li>a:hover{
+      padding-left:19px;color:#563d7c;text-decoration:none;background-color:transparent;border-left:1px solid #563d7c
+    }
+    .wiki-toc-nav .nav>.active:focus>a,.wiki-toc-nav .nav>.active:hover>a,.wiki-toc-nav .nav>.active>a{
+      padding-left:18px;font-weight:700;color:#563d7c;background-color:transparent;border-left:2px solid #563d7c
+    }
+    .wiki-toc-nav .nav .nav{
+      display:none;padding-bottom:10px
+    }
+    .wiki-toc-nav .nav .nav>li>a{
+      padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400
+    }
+    .wiki-toc-nav .nav .nav>li>a:focus,.wiki-toc-nav .nav .nav>li>a:hover{
+      padding-left:29px
+    }
+    .wiki-toc-nav .nav .nav>.active:focus>a,.wiki-toc-nav .nav .nav>.active:hover>a,.wiki-toc-nav .nav .nav>.active>a{
+      padding-left:28px;font-weight:500
+    }
+    .wiki-toc-nav .nav>.active>ul{
+      display:block
+    }
+
+
+  </style>
+{% endblock %}
+{%- block scripts %}
+  {{ super() }}
+  <script>
+/*
+ * jQuery throttle / debounce - v1.1 - 3/7/2010
+ * http://benalman.com/projects/jquery-throttle-debounce-plugin/
+ *
+ * Copyright (c) 2010 "Cowboy" Ben Alman
+ * Dual licensed under the MIT and GPL licenses.
+ * http://benalman.com/about/license/
+ */
+(function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
+
+    $(function() {
+      var $toc = $('#toc'),
+        tooThin = $(window).width() < 769,
+        limit = $toc.offset().top,
+        $window = $(window),
+        shouldAffix = function () {
+          var scrollTop = $window.scrollTop();
+          if (!tooThin && scrollTop >= limit) {
+            $toc.addClass('affix');
+          } else {
+            $toc.removeClass('affix');
+          }
+        };
+      $(window).scroll($.throttle(150, shouldAffix));
+      $(window).resize($.throttle(150, function() {
+        tooThin = $window.width() < 769;
+        shouldAffix();
+      }));
+    });
+  </script>
 {% endblock %}
