@@ -147,50 +147,97 @@ def _wiki_quote_callback(m, for_link_cb):
     return content if content else '{{' + f'{link}#{section}' + '}}'
 
 
+def table_of_contents(pq_content):
+
+    toc = pq('<nav id="toc" class="wiki-toc-nav"><ul class="nav"></ul></nav>')
+    toc_ul = toc.find('ul.nav')
+    found_a_heading = False
+    previous_heading = None
+
+    # for i, heading in enumerate(pq_content.find('h1,h2,h3,h4')):
+    for i, heading in enumerate(pq_content.find('h1,h2,h3,h44')):
+        title = pq(heading).text()
+        pq(heading).attr('id', title)
+        link = (pq('<a></a>')
+                .text(title)
+                .attr('href', '#' + title)
+                .addClass('li' + heading.tag)
+                .wrap('<li>'))
+
+        if heading.tag in ['h1', 'h2']:
+            previous_heading = heading
+            previous_heading_link = link
+            # link.addClass('active')
+            toc_ul.append(link)
+        elif heading.tag in ['h3', 'h4']:
+            if pq(previous_heading):
+                ul_nav = pq(previous_heading_link).find('ul.nav:first')
+                print (len(ul_nav))
+                if not len(ul_nav):
+                    ul_nav = pq('<ul class="nav"></ul>')
+                    pq(previous_heading_link).append(ul_nav)
+                ul_nav.append(link)
+            else:
+                toc_ul.append(link)
+        found_a_heading = True
+    if found_a_heading:
+        return toc
+
 def _wiki_section(content):
     """ Find all the sections (header tags), and make a table of contents.
     """
     if not content:
         return content
+
     pq_content = pq(content)
-    toc = pq('<nav>Table of Contents<ul class="nav nav-pills-horizontal"></ul></nav>')
-    heading_tags = [f'h{i}' for i in range(1, 5)]
-    found_a_heading = False
-    for heading_tag in heading_tags:
-        for heading in pq_content.find(heading_tag):
-            title = pq(heading).text()
-            pq(heading).attr('id', title)
-            link = pq('<a></a>').text(title).attr('href', '#' + title).wrap('<li class="presentation">')
-            toc.append(link)
-            found_a_heading = True
-
-    if found_a_heading:
+    toc = table_of_contents(pq_content)
+    if toc is not None:
         pq_content.prepend(toc)
-
     return pq_content
 
 
-def render(content, for_link_cb=None):
+def render_pq(content, for_link_cb=None, toc_separate=False):
     """ render the content, which is wiki markup.
 
     :param for_link_cb: takes a link and returns the wiki content for it.
     """
     if content is None or content is '':
-        return ''
+        if toc_separate:
+            return pq(None), pq(None)
+        return pq(None)
 
     content = _wiki_quote(content, for_link_cb)
     content = _wiki_code(content)
     content = _wiki_href(content)
     content = _wiki_img(content)
     content = _wiki_link(content)
-    pq_content = _wiki_section(content)
+
+    pq_content = pq(content)
 
     for anchor in pq_content.find('a'):
         pq(anchor).attr('rel', 'nofollow')
     for table in pq_content.find('table'):
         pq(table).addClass('table').wrap('<div class="table-responsive">')
+    toc = table_of_contents(pq_content)
 
-    return pq_content.outerHtml()
+    if toc_separate:
+        return pq_content, toc
+
+    if toc is not None:
+        pq_content.prepend(toc)
+    return pq_content
+
+def render(content, for_link_cb=None):
+    """ render the content, which is wiki markup.
+
+    :param for_link_cb: takes a link and returns the wiki content for it.
+    """
+    # if content is None or content is '':
+    #     return ''
+    if content is None or content is '':
+        return ''
+    return render_pq(content, for_link_cb).outerHtml()
+
 
 
 if __name__ == "__main__":
