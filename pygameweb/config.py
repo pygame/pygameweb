@@ -34,6 +34,7 @@ class Config(object):
     SECRET_KEY = os.getenv('APP_SECRET_KEY')
     WWW = os.getenv('APP_WWW')
     TESTING = False
+    ADMIN = os.getenv('APP_ADMIN', False)
 
     # http://flask-security-fork.readthedocs.io/en/latest/configuration.html
     SECURITY_PASSWORD_HASH = 'bcrypt'
