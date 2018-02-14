@@ -24,6 +24,16 @@ def create_app(object_name='pygameweb.config.Config',
     db.init(app, engine, session_factory)
     Mail(app)
 
+    use_https_urls = not app.config['DEBUG']
+    if use_https_urls:
+        class ForceHttpsUrlFor(object):
+            def __init__(self, app):
+                self.app = app
+            def __call__(self, environ, start_response):
+                environ['wsgi.url_scheme'] = 'https'
+                return self.app(environ, start_response)
+        app.wsgi_app = ForceHttpsUrlFor(app.wsgi_app)
+
     # https://flask-debugtoolbar.readthedocs.io/en/latest/
     if app.config['DEBUG'] and not app.config['TESTING']:
         app.config['DEBUG_TB_PROFILER_ENABLED'] = True
