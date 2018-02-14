@@ -1,5 +1,5 @@
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "bootstrap/utils.html" as util %}
+{% import "bootstrap/wtf.html" as wtf -%}
+{% import "bootstrap/utils.html" as util -%}
 {% block doc -%}
 <!DOCTYPE html>
 <html{% block html_attribs %}{% endblock html_attribs %}>
@@ -9,29 +9,31 @@
     <title>{% block title %}{{title|default}}{% endblock title %}</title>
 
     {%- block metas %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {%- endblock metas %}
-
-    {%- block styles %}
-    <!-- Bootstrap -->
-    <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
-    <style>
-    .dont-break-out {
-      overflow-wrap: break-word;
-      word-wrap: break-word;
-      -ms-word-break: break-all;
-      word-break: break-all;
-      word-break: break-word;
-      -ms-hyphens: auto;
-      -moz-hyphens: auto;
-      -webkit-hyphens: auto;
-      hyphens: auto;
-    }
-    </style>
-
-
-
+    {% block styles -%}
+      <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+      <style>
+      .dont-break-out {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+      }
+      </style>
     {%- endblock styles %}
+
+    {%- block feeds -%}
+      <link rel="alternate" type="application/atom+xml" title="pygame.org news (ATOM feed)" href="http://www.pygame.org/feed/news.php?format=ATOM"/>
+      <link rel="alternate" type="application/rss+xml" title="pygame.org news (RSS 2.0 feed)" href="http://www.pygame.org/feed/news.php?format=RSS2.0" />
+    {%- endblock feeds %}
+
+
     {%- endblock head %}
   </head>
   <body{% block body_attribs %}{% endblock body_attribs %}>
@@ -39,60 +41,52 @@
     <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
 
     {% block body -%}
-    {% block navbar %}
-    {% if nav %}
-      {% cache 60*5 %}
-        {{ nav.mynavbar.render() }}
-      {% endcache %}
-    {% endif %}
-    {%- endblock navbar %}
+      {% block navbar %}
+      {% if nav %}
+        {% cache 60*5 %}
+          {{ nav.mynavbar.render() }}
+        {% endcache %}
+      {% endif %}
+      {%- endblock navbar %}
 
-    <div class="container" id="content">
-      <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-12 col-sm-9">
-        {{util.flashed_messages(dismissible=True, container=False)}}
+      <div class="container" id="content">
+        <div class="row row-offcanvas row-offcanvas-right">
+          <div class="col-xs-12 col-sm-9">
+          {{util.flashed_messages(dismissible=True, container=False)}}
 
-        {% block content -%}
-        {%- endblock content %}
-      </div><!--/.col-xs-12.col-sm-9-->
-        <div class="col-xs-12 col-sm-3 sidebar-offcanvas" id="sidebar">
-        {% block sidebar -%}
-
-          {% if sidebar %}
-            {% if current_user and url_for_security %}
-            <div class="list-group">
-
-              {% if current_user.is_authenticated %}
-                <a class="list-group-item" href="{{ url_for_security('logout') }}">Log Out</a>
-                <a class="list-group-item" href="{{ url_for('project.new_project') }}">Add a new project</a>
-                <a class="list-group-item" href="{{ url_for('project.projects') }}">Your projects</a>
-
-              {% else %}
-                <a class="list-group-item" href="{{ url_for_security('register') }}">New members signup</a>
-                <a class="list-group-item" href="{{ url_for_security('login') }}">Log In</a>
+          {% block content -%}
+          {%- endblock content %}
+        </div><!--/.col-xs-12.col-sm-9-->
+          <div class="col-xs-12 col-sm-3 sidebar-offcanvas" id="sidebar">
+          {% block sidebar -%}
+            {% if sidebar %}
+              {% if current_user and url_for_security %}
+              <div class="list-group">
+                {% if current_user.is_authenticated %}
+                  <a class="list-group-item" href="{{ url_for_security('logout') }}">Log Out</a>
+                  <a class="list-group-item" href="{{ url_for('project.new_project') }}">Add a new project</a>
+                  <a class="list-group-item" href="{{ url_for('project.projects') }}">Your projects</a>
+                {% else %}
+                  <a class="list-group-item" href="{{ url_for_security('register') }}">New members signup</a>
+                  <a class="list-group-item" href="{{ url_for_security('login') }}">Log In</a>
+                {% endif %}
+              </div>
               {% endif %}
-            </div>
+              {% include 'recent-releases.html' %}
             {% endif %}
+          {%- endblock sidebar %}
+          </div><!--/.sidebar-offcanvas-->
+        </div><!--/row-->
+        <hr>
+        <footer>
+          <p></p>
+        </footer>
+      </div><!--/.container-->
 
-            {% include 'recent-releases.html' %}
-
-          {% endif %}
-
-        {%- endblock sidebar %}
-        </div><!--/.sidebar-offcanvas-->
-      </div><!--/row-->
-
-      <hr>
-
-      <footer>
-    <p></p>
-      </footer>
-    </div><!--/.container-->
-
-    {% block scripts %}
-    <script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
-    <script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
-    {%- endblock scripts %}
+      {% block scripts %}
+      <script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
+      <script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
+      {%- endblock scripts %}
     {%- endblock body %}
   </body>
 {%- endblock html %}
