@@ -65,6 +65,26 @@ def test_wiki_code():
     assert should_be in code, 'because code should be annotated'
     assert '<html' not in code
 
+
+def test_wiki_code_pre():
+    """For our tinymce rich text editor, we need to wrap code
+       tags inside of pre tags. However, rendering them looks
+       kind of silly.
+    """
+    from pygameweb.wiki.wiki import _wiki_pre_code_clean, _wiki_code
+    from pyquery import PyQuery as pq
+    code = _wiki_code('<div><pre><code class="python">def my_code(x): return x + 1</code></pre></div>')
+    pq_content = pq(code)
+    pq_content = _wiki_pre_code_clean(pq_content)
+    assert pq_content.outerHtml().startswith('<div><div class="highlight"')
+
+    code = _wiki_code('<pre><code class="python">def my_code(x): return x + 1</code></pre>')
+    pq_content = pq(code)
+    pq_content = _wiki_pre_code_clean(pq_content)
+    assert pq_content.outerHtml().startswith('<div class="highlight"')
+
+
+
 def test_wiki_link():
     """turns the markup using [] into a html anchor tag.
     """
