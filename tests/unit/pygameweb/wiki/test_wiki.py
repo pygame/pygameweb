@@ -52,13 +52,18 @@ def test_wiki_href():
 
 def test_wiki_code():
     from pygameweb.wiki.wiki import _wiki_code
-    code = _wiki_code('<code class="python">my_code()</code>')
-    should_be = ('<div class="highlight"><pre><span></span>'
-                 '<span class="n">my_code</span><span class="p">()</span>'
-                 '\n</pre></div>\n')
-    assert code.endswith(should_be), 'because code should be annotated'
-    assert '<style>' in code, 'because there should be css'
+    code = _wiki_code('<code class="python">def my_code(x): return x + 1</code>')
 
+    should_be = (
+        '<pre style="line-height: 125%"><span></span>'
+        '<span style="color: #008000; font-weight: bold">def</span> '
+        '<span style="color: #0000FF">my_code</span>(x): '
+        '<span style="color: #008000; font-weight: bold">return</span> '
+        'x <span style="color: #666666">+</span> '
+        '<span style="color: #666666">1</span>\n</pre>'
+    )
+    assert should_be in code, 'because code should be annotated'
+    assert '<html' not in code
 
 def test_wiki_link():
     """turns the markup using [] into a html anchor tag.
