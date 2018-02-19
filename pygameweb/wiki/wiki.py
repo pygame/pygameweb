@@ -91,12 +91,24 @@ def _wiki_code_callback(matchobj):
     content = re.sub(r'^\s*', '', content, re.S)
     content = re.sub(r'\s*$', '', content, re.S)
     # code_class = m[0]
-    formatter = HtmlFormatter()
-    styles = formatter.get_style_defs('.highlight')
+    formatter = HtmlFormatter(noclasses=True)
     code = highlight(content, PythonLexer(), formatter)
+    return code
 
-    return f'<style>{styles}</style>{code}'
+def _wiki_pre_code_clean(pq_content):
+    """ remove the double pre when <pre><code></code></pre>.
 
+    For our tinymce rich text editor, we need to wrap code
+    tags inside of pre tags. However, rendering them looks
+    of silly because there is a pre wrapped in a pre.
+    """
+    if len(pq_content) == 1 and pq_content[0].tag == 'pre':
+        if len(pq_content.find('div.highlight')):
+            return pq(pq_content.find('div.highlight').outerHtml())
+
+    for div in pq_content.find('pre div.highlight'):
+        pq(div).parent().replace_with(pq(div))
+    return pq_content
 
 def _wiki_link(content):
     """
@@ -195,7 +207,6 @@ def _wiki_section(content):
         pq_content.prepend(toc)
     return pq_content
 
-
 def render_pq(content, for_link_cb=None, toc_separate=False):
     """ render the content, which is wiki markup.
 
@@ -213,6 +224,7 @@ def render_pq(content, for_link_cb=None, toc_separate=False):
     content = _wiki_link(content)
 
     pq_content = pq(content)
+    pq_content = _wiki_pre_code_clean(pq_content)
 
     for anchor in pq_content.find('a'):
         pq(anchor).attr('rel', 'nofollow')
