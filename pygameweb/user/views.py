@@ -142,8 +142,8 @@ def add_user_blueprint(app):
     monkey_patch_email()
 
     # https://pythonhosted.org/Flask-Security-Fork/customizing.html
-    from flask_security.forms import RegisterForm, ConfirmRegisterForm
-    from wtforms.fields import StringField
+    from flask_security.forms import RegisterForm, ConfirmRegisterForm, LoginForm
+    from wtforms.fields import StringField, BooleanField
     from wtforms.validators import Required, Regexp, Length
 
     # https://flask-security-fork.readthedocs.io/en/latest/customizing.html#views
@@ -175,6 +175,10 @@ def add_user_blueprint(app):
         unique_user_name,
     ]
 
+
+    class ExtendedLoginForm(LoginForm):
+        remember = BooleanField('Remember Me', default = True)
+
     class ExtendedRegisterForm(RegisterForm):
         name = StringField('Username', username_validators)
         title = StringField('Title (eg. Real name)', [Required()])
@@ -188,8 +192,9 @@ def add_user_blueprint(app):
 
     security = Security(app,
                         app.user_datastore,
-                        register_form=ExtendedRegisterForm,
-                        confirm_register_form=ExtendedConfirmRegisterForm)
+                        confirm_register_form=ExtendedConfirmRegisterForm,
+                        login_form=ExtendedLoginForm,
+                        register_form=ExtendedRegisterForm)
 
     from pygameweb.cache import limiter
     limiter.limit("4/hour")(security.app.blueprints['security'])

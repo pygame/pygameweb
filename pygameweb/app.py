@@ -24,16 +24,6 @@ def create_app(object_name='pygameweb.config.Config',
     db.init(app, engine, session_factory)
     Mail(app)
 
-    use_https_urls = not app.config['DEBUG']
-    if use_https_urls:
-        class ForceHttpsUrlFor(object):
-            def __init__(self, app):
-                self.app = app
-            def __call__(self, environ, start_response):
-                environ['wsgi.url_scheme'] = 'https'
-                return self.app(environ, start_response)
-        app.wsgi_app = ForceHttpsUrlFor(app.wsgi_app)
-
     # https://flask-debugtoolbar.readthedocs.io/en/latest/
     if app.config['DEBUG'] and not app.config['TESTING']:
         app.config['DEBUG_TB_PROFILER_ENABLED'] = True
@@ -53,6 +43,29 @@ def create_app(object_name='pygameweb.config.Config',
 
     return app
 
+def upgrade_https_urls(app):
+
+    # use https with url_for when not in debug mode.
+    use_https_urls = not app.config['DEBUG']
+    if use_https_urls:
+        class ForceHttpsUrlFor(object):
+            def __init__(self, app):
+                self.app = app
+            def __call__(self, environ, start_response):
+                environ['wsgi.url_scheme'] = 'https'
+                return self.app(environ, start_response)
+        app.wsgi_app = ForceHttpsUrlFor(app.wsgi_app)
+
+    # make sure https://www. is used for login/logout/register links.
+    from flask_security.utils import url_for_security
+    def _url_for_security(endpoint, **values):
+        return (url_for_security(endpoint, **values)
+                .replace('https://pygame.org', 'https://www.pygame.org'))
+
+    @app.context_processor
+    def inject_url_for_image():
+        return {'url_for_security': _url_for_security}
+
 
 def add_views_front(app):
     """ Adds all the front end views to the app.
@@ -62,6 +75,7 @@ def add_views_front(app):
     # add_user_blueprint does some monkey patching, so it needs to be first.
     from pygameweb.user.views import add_user_blueprint
     add_user_blueprint(app)
+    upgrade_https_urls(app)
 
     from pygameweb.wiki.views import add_wiki_blueprint
     from pygameweb.project.views import add_project_blueprint
