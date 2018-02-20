@@ -10,7 +10,7 @@ from flask_sqlalchemy_session import current_session
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
 
-from pygameweb.project.models import Project, Release, Tags, top_tags
+from pygameweb.project.models import Project, Release, Tags, top_tags, recent_releases
 from pygameweb.project.forms import (FirstReleaseForm,
                                      ReleaseForm,
                                      ProjectForm,
@@ -470,29 +470,10 @@ def delete_release(project_id, release_id):
     raise NotImplementedError()
 
 
-def recent_releases():
-    return (current_session.query(User, Project, Release)
-            .filter(Release.project_id == Project.id)
-            .filter(User.id == Project.users_id)
-            .filter(User.disabled == 0)
-            .order_by(Release.datetimeon.desc())
-            .limit(20)
-            .all())
-
-
-def recent_releases():
-    from sqlalchemy import func
-
-    return (current_session.query(User, Project, Release)
-            .join(Release)
-            .asdf
-            .group_by(func.max(Release.id))
-            .filter(Release.project_id == Project.id)
-            .filter(User.id == Project.users_id)
-            .filter(User.disabled == 0)
-            .order_by(Release.datetimeon.desc())
-            .limit(20)
-            .all())
+def feed_recent_releases():
+    """ of projects to the rss and atom robots.
+    """
+    return recent_releases(current_session).limit(20).all()
 
 
 @project_blueprint.route('/project/feed/atom', methods=['GET'])
@@ -500,7 +481,7 @@ def atom():
     """ of recent releases
     """
     resp = render_template('project/atom.xml',
-                           recent_releases=recent_releases())
+                           recent_releases=feed_recent_releases())
     response = make_response(resp)
     content_type = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
     response.headers['Content-Type'] = content_type
@@ -513,7 +494,7 @@ def rss():
     """
     build_date = formatdate(datetime.datetime.now().timestamp())
     resp = render_template('project/rss.xml',
-                           recent_releases=recent_releases(),
+                           recent_releases=feed_recent_releases(),
                            build_date=build_date)
     response = make_response(resp)
     content_type = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
