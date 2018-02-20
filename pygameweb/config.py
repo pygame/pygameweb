@@ -27,36 +27,38 @@ def truthy_config(key, default=False):
 class Config(object):
     """App config.
     """
-    SQLALCHEMY_DATABASE_URI = os.environ.get('APP_DATABASE_URL')
-    PORT = int(os.getenv('APP_PORT', '5000'))
-    HOST = os.getenv('APP_HOST', 'localhost')
-    DEBUG = truthy_config('APP_DEBUG')
-    SECRET_KEY = os.getenv('APP_SECRET_KEY')
-    WWW = os.getenv('APP_WWW')
+    CONFIG_PREFIX = 'APP_'
+    SQLALCHEMY_DATABASE_URI = os.environ.get(CONFIG_PREFIX + 'DATABASE_URL')
+    PORT = int(os.getenv(CONFIG_PREFIX + 'PORT', '5000'))
+    HOST = os.getenv(CONFIG_PREFIX + 'HOST', 'localhost')
+    DEBUG = truthy_config(CONFIG_PREFIX + 'DEBUG')
+    SECRET_KEY = os.getenv(CONFIG_PREFIX + 'SECRET_KEY')
+    WWW = os.getenv(CONFIG_PREFIX + 'WWW')
     TESTING = False
-    ADMIN = os.getenv('APP_ADMIN', False)
+    ADMIN = os.getenv(CONFIG_PREFIX + 'ADMIN', False)
 
     # http://flask-security-fork.readthedocs.io/en/latest/configuration.html
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    SECURITY_PASSWORD_SALT = os.getenv('APP_SECRET_KEY')
+    SECURITY_PASSWORD_SALT = os.getenv(CONFIG_PREFIX + 'SECRET_KEY')
     SECURITY_CONFIRMABLE = True
     SECURITY_REGISTERABLE = True
     SECURITY_RECOVERABLE = True
     SECURITY_TRACKABLE = True
     SECURITY_CHANGEABLE = True
-    SECURITY_EMAIL_SENDER = os.getenv('APP_SECURITY_EMAIL_SENDER', '')
+    SECURITY_EMAIL_SENDER = os.getenv(CONFIG_PREFIX + 'SECURITY_EMAIL_SENDER', '')
+    SECURITY_DEFAULT_REMEMBER_ME = os.getenv(CONFIG_PREFIX + 'SECURITY_DEFAULT_REMEMBER_ME', True)
 
-    MAIL_SERVER = os.getenv('APP_MAIL_SERVER', '')
-    MAIL_PORT = int(os.getenv('APP_MAIL_PORT', 465))
-    MAIL_USE_SSL = truthy_config('APP_MAIL_USE_SSL', True)
+    MAIL_SERVER = os.getenv(CONFIG_PREFIX + 'MAIL_SERVER', '')
+    MAIL_PORT = int(os.getenv(CONFIG_PREFIX + 'MAIL_PORT', 465))
+    MAIL_USE_SSL = truthy_config(CONFIG_PREFIX + 'MAIL_USE_SSL', True)
 
-    MAIL_USERNAME = os.getenv('APP_MAIL_USERNAME', '')
-    MAIL_PASSWORD = os.getenv('APP_MAIL_PASSWORD', '')
-    MAIL_SUPPRESS_SEND = truthy_config('APP_DEBUG')
-    MAIL_DEBUG = truthy_config('APP_DEBUG')
+    MAIL_USERNAME = os.getenv(CONFIG_PREFIX + 'MAIL_USERNAME', '')
+    MAIL_PASSWORD = os.getenv(CONFIG_PREFIX + 'MAIL_PASSWORD', '')
+    MAIL_SUPPRESS_SEND = truthy_config(CONFIG_PREFIX + 'DEBUG')
+    MAIL_DEBUG = truthy_config(CONFIG_PREFIX + 'DEBUG')
 
     # CACHE_TYPE = 'simple'
-    CACHE_TYPE = 'null' if truthy_config('APP_DEBUG') else 'simple'
+    CACHE_TYPE = 'null' if truthy_config(CONFIG_PREFIX + 'DEBUG') else 'simple'
     """ flask_caching is off in debug mode.
     """
 
@@ -66,11 +68,11 @@ class Config(object):
         CACHE_NO_NULL_WARNING = True
 
     RATELIMIT_GLOBAL = ('5000 per day, 5000 per hour'
-                        if truthy_config('APP_DEBUG')
+                        if truthy_config(CONFIG_PREFIX + 'DEBUG')
                         else '200 per day, 50 per hour')
 
-    STACK_KEY = os.getenv('APP_STACK_KEY', '')
+    STACK_KEY = os.getenv(CONFIG_PREFIX + 'STACK_KEY', '')
 
-    COMMENT_MODEL = os.getenv('APP_COMMENT_MODEL', 'comment_spam_model.pkl')
+    COMMENT_MODEL = os.getenv(CONFIG_PREFIX + 'COMMENT_MODEL', 'comment_spam_model.pkl')
     """For the comment spam classifier model file.
     """
