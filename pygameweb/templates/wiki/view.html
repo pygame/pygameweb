@@ -52,10 +52,7 @@
 
 {%- block styles %}
   {{ super() }}
-  <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.css">
   <style>
-
-
     .wiki-toc-nav .nav {
       max-width: 170px;
     }
@@ -79,7 +76,7 @@
       padding-left:18px;font-weight:700;color:#563d7c;background-color:transparent;border-left:2px solid #563d7c
     }
     .wiki-toc-nav .nav .nav{
-      display:none;padding-bottom:10px
+      padding-bottom:10px
     }
     .wiki-toc-nav .nav .nav>li>a{
       padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400
@@ -93,9 +90,8 @@
     .wiki-toc-nav .nav>.active>ul{
       display:block
     }
-
-
   </style>
+
 {% endblock %}
 {%- block scripts %}
   {{ super() }}
