@@ -5,7 +5,7 @@ from pathlib import Path
 from email.utils import formatdate
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
-                        String, Text, inspect)
+                        String, Text, inspect, func, and_)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import count
 
@@ -113,6 +113,26 @@ class Projectcomment(Base):
 
     project = relationship(Project, backref='comments')
     user = relationship(User, backref='projectcomments')
+
+
+def recent_releases(session):
+    """
+    """
+    releases = session.query(
+        Release.project_id,
+        func.max(Release.datetimeon).label('max_datetimeon'),
+    ).group_by(Release.project_id).subquery('releases')
+
+    query = (session
+      .query(User, Project, Release)
+      .filter(and_(Project.id == Release.project_id,
+              Project.id == releases.c.project_id,
+              Release.datetimeon == releases.c.max_datetimeon))
+      .filter(User.id == Project.users_id)
+      .filter(User.disabled == 0)
+      .order_by(Release.datetimeon.desc())
+    )
+    return query
 
 
 class Release(Base):

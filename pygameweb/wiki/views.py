@@ -161,6 +161,8 @@ def recent():
     from itertools import groupby
 
     def grouper(item):
+        if not item.datetimeon:
+            return (None, None, None)
         return item.datetimeon.year, item.datetimeon.month, item.datetimeon.day
 
     day_groups = []

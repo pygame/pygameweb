@@ -480,6 +480,21 @@ def recent_releases():
             .all())
 
 
+def recent_releases():
+    from sqlalchemy import func
+
+    return (current_session.query(User, Project, Release)
+            .join(Release)
+            .asdf
+            .group_by(func.max(Release.id))
+            .filter(Release.project_id == Project.id)
+            .filter(User.id == Project.users_id)
+            .filter(User.disabled == 0)
+            .order_by(Release.datetimeon.desc())
+            .limit(20)
+            .all())
+
+
 @project_blueprint.route('/project/feed/atom', methods=['GET'])
 def atom():
     """ of recent releases
