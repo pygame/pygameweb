@@ -26,7 +26,7 @@ def update_docs():
     assert update_file.exists()
 
     run(['touch', str(update_file)], cwd=cwd)
-    run(['git pull', 'pull'], cwd=cwd)
+    run(['git', 'pull'], cwd=cwd)
     run([str(venv_python.absolute()), 'makeref.py'], cwd=cwd)
     run(['rsync', '-va', '--delete', 'docs/',
          str(docs_path.absolute())], cwd=cwd)
