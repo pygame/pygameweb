@@ -6,6 +6,23 @@
     {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
 {% endcache %}{% endblock title %}
 
+{%- block metas %}
+  {% cache 60*5, 'twitter_card', project_id | string(), release_id | string() if release_id else '' %}
+    {{ super() }}
+    {% set project = project_for(project_id) -%}
+    {% set release = release_for(release_id) if release_id else None -%}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@pygame_org" />
+      <meta name="twitter:creator" content="@pygame_org" />
+      <meta property="og:url" content="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}" />
+      <meta property="og:title" content="{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}" />
+      <meta property="og:description" content="{{ project.summary_html_text }}" />
+    {% set thumb_img = project.image_thumb(400,400) -%}
+    {% if thumb_img -%}
+      <meta property="og:image" content="{{ thumb_img }}" />
+    {% endif %}
+  {% endcache %}
+{%- endblock metas %}
 
 {% block content %}
   {% cache 60*5, project_id | string(), release_id | string() if release_id else '' %}

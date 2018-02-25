@@ -9,6 +9,8 @@ from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import count
 
+from pyquery import PyQuery as pq
+
 from pygameweb.models import Base
 from pygameweb.user.models import User
 from pygameweb.config import Config
@@ -38,6 +40,10 @@ class Project(Base):
     @property
     def summary_html(self):
         return sanitize_html(self.summary)
+
+    @property
+    def summary_html_text(self):
+        return pq(self.summary_html).text()
 
     @property
     def description_html(self):
