@@ -9,10 +9,10 @@
     <title>{% block title %}{{title|default}}{% endblock title %}</title>
 
     {%- block metas %}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {%- endblock metas %}
     {% block styles -%}
-      <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet">
+      <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet" />
       <style>
       .dont-break-out {
         overflow-wrap: break-word;

@@ -19,7 +19,8 @@
       <meta property="og:description" content="{{ project.summary_html_text }}" />
     {% set thumb_img = project.image_thumb(400,400) -%}
     {% if thumb_img -%}
-      <meta property="og:image" content="{{ thumb_img }}" />
+      {% set base_url = url_for('news.index', _external=True).replace('/news', '') -%}
+      <meta property="og:image" content="{{ base_url }}/{{ thumb_img }}" />
     {% endif %}
   {% endcache %}
 {%- endblock metas %}
