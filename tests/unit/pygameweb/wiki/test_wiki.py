@@ -112,3 +112,24 @@ def test_wiki_section():
     res = _wiki_section(content).outerHtml()
     assert '<h1 id="Hello there matey">' in res, 'because headers should have an id'
     assert '<h2 id="Another section, another day">' in res
+
+
+def test_wiki_section_h3():
+    """What if there are no h1/h2 headers?
+    """
+    from pygameweb.wiki.wiki import _wiki_section
+    content = """
+    <h3>Hello there matey</h3>
+    Pleasure in other peoples leasure.
+
+    <h3>Another section, another day</h3>
+    Pleasure in other peoples leasure.
+
+    <h4>Three levels deep</h4>
+    On top of Prenzlauer Berg Berg.
+
+    <h3>And finally the last one</h3>
+    """
+    res = _wiki_section(content).outerHtml()
+    assert '<h3 id="Hello there matey">' in res, 'because headers should have an id'
+    assert '<h3 id="Another section, another day">' in res

@@ -167,7 +167,7 @@ def table_of_contents(pq_content):
     previous_heading = None
 
     # for i, heading in enumerate(pq_content.find('h1,h2,h3,h4')):
-    for i, heading in enumerate(pq_content.find('h1,h2,h3,h44')):
+    for i, heading in enumerate(pq_content.find('h1,h2,h3,h4')):
         title = pq(heading).text()
         pq(heading).attr('id', title)
         link = (pq('<a></a>')
@@ -182,9 +182,8 @@ def table_of_contents(pq_content):
             # link.addClass('active')
             toc_ul.append(link)
         elif heading.tag in ['h3', 'h4']:
-            if pq(previous_heading):
+            if previous_heading is not None and pq(previous_heading):
                 ul_nav = pq(previous_heading_link).find('ul.nav:first')
-                print (len(ul_nav))
                 if not len(ul_nav):
                     ul_nav = pq('<ul class="nav"></ul>')
                     pq(previous_heading_link).append(ul_nav)
