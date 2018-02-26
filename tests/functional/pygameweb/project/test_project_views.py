@@ -232,7 +232,7 @@ def test_project_index(project_client, session, user, project, project2):
     assert b'og:url' in resp.data
     assert b'og:title' in resp.data
     assert b'og:description' in resp.data
-    assert b'og:image' in resp.data
+    # assert b'og:image' in resp.data
 
     resp = project_client.get('/project/66/')
     assert resp.status_code == 404, 'when the project is not there'
