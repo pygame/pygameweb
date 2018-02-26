@@ -14,14 +14,19 @@
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@pygame_org" />
       <meta name="twitter:creator" content="@pygame_org" />
-      <meta property="og:url" content="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}" />
+      {% if release -%}
+        <meta property="og:url" content="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}" />
+      {% else %}
+        <meta property="og:url" content="{{ url_for('project.view', project_id=project.id) }}" />
+      {% endif %}
       <meta property="og:title" content="{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}" />
       <meta property="og:description" content="{{ project.summary_html_text }}" />
     {% set thumb_img = project.image_thumb(400,400) -%}
     {% if thumb_img -%}
-      {% set base_url = url_for('news.index', _external=True).replace('/news', '') -%}
-      <meta property="og:image" content="{{ base_url }}/{{ thumb_img }}" />
+      {% set base_url = url_for('static', filename='', _external=True).replace('/static/', '') -%}
+      <meta property="og:image" content="{{ base_url }}{{ thumb_img }}" />
     {% endif %}
+
   {% endcache %}
 {%- endblock metas %}
 

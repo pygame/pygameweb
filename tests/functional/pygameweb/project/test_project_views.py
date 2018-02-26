@@ -226,10 +226,21 @@ def test_project_index(project_client, session, user, project, project2):
     assert resp.status_code == 200, 'because this url works too.'
     assert b'A release title.' in resp.data
 
+    assert b'twitter:card' in resp.data
+    assert b'twitter:site' in resp.data
+    assert b'twitter:creator' in resp.data
+    assert b'og:url' in resp.data
+    assert b'og:title' in resp.data
+    assert b'og:description' in resp.data
+    assert b'og:image' in resp.data
+
     resp = project_client.get('/project/66/')
     assert resp.status_code == 404, 'when the project is not there'
     resp = project_client.get('/project/1/66')
     assert resp.status_code == 404, 'when the release is not there either'
+
+
+
 
 
 def test_tags(project_client, session, project, project2):
