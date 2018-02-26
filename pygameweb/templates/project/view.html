@@ -15,9 +15,9 @@
       <meta name="twitter:site" content="@pygame_org" />
       <meta name="twitter:creator" content="@pygame_org" />
       {% if release -%}
-        <meta property="og:url" content="{{ url_for('project.release', project_id=project.id, release_id=release.id) }}" />
+        <meta property="og:url" content="{{ url_for('project.release', project_id=project.id, release_id=release.id, _external=True) }}" />
       {% else %}
-        <meta property="og:url" content="{{ url_for('project.view', project_id=project.id) }}" />
+        <meta property="og:url" content="{{ url_for('project.view', project_id=project.id, _external=True) }}" />
       {% endif %}
       <meta property="og:title" content="{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}" />
       <meta property="og:description" content="{{ project.summary_html_text }}" />
