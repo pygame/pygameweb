@@ -169,12 +169,20 @@ def table_of_contents(pq_content):
     # for i, heading in enumerate(pq_content.find('h1,h2,h3,h4')):
     for i, heading in enumerate(pq_content.find('h1,h2,h3,h4')):
         title = pq(heading).text()
-        pq(heading).attr('id', title)
+        header_link = (pq('<a title="Permalink to this definition">¶</a>')
+            .addClass('header_link')
+            .attr('href', '#' + title)
+        )
+        (pq(heading)
+            .attr('id', title)
+            .addClass('wiki-heading')
+            .append(header_link))
+
         link = (pq('<a></a>')
-                .text(title)
-                .attr('href', '#' + title)
-                .addClass('li' + heading.tag)
-                .wrap('<li>'))
+            .text(title)
+            .attr('href', '#' + title)
+            .addClass('li' + heading.tag)
+            .wrap('<li>'))
 
         if heading.tag in ['h1', 'h2']:
             previous_heading = heading
