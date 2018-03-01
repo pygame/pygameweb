@@ -110,8 +110,8 @@ def test_wiki_section():
 
     """
     res = _wiki_section(content).outerHtml()
-    assert '<h1 id="Hello there matey">' in res, 'because headers should have an id'
-    assert '<h2 id="Another section, another day">' in res
+    assert '<h1 id="Hello there matey"' in res, 'because headers should have an id'
+    assert '<h2 id="Another section, another day"' in res
 
 
 def test_wiki_section_h3():
@@ -131,5 +131,5 @@ def test_wiki_section_h3():
     <h3>And finally the last one</h3>
     """
     res = _wiki_section(content).outerHtml()
-    assert '<h3 id="Hello there matey">' in res, 'because headers should have an id'
-    assert '<h3 id="Another section, another day">' in res
+    assert '<h3 id="Hello there matey"' in res, 'because headers should have an id'
+    assert '<h3 id="Another section, another day"' in res
