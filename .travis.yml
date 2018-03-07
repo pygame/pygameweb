@@ -1,33 +1,53 @@
-
-# sudo required currently for postgresql 9.6
 dist: trusty
 sudo: required
 services:
-  - postgresql
+- postgresql
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y yui-compressor node optipng
+- sudo apt-get -qq update
+- sudo apt-get install -y yui-compressor node optipng
 before_script:
-  - cp example.env .env
-  - psql -c 'create database pygame_test;' -U postgres
-  - psql pygame_test -c "CREATE USER pygame_test WITH PASSWORD 'password';" -U postgres
-  - psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;" -U postgres
+- cp example.env .env
+- psql -c 'create database pygame_test;' -U postgres
+- psql pygame_test -c "CREATE USER pygame_test WITH PASSWORD 'password';" -U postgres
+- psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;"
+  -U postgres
 addons:
-  postgresql: "9.6"
+  postgresql: '9.6'
 test:
   adapter: postgresql
   database: pygame_test
-
 language: python
 cache: pip
 python:
-  - "3.6"
+- '3.6'
 install:
 - pip install -r requirements.dev.txt
 - pip install coveralls
 - pip install -e .
-
 script: APP_SECRET_KEY=a pytest
-
 after_success:
-    - coveralls
+- coveralls
+before_deploy:
+- pwd
+- ls -la
+- git checkout $TRAVIS_BRANCH
+- pygameweb_release_version_correct
+deploy:
+  - provider: pypi
+    user: illume
+    distributions: sdist bdist_wheel
+    on:
+      branch:
+      - master
+      - mastertest
+    password:
+      secure: gzDc/dK0FJnLtcYBDXRu4PiIc+DvTBLKRbClBlSVayCiH0k+TzjatjwRJm9EPK0ctR3QX4esBrlxlLHVVIhjt1fWe/UcN+JEmR0ICPaPmcqR+17j+tPBX3PyrV8aULWe/PG9MgTKEZw9S8ysGPThlcXlcO0h65ma5/a58NZIBEKyamjXgrZmuipfYlMRjyk54c53gZGI+jKn3R3mgk+pDcjI3vL5pkA6QU69ucBhg/iLLoicpiTkUTfewV6nNcUKj88j162wgXshQ2Rnl7prvekDOaYeNplZzLto8gYO+HxO95povzG8nTxgqs1Soip1vW8hyPj4hmWkYfsxQt88UJZhnNaE+Dy2Uv+YyhxT7x9xonLB/HewOf2QROKElJG8qJ9CM+/F4QbkyRHXl9eP0hDbMDzc4cxAiuDJ0y3XysZBkRcBQoj+moDlyCv4LTc/bXhvoUXjCsmAI3xRmrV0j4Ml8wgoqFxT/bLH3CLW2sRmYg6mE+OCGfjubyxQPrwHLDOOJykj2kB1GCDhl1Jn0iGyRXdKzykSJPO3LJVelMmiwZwbdED0Nih70buG6EsEOquZhZB+oGltjO2W9rbphaxnoUDTQVq+JFrXD1eACY/42HJ4RZ9gBo0SqRCuGGaaYgw2BCvqinRoH+5qfoXontlkGX/XFbKQP3+3agJ0K+M=
+    skip_cleanup: true
+  - provider: pypi
+    user: illume
+    distributions: sdist bdist_wheel
+    on:
+      tags: true
+    password:
+      secure: gzDc/dK0FJnLtcYBDXRu4PiIc+DvTBLKRbClBlSVayCiH0k+TzjatjwRJm9EPK0ctR3QX4esBrlxlLHVVIhjt1fWe/UcN+JEmR0ICPaPmcqR+17j+tPBX3PyrV8aULWe/PG9MgTKEZw9S8ysGPThlcXlcO0h65ma5/a58NZIBEKyamjXgrZmuipfYlMRjyk54c53gZGI+jKn3R3mgk+pDcjI3vL5pkA6QU69ucBhg/iLLoicpiTkUTfewV6nNcUKj88j162wgXshQ2Rnl7prvekDOaYeNplZzLto8gYO+HxO95povzG8nTxgqs1Soip1vW8hyPj4hmWkYfsxQt88UJZhnNaE+Dy2Uv+YyhxT7x9xonLB/HewOf2QROKElJG8qJ9CM+/F4QbkyRHXl9eP0hDbMDzc4cxAiuDJ0y3XysZBkRcBQoj+moDlyCv4LTc/bXhvoUXjCsmAI3xRmrV0j4Ml8wgoqFxT/bLH3CLW2sRmYg6mE+OCGfjubyxQPrwHLDOOJykj2kB1GCDhl1Jn0iGyRXdKzykSJPO3LJVelMmiwZwbdED0Nih70buG6EsEOquZhZB+oGltjO2W9rbphaxnoUDTQVq+JFrXD1eACY/42HJ4RZ9gBo0SqRCuGGaaYgw2BCvqinRoH+5qfoXontlkGX/XFbKQP3+3agJ0K+M=
+    skip_cleanup: true

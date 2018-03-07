@@ -14,4 +14,6 @@ pytest-pylint
 pytest-timeout
 pytest-watch
 pytest-xdist
+twine
+wheel
 -r requirements.txt
