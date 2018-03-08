@@ -1,4 +1,4 @@
-__version__ = '0.0.4.dev'
+__version__ = '0.0.4'
 
 
 # So we can use environment variables to configure things.
