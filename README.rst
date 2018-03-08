@@ -1,9 +1,13 @@
 pygame.org website |build-status| |coverage-status|
 ===================================================
 
-Pieces of the pygame website will be open sourced here.
+Pieces of the pygame website (https://www.pygame.org/) will be open sourced here.
 
 Strategy is to bring in code one piece at a time, and clean it up as I go.
+
+
+It's a community website where people can post projects, comment on them,
+but also write things in there themselves on wiki pages.
 
 
 Contributing
@@ -233,13 +237,15 @@ With with a @cache decorator, and/or markup in a template.
 Releases
 ========
 
-Releases are done from travisci. Fairly closely following this:
-https://docs.travis-ci.com/user/deployment/pypi/
+Step by step release instructions below.
 
 - Commits to `master` branch do a dev  deploy to pypi.
 - Commits to `mastertest` branch do a dev deploy to pypi.
 - Commits to a tag do a real deploy to pypi.
 
+
+Prereleases
+-----------
 
 https://packaging.python.org/tutorials/distributing-packages/#pre-release-versioning
 
@@ -252,8 +258,52 @@ Which is one version ahead of of the last tagged release.
 
 Release tags should be like '0.0.2', and match the `pygameweb/__init__.py __version__`.
 
-When everything is ready, tags should be done through github.
 
-Note: do not tag pre releases (these are made on commits to `master`/`mastertest`).
+Preparing a release in a branch.
+--------------------------------
+
+It's a good idea to start a branch first, and make any necessary changes
+for the release.
+
+```
+git checkout -b v0.0.2
+vi pygameweb/__init__.py __version__ = '0.0.2'
+git commit -m "Version 0.0.2"
+```
+
+Change log, drafting a release.
+-------------------------------
+
+Github 'releases' are done as well.
+You can start drafting the release notes in there before the tag.
 https://help.github.com/articles/creating-releases/
 
+You can make the release notes with the help of the changes since last release.
+https://github.com/pygame/pygameweb/compare/0.0.1...master
+
+git log 0.0.1...master
+
+Tagging a release
+-----------------
+
+When the release is tagged, pushing it starts the deploy to pypi off.
+```
+git tag -a 0.0.2
+git push origin 0.0.2
+```
+Note: do not tag pre releases
+(these are made on commits to `master`/`mastertest`).
+
+After the tag is pushed, then you can do the release
+in github from your draft release.
+
+
+Back to dev version.
+--------------------
+
+If we were at 0.0.2 before, now we want to be at 0.0.3.dev
+```
+vi pygameweb/__init__.py __version__ = '0.0.3.dev'
+```
+
+Merge the release branch into master, and push that up.
