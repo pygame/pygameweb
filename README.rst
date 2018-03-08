@@ -226,3 +226,34 @@ With with a @cache decorator, and/or markup in a template.
 .. |coverage-status| image:: https://coveralls.io/repos/github/pygame/pygameweb/badge.svg?branch=master
    :target: https://coveralls.io/github/pygame/pygameweb?branch=master
    :alt: Test coverage percentage
+
+
+
+
+Releases
+========
+
+Releases are done from travisci. Fairly closely following this:
+https://docs.travis-ci.com/user/deployment/pypi/
+
+- Commits to `master` branch do a dev  deploy to pypi.
+- Commits to `mastertest` branch do a dev deploy to pypi.
+- Commits to a tag do a real deploy to pypi.
+
+
+https://packaging.python.org/tutorials/distributing-packages/#pre-release-versioning
+
+Pre releases should be named like this:
+```
+# pygameweb/__init__.py
+__version__ = '0.0.2'
+```
+Which is one version ahead of of the last tagged release.
+
+Release tags should be like '0.0.2', and match the `pygameweb/__init__.py __version__`.
+
+When everything is ready, tags should be done through github.
+
+Note: do not tag pre releases (these are made on commits to `master`/`mastertest`).
+https://help.github.com/articles/creating-releases/
+

@@ -41,8 +41,6 @@ setup(
     name='pygameweb',
     classifiers=[
         'Development Status :: 1 - Planning',
-        'Classifier: Framework :: Flask',
-        'Classifier: License :: OSI Approved',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
@@ -80,6 +78,8 @@ setup(
                 'pygameweb.comment.classifier_train:classify_comments',
             'pygameweb_worker='
                 'pygameweb.tasks.worker:work',
+            'pygameweb_release_version_correct='
+                'pygameweb.builds.update_version_from_git:release_version_correct',
         ],
     },
 )
