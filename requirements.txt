@@ -18,6 +18,7 @@ ghdiff
 numpy
 pandas
 psycopg2
+python-dotenv
 pyquery
 pygments
 pq
