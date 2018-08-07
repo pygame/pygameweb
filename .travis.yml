@@ -21,7 +21,9 @@ cache: pip
 python:
 - '3.6'
 install:
+- pip install --upgrade pip
 - pip install -r requirements.dev.txt
+- pip install --upgrade pytest
 - pip install coveralls
 - pip install -e .
 script: APP_SECRET_KEY=a pytest
