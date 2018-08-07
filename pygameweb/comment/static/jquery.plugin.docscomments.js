@@ -119,8 +119,8 @@ $(document).ready(function () {
 
 
     var searchButtonHtml = [
-        '<form action="https://github.com/search?type=Code" class="addcomment"><input type="hidden" value="',
-        '" name="q"><input type="submit" value="Search examples for ',
+        '<form action="https://github.com/search" method="get" class="addcomment"><input type="hidden" value="',
+        '" name="q"><input type="hidden" name="type" value="Code"><input type="submit" value="Search examples for ',
         '"></form>'
     ];
 
