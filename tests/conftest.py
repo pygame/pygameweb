@@ -11,8 +11,7 @@ import os
 import pytest
 from flask_sqlalchemy_session import flask_scoped_session
 
-from sqlpytestflask import engine, session, session_factory, connection, schema_name
-
+from sqlalchemy_pytest_fixtures import engine, session, session_factory, connection, schema_name
 
 @pytest.fixture(scope='function')
 def app(engine, session_factory):
