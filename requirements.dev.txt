@@ -14,6 +14,7 @@ pytest-pylint
 pytest-timeout
 pytest-watch
 pytest-xdist
+sqlalchemy_pytest_fixtures
 twine
 wheel
 -r requirements.txt
