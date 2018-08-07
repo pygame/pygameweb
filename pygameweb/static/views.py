@@ -1,4 +1,6 @@
 """Adding static folders.
+
+This serves up a whole bunch of static files and folders.
 """
 
 from flask import Blueprint, send_from_directory

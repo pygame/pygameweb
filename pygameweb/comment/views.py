@@ -1,7 +1,7 @@
 """ For commenting on things.
 """
 
-from flask import (Blueprint, render_template, abort, redirect, flash)
+from flask import (Blueprint, render_template, abort, redirect, flash, url_for)
 from flask_sqlalchemy_session import current_session
 from flask_security import login_required, roles_required
 
@@ -9,7 +9,8 @@ from pygameweb.comment.models import CommentPost
 
 comment_blueprint = Blueprint('comment',
                               __name__,
-                              template_folder='../templates/')
+                              template_folder='../templates/',
+                              static_folder='static')
 
 
 def comments_for(forum):
@@ -24,6 +25,14 @@ def comments_for(forum):
              .limit(40)
              .all())
     return posts
+
+
+
+@comment_blueprint.route('/comment/jquery.plugin.docscomments.js', methods=['GET'])
+def comments_js():
+    """ for including in document pages.
+    """
+    return comment_blueprint.send_static_file('jquery.plugin.docscomments.js')
 
 
 @comment_blueprint.route('/comments/<forum>',
