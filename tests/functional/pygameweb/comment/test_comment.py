@@ -233,3 +233,10 @@ def test_recent_comments(session, comment_client):
 
     resp = comment_client.get('/comments/pygame')
     assert resp.status_code == 200
+
+
+def test_comments_jquery_there(comment_client):
+    """ as it is used by the documentation.
+    """
+    resp = comment_client.get('/comments/jquery.plugin.docscomments.js')
+    assert resp.status_code == 200
