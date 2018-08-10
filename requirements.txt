@@ -19,6 +19,7 @@ numpy
 pandas
 psycopg2
 python-dotenv
+python-slugify
 pyquery
 pygments
 pq

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{%- block feeds %}
+    <link rel="alternate" type="application/atom+xml" title="pygame.org news (ATOM feed)" href="http://www.pygame.org/feed/news.php?format=ATOM"/>
+    <link rel="alternate" type="application/rss+xml" title="pygame.org news (RSS 2.0 feed)" href="http://www.pygame.org/feed/news.php?format=RSS2.0" />
+{%- endblock feeds %}
+
+{%- block metas %}
+  {% cache 60*5, 'news_twitter_card', news_id | string() if news_id else '', slug if slug else '' %}
+    {{ super() }}
+    {% set news = news_for(slug, news_id) -%}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@pygame_org" />
+      <meta name="twitter:creator" content="@pygame_org" />
+      <meta property="og:url" content="{{ url_for('news.view', slug=news.slug, _external=True) }}" />
+      <meta property="og:title" content="{{ news.title_html }} &mdash; {{ news.datetimeon.strftime('%-d %b, %Y') }}" />
+      <meta property="og:description" content="{{ news.summary }}" />
+      <meta property="og:image" content="https://www.pygame.org/images/logo.png" />
+      {#
+      	This doesn't exist.
+      	But maybe it could search through the news for images,
+      	and make a thumbnail of one.
+	      {% set thumb_img = news.image_thumb(400,400) -%}
+	      {% if thumb_img -%}
+	        {% set base_url = url_for('static', filename='', _external=True).replace('/static/', '') -%}
+	        <meta property="og:image" content="{{ base_url }}{{ thumb_img }}" />
+	      {% endif %}
+	   #}
+  {% endcache %}
+{%- endblock metas %}
+
+
+{% block content %}
+  {% cache 60*5, current_user.id, news_id | string() if news_id else '', slug if slug else '' %}
+    {% set news = news_for(slug, news_id) -%}
+	{% if current_user.is_authenticated and current_user.has_role('admin') %}
+	  <a href="{{ url_for('news.edit_news', slug=news.slug) }}">Edit news</a>
+	{% endif %}
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h1>{{ news.title_html }} &mdash; {{ news.datetimeon.strftime('%-d %b, %Y') }}</h1>
+            </div>
+            <div class="panel-body dont-break-out">
+              {{ news.description_html|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'news/welcome.html' %}
+  {% endcache %}
+{% endblock %}

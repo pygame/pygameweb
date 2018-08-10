@@ -39,7 +39,9 @@ def create_app(object_name='pygameweb.config.Config',
 
     from pygameweb.cache import cache, limiter
     cache.init_app(app)
-    limiter.init_app(app)
+
+    if not app.config['TESTING']:
+        limiter.init_app(app)
 
     return app
 

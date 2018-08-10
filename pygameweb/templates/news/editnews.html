@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+	<h1>Edit News</h1>
+
+    <a href="#" id="richtext">Enable rich text editor</a>
+
+    <form class="form"
+          method="post"
+          action="{{ url_for('news.edit_news', slug=slug) }}"
+          enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+
+        {{ wtf.form_field(form.title) }}
+        {{ wtf.form_field(form.summary) }}
+        {{ wtf.form_field(form.description, rows=15) }}
+
+        <button class="btn btn-lg btn-primary" type="submit">Continue</button>
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.5/tinymce.min.js"></script>
+  <script type="text/javascript" >
+  $(document).ready(function() {
+    $('#richtext').on('click', function() {
+      tinyMCE.init({
+        selector: 'textarea',
+        plugins: "code"
+        });
+    });
+  })
+  </script>
+{% endblock %}

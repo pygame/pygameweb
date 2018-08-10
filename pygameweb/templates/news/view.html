@@ -5,6 +5,7 @@
     <link rel="alternate" type="application/rss+xml" title="pygame.org news (RSS 2.0 feed)" href="http://www.pygame.org/feed/news.php?format=RSS2.0" />
 {%- endblock feeds %}
 
+
 {% block content %}
   {% cache 60*5 %}
     <div class="row">
@@ -15,11 +16,18 @@
                   data-toggle="modal"
                   data-target=".bs-example-modal-lg">New here?</button>
         </h1>
+        {% if current_user.is_authenticated and current_user.has_role('admin') %}
+          <a href="/news/new">Post news</a>
+        {% endif %}
         <div>
         {% for new in news %}
           <div class="panel panel-default">
             <div class="panel-heading">
-              {{ new.title_html }} &mdash; {{ new.datetimeon.strftime('%-d %b, %Y') }}
+              <b>
+                <a href="{{ url_for('news.view', slug=new.slug) }}">
+                {{ new.title_html }} &mdash; {{ new.datetimeon.strftime('%-d %b, %Y') }}
+                </a>
+              </b>
             </div>
             <div class="panel-body dont-break-out">
               {{ new.description_html|safe }}
