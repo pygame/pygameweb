@@ -10,11 +10,11 @@
     {% for new in news -%}
     <entry>
         <title>{{ new.title }}</title>
-        <link rel="alternate" type="text/html" href="https://www.pygame.org/news.html"/>
+        <link rel="alternate" type="text/html" href="{{ url_for('news.view', slug=new.slug, _external=True) }}"/>
         <created>{{ new.datetimeon.isoformat() }}</created>
         <issued>{{ new.datetimeon.isoformat() }}</issued>
         <modified>{{ new.datetimeon.isoformat() }}</modified>
-        <id>https://www.pygame.org/news.html</id>
+        <id>{{ url_for('news.view_news_id', news_id=new.id, _external=True) }}</id>
         <author>
             <name>pygame.org</name>
         </author>

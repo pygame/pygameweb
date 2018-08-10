@@ -3,15 +3,39 @@
 import datetime
 from email.utils import formatdate
 
-from flask import Blueprint, render_template, request, make_response, redirect, url_for
+from flask import (
+    Blueprint, render_template, request,
+    make_response, redirect, url_for
+)
+from flask_security import current_user, login_required, roles_required
 from flask_sqlalchemy_session import current_session
 
 from pygameweb.news.models import News
+from pygameweb.news.forms import NewsForm
 
 
-news_blueprint = Blueprint('news',
-                           __name__,
-                           template_folder='../templates/')
+news_blueprint = Blueprint(
+    'news',
+    __name__,
+    template_folder='../templates/'
+)
+
+
+def news_for(slug, news_id=None):
+    """ gets a News for the given 'slug'.
+    """
+    newsq = current_session.query(News)
+
+    if slug is not None:
+        newsq = newsq.filter(News.slug == slug)
+    if news_id is not None:
+        newsq = newsq.filter(News.id == news_id)
+
+    news = newsq.first()
+    if news is None:
+        abort(404)
+
+    return news
 
 
 def latest_news(session, per_page=10):
@@ -26,7 +50,10 @@ def latest_news(session, per_page=10):
 def index():
     """ of the news page.
     """
-    return render_template('news/view.html', news=latest_news(current_session))
+    return render_template(
+        'news/view.html',
+        news=latest_news(current_session)
+    )
 
 
 @news_blueprint.route('/', methods=['GET'])
@@ -42,9 +69,13 @@ def index_redirect():
 def atom():
     """ of the news page.
     """
-    resp = render_template('news/atom.xml', news=latest_news(current_session))
+    resp = render_template(
+        'news/atom.xml',
+        news=latest_news(current_session)
+    )
     response = make_response(resp)
-    response.headers['Content-Type'] = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
+    content_type = 'application/atom+xml; charset=utf-8; filename=news-ATOM'
+    response.headers['Content-Type'] = content_type
     return response
 
     # This makes output which crashes a feed validator.
@@ -66,10 +97,15 @@ def rss():
     """ of the news page.
     """
     build_date = formatdate(datetime.datetime.now().timestamp())
-    resp = render_template('news/rss.xml', news=latest_news(current_session), build_date=build_date)
+    resp = render_template(
+        'news/rss.xml',
+        news=latest_news(current_session),
+        build_date=build_date
+    )
 
     response = make_response(resp)
-    response.headers['Content-Type'] = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
+    content_type = 'application/xml; charset=ISO-8859-1; filename=news-RSS2.0'
+    response.headers['Content-Type'] = content_type
     return response
 
 
@@ -84,6 +120,73 @@ def legacy_feeds():
     elif feed_type == 'RSS2.0':
         return rss()
     return ''
+
+
+@news_blueprint.route('/news/<path:slug>', methods=['GET'])
+def view(slug):
+    """
+    """
+    return render_template('news/viewone.html',
+                           slug=slug,
+                           news_id=None,
+                           news_for=news_for)
+
+
+@news_blueprint.route('/news-view/<int:news_id>', methods=['GET'])
+def view_news_id(news_id):
+    """
+    """
+    return render_template('news/viewone.html',
+                           slug=None,
+                           news_id=news_id,
+                           news_for=news_for)
+
+
+@news_blueprint.route('/news/<path:slug>/edit', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
+def edit_news(slug):
+    news = news_for(slug)
+
+    if request.method == 'GET':
+        form = NewsForm(obj=news)
+    else:
+        form = NewsForm()
+
+    if form.validate_on_submit():
+        news.title = form.title.data
+        news.description = form.description.data
+        news.summary = form.summary.data
+        current_session.add(news)
+        current_session.commit()
+        return redirect(url_for('news.view', slug=news.slug))
+
+    return render_template('news/editnews.html',
+                           form=form,
+                           slug=slug)
+
+
+@news_blueprint.route('/news/new', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
+def new_news():
+    """ posts a new piece of news.
+    """
+    form = NewsForm()
+    if form.validate_on_submit():
+        when = datetime.datetime.now()
+        news = News(
+            title=form.title.data,
+            description=form.description.data,
+            summary=form.summary.data,
+            datetimeon=datetime.datetime.utcnow(),
+            submit_users_id=current_user.id
+        )
+        current_session.add(news)
+        current_session.commit()
+        return redirect(url_for('news.view', slug=news.slug))
+
+    return render_template('news/newnews.html', form=form)
 
 
 def add_news_blueprint(app):

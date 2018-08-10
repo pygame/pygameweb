@@ -15,8 +15,8 @@
         {% for new in news %}
         <item>
             <title>{{ new.title }}</title>
-            <link>https://www.pygame.org/news.html</link>
-            <guid>https://www.pygame.org/news.html?id={{ new.id }}</guid>
+            <link>{{ url_for('news.view', slug=new.slug, _external=True) }}</link>
+            <guid isPermaLink="false">{{ url_for('news.view_news_id', news_id=new.id, _external=True) }}</guid>
             <description><![CDATA[{{ new.description_html|safe }}]]></description>
             <author>pygame.org</author>
             <pubDate>{{ new.datetimeon_2882 }}</pubDate>
