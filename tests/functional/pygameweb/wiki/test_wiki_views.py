@@ -47,6 +47,21 @@ def member(session, user):
 
 
 @pytest.fixture
+def admin(session, user):
+    """
+    """
+    from pygameweb.user.models import Group
+    group = Group(name='admin', title='Admin')
+    user.roles.append(group)
+    session.add(group)
+    group = Group(name='members', title='Member')
+    user.roles.append(group)
+    session.add(group)
+    session.commit()
+    return group
+
+
+@pytest.fixture
 def wiki_page_info(session):
     import datetime
     from pygameweb.wiki.models import Wiki
@@ -131,6 +146,43 @@ def test_wiki_link_login(wiki_client, session, wiki_page_info, member):
     assert resp.status_code == 200
     assert b'new changes to the wiki page' in resp.data
     assert b'first wiki page version is done' in resp.data
+
+
+def test_wiki_locked(wiki_client, session, wiki_page_info, user):
+    """ stops a page from being edited or reverted.
+    """
+    wiki_page, first_content, second_content, first_id, _, _ = wiki_page_info
+    wiki_page.locked = True
+    session.add(wiki_page)
+    session.commit()
+
+    resp = wiki_client.get('/wiki/blablabla/edit')
+    assert resp.status_code == 302
+    assert resp.location == 'http://localhost/'
+
+    data = dict(changes='I have changed.', content='some content')
+    resp = wiki_client.post('/wiki/blabla/edit',
+                            data=data)
+    assert resp.status_code == 302
+    assert resp.location == 'http://localhost/'
+
+
+def test_wiki_locked_admin(wiki_client, session, wiki_page_info, user, admin):
+    """ admin should be able to edit it, and revert it.
+    """
+    wiki_page, first_content, second_content, first_id, _, _ = wiki_page_info
+    wiki_page.locked = True
+    session.add(wiki_page)
+    session.commit()
+
+    resp = wiki_client.get('/wiki/blablabla/edit')
+    assert resp.status_code == 200
+
+    data = dict(changes='I have changed.', content='some content')
+    resp = wiki_client.post('/wiki/blabla/edit',
+                            data=data)
+    assert resp.status_code == 302
+    assert resp.location == 'http://localhost/wiki/blabla'
 
 
 def test_wiki_new_page(wiki_client, session, member, user):
