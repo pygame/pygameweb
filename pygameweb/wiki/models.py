@@ -2,8 +2,10 @@
 """
 import datetime
 
-from sqlalchemy import (Column, DateTime, Integer, String,
-                        Text, ForeignKey, inspect)
+from sqlalchemy import (
+    Boolean, Column, DateTime, Integer, String,
+    Text, ForeignKey, inspect
+)
 from sqlalchemy.orm.session import make_transient
 from sqlalchemy.orm import relationship
 
@@ -30,6 +32,9 @@ class Wiki(Base):
     title = Column(String(255))
     parent = Column(String(255))
     keywords = Column(String(255))
+
+    locked = Column(Boolean)
+    """ True if only an admin user can edit it. """
 
     users_id = Column(Integer,
                       ForeignKey(User.id,

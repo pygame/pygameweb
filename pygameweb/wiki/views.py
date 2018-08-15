@@ -1,5 +1,7 @@
-from flask import (Blueprint, render_template, abort,
-                   redirect, url_for, request, Response)
+from flask import (
+    abort, Blueprint, current_app, redirect,
+    render_template, request, Response, url_for
+)
 # http://flask-sqlalchemy-session.readthedocs.org/en/v1.1/
 from flask_caching import make_template_fragment_key
 from flask_sqlalchemy_session import current_session
@@ -61,6 +63,9 @@ def index(link='index'):
 def revert(link):
     """ the link to make the latest version the one selected.
     """
+    if wiki_for(link).locked and not current_user.has_role('admin'):
+        flash('Wiki page locked.')
+        return current_app.login_manager.unauthorized()
 
     latest = request.args.get('latest', None)
     if latest is not None:
@@ -185,6 +190,10 @@ def edit(link):
     if page is None:
         # we create a new empty wiki page!
         page = Wiki(link=link, title=link, latest=1)
+
+    if page.locked and not current_user.has_role('admin'):
+        flash('Wiki page locked.')
+        return current_app.login_manager.unauthorized()
 
     form = WikiForm(obj=page)
 
