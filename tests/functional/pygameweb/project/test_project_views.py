@@ -112,7 +112,7 @@ def project(session, user):
     return the_project
 
 
-def a_project(session, title, version, user):
+def a_project(session, title, release_description, version, user):
     """ adds a second project with a couple of tags.
     """
 
@@ -130,7 +130,7 @@ def a_project(session, title, version, user):
     )
 
     release1 = Release(datetimeon=datetime.datetime(2017, 1, 5),
-                       description='Description of some release 2.',
+                       description=release_description,
                        srcuri='http://example.com/source.tar.gz',
                        winuri='http://example.com/win.exe',
                        macuri='http://example.com/mac.dmg',
@@ -149,10 +149,11 @@ def project2(session, project, user):
     """
     title = 'Some project title 2'
     version = 'some version'
+    release_description = 'release description 2'
     (the_project2,
      release1,
      tag3,
-     tag4) = a_project(session, title, version, user)
+     tag4) = a_project(session, title, release_description, version, user)
 
     session.add(release1)
     session.add(tag3)
@@ -167,21 +168,27 @@ def project3(session, project, user_banned):
     """
     title = 'Some project title 3'
     version = 'some version 3'
-    (the_project2,
+    release_description = 'release description 3'
+    (the_project3,
      release1,
      tag3,
-     tag4) = a_project(session, title, version, user_banned)
+     tag4) = a_project(session, title, release_description, version, user_banned)
 
+    session.add(the_project3)
     session.add(release1)
     session.add(tag3)
     session.add(tag4)
-    session.add(the_project2)
-    return the_project2
+    return the_project3
 
 
 def test_project_hidden(project_client, session, project, project2, project3):
     """ when user account has been disabled.
     """
+    from pygameweb.project.models import Project, Tags, Release
+    from pygameweb.user.models import User, Group
+
+    session.flush()
+
     resp = project_client.get(f'/project/{project.id}/')
     assert resp.status_code == 200
     resp = project_client.get(f'/project/{project3.id}/')
@@ -189,6 +196,14 @@ def test_project_hidden(project_client, session, project, project2, project3):
 
     resp = project_client.get('/tags/all')
     assert b'Some project title 3' not in resp.data, 'because user is banned'
+
+    resp = project_client.get('/tags/arcade')
+    assert resp.status_code == 200
+    assert project.title.encode('utf-8') + b'</a>' in resp.data
+    assert (project2.title.encode('utf-8') +
+            b'</a>') in resp.data, 'because both are in arcade.'
+
+    assert b'Some project title 3</a>' not in resp.data, 'because user is banned'
 
 
 def test_project_index(project_client, session, user, project, project2):
