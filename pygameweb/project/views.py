@@ -44,13 +44,15 @@ def project_for(project_id):
 def release_for(release_id):
     """ gets a project for the given
     """
-    result = (current_session
+    release = (current_session
               .query(Release)
               .filter(Release.id == release_id)
               .first())
-    if not result:
+    if not release:
         abort(404)
-    return result
+    if release.project.user and release.project.user.disabled != 0:
+        abort(404)
+    return release
 
 
 def comments_for(project_id):
@@ -154,15 +156,21 @@ def tags(tag):
 
     # all is a special tag, meaning show all.
     if tag == 'all':
-        projectsq = (current_session.query(Project)
+        projectsq = (current_session
+                     .query(Project)
                      .join(User)
                      .join(Release)
                      .filter(Release.project_id == Project.id)
                      .filter(User.id == Project.users_id)
+                     .filter(User.disabled == 0)
                      .order_by(Release.datetimeon.desc()))
     else:
         projectsq = (current_session
                      .query(Project)
+                     .join(User)
+                     .join(Tags)
+                     .filter(User.id == Project.users_id)
+                     .filter(User.disabled == 0)
                      .filter(Tags.project_id == Project.id)
                      .filter(Tags.value == tag))
 
