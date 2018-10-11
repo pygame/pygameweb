@@ -18,9 +18,9 @@
         overflow-wrap: break-word;
         word-wrap: break-word;
         -ms-word-break: break-all;
-        word-break: break-all;
+/*        word-break: break-all;
         word-break: break-word;
-        -ms-hyphens: auto;
+*/        -ms-hyphens: auto;
         -moz-hyphens: auto;
         -webkit-hyphens: auto;
         hyphens: auto;
@@ -72,6 +72,19 @@
                 {% endif %}
               </div>
               {% endif %}
+
+              <h2>Artist in Residence</h2>
+              <div class="list-group project-releases">
+                <a href="https://www.pygame.org/artist-in-residence/1"
+                   class="list-group-item">
+                  <img class="img-responsive" src="https://www.pygame.org/ftp/artist-in-residence/1/artist-in-residence-1-640.png" alt="Josh Bartlett">
+
+                  <span class="project-title dont-break-out"{{ style_title }}>
+                    Josh Bartlett
+                  </span>
+                </a>
+              </div>
+
               {% include 'recent-releases.html' %}
             {% endif %}
           {%- endblock sidebar %}
