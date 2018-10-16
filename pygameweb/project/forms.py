@@ -16,7 +16,7 @@ class ProjectForm(FlaskForm):
 
     image = FileField('image', validators=[
         # FileRequired(),
-        FileAllowed(['jpg', 'png'], 'Images only!')
+        FileAllowed(['jpg', 'png', 'gif'], 'Images and GIFs only! 3MB upload cap!')
     ])
 
 
