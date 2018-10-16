@@ -18,6 +18,7 @@ def create_app(object_name='pygameweb.config.Config',
 
     from pygameweb import db
     app = Flask(__name__)
+    app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024 # 3MB file upload cap
     app.config.from_object(object_name)
     Bootstrap(app)
 
