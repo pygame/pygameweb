@@ -1,3 +1,4 @@
+from flask import render_template
 
 
 def create_app(object_name='pygameweb.config.Config',
@@ -69,11 +70,30 @@ def upgrade_https_urls(app):
         return {'url_for_security': _url_for_security}
 
 
+def http_error_handler(error):
+    message = error.description
+    if '  ' in message:
+        message, sub = message.split('  ', 1)
+    else:
+        sub = ''
+    return render_template('error.html', code=error.code, message=message, sub=sub), error.code
+
+
+def error_handler(exception):
+    message = 'Internal Server Error'
+    # Get the exception in the form `Exception: Message`
+    sub = repr(exception).split('(')[0] + ': ' + str(exception)
+    return render_template('error.html', code=500, message=message, sub=sub), 500
+
+
 def add_views_front(app):
     """ Adds all the front end views to the app.
 
     Kept separate from create_app so we can test individual views.
     """
+    # We catch HTTPException to handle all HTTP error codes
+    from werkzeug.exceptions import HTTPException
+
     # add_user_blueprint does some monkey patching, so it needs to be first.
     from pygameweb.user.views import add_user_blueprint
     add_user_blueprint(app)
@@ -90,6 +110,9 @@ def add_views_front(app):
     from pygameweb.dashboard.views import add_dashboard
     from pygameweb.builds.views import add_builds
     from pygameweb.comment.views import add_comment
+
+    app.errorhandler(HTTPException)(http_error_handler)
+    app.errorhandler(Exception)(error_handler)
 
     add_wiki_blueprint(app)
     add_project_blueprint(app)
