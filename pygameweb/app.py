@@ -79,11 +79,9 @@ def http_error_handler(error):
     return render_template('error.html', code=error.code, message=message, sub=sub), error.code
 
 
-def error_handler(exception):
+def error_handler(_):
     message = 'Internal Server Error'
-    # Get the exception in the form `Exception: Message`
-    sub = repr(exception).split('(')[0] + ': ' + str(exception)
-    return render_template('error.html', code=500, message=message, sub=sub), 500
+    return render_template('error.html', code=500, message=message, sub=''), 500
 
 
 def add_views_front(app):
