@@ -77,6 +77,7 @@ def project(session, user):
         uri='http://some.example.com/',
         datetimeon=datetime.datetime(2017, 1, 5),
         image='1.png',
+        github_repo='https://github.com/pygame/example',
         user=user
     )
 
