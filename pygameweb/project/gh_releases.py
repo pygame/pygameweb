@@ -2,41 +2,99 @@
 """
 import urllib.parse
 import feedparser
+import requests
+import dateutil.parser
+
+from pygameweb.project.models import Project, Release
+from pygameweb.config import Config
+
+def sync_project(session, project):
+    if not project.github_repo:
+        return
+    gh_releases = get_gh_releases_feed(project)
+    releases = project.releases
+
+    gh_add, gh_update, pg_delete = releases_to_sync(gh_releases, releases)
+
+    # only do the API call once if we need to add/update.
+    releases_gh_api = (
+        get_gh_releases_api(project)
+        if gh_add or gh_update else None
+    )
+
+    releases_added = []
+    for gh_release in gh_add:
+        gh_release_api = [
+            r for r in releases_gh_api
+            if r['name'] == gh_release['title']
+        ]
+        if not gh_release_api or gh_release_api[0]['draft']:
+            continue
+
+        release = release_from_gh(session, project, gh_release, gh_release_api[0])
+        releases_added.append(release)
+
+    for release in releases_added:
+        session.add(release)
+
+    #TODO: deal with gh_update, pg_delete
+    # for gh_release in gh_update:
+    #     release = session. get Release     gh_release   ...
+    #     release.version = gh_release.title
+    #     release. changes = gh_release. xx
+    #     session.add(release)
+
+    # for pg_release in pg_delete:
+    #     release = session. get Release   pg_release   ...
+    #     release.delete()
+    #     session.add(release)
 
 
-# def sync_project(session, project):
-#     if not project.github_repo:
-#         return
-#     gh_releases = get_gh_releases(project)
-#     releases = project.releases
-#     gh_add, gh_update, pg_delete = releases_to_sync(gh_releases, releases)
-
-#     #TODO: deal with gh_add, gh_update, pg_delete
-#     for gh_release in gh_add:
-#         session.add(release_from_gh(gh_release))
-
-#     for gh_release in gh_update:
-#         release = session. get Release     gh_release   ...
-#         release.version = gh_release.title
-#         release. changes = gh_release. xx
-#         session.add(release)
-
-#     for pg_release in pg_delete:
-#         release = session. get Release   pg_release   ...
-#         release.delete()
-#         session.add(release)
+    # # assets[0].browser_download_url
+    # data['assets']
 
 
+def release_from_gh(session, project, gh_release_atom, gh_release_api):
+    """ make a Release from a gh release.
 
-# def release_from_gh(gh_release):
-#     """ make a Release from a gh release.
-#     """
+    :param gh_release_atom: from the atom feed.
+    :param gh_release_api: from the API.
+    """
+    winuri = ''
+    srcuri = ''
+    macuri = ''
+    for asset in gh_release_api['assets']:
+        if asset["browser_download_url"].endswith('msi'):
+            winuri = asset["browser_download_url"]
+        elif asset["browser_download_url"].endswith('tar.gz'):
+            srcuri = asset["browser_download_url"]
+        elif asset["browser_download_url"].endswith('dmg'):
+            macuri = asset["browser_download_url"]
 
-#     ...
+    published_at = dateutil.parser.parse(gh_release_api["published_at"])
+    # "2019-01-06T15:29:18Z",
 
+    release = Release(
+        datetimeon=published_at,
+        description=gh_release_atom['content'][0]["value"],
+        srcuri=srcuri,
+        winuri=winuri,
+        macuri=macuri,
+        version=gh_release_atom['title']
+    )
+
+    project = (session
+               .query(Project)
+               .filter(Project.title == 'title')
+               .first())
+    return release
 
 
 def releases_to_sync(gh_releases, releases):
+    """
+    :param gh_releases: github release objects from atom.
+    :param releases: the db releases.
+    """
     add, update, delete = versions_to_sync(gh_releases, releases)
 
     gh_add = [r for r in gh_releases if r.title in add]
@@ -45,7 +103,10 @@ def releases_to_sync(gh_releases, releases):
     return gh_add, gh_update, pg_delete
 
 def versions_to_sync(gh_releases, releases):
-
+    """
+    :param gh_releases: github release objects from atom.
+    :param releases: the db releases.
+    """
     # Because many projects might have existing ones on pygame,
     #  but not have them on github, we don't delete ones unless
     #  they came originally from github.
@@ -63,17 +124,61 @@ def what_versions_sync(pg_versions, gh_versions, pg_versions_gh):
     to_delete = pg_versions_gh - gh_versions
     return to_add, to_update, to_delete
 
-def get_gh_releases(project):
+def get_gh_releases_feed(project):
     """ for a project.
     """
     repo = project.github_repo
     if not repo.endswith('/'):
         repo += '/'
     feed_url = urllib.parse.urljoin(
-        project.github_repo,
+        repo,
         "releases.atom"
     )
     data = feedparser.parse(feed_url)
-    if not data['title'].starts_with('Release notes from'):
+    if not data['feed']['title'].startswith('Release notes from'):
         raise ValueError('does not appear to be a github release feed.')
     return data.entries
+
+
+def get_repo_from_url(url):
+    """ get the github repo from the url
+    """
+    if not url.startswith('https://github.com/'):
+        return
+    repo = (
+        urllib.parse.urlparse(url).path
+        .lstrip('/')
+        .rstrip('/')
+    )
+    if len(repo.split('/')) != 2:
+        return
+    return repo
+
+
+def get_gh_releases_api(project, version=None):
+    """
+    """
+    # https://developer.github.com/v3/auth/
+    # self.headers = {'Authorization': 'token %s' % self.api_token}
+    # https://api.github.com/repos/pygame/stuntcat/releases/latest
+    repo = get_repo_from_url(project.github_repo)
+    if not repo:
+        return
+
+    url = f'https://api.github.com/repos/{repo}/releases'
+    if version is not None:
+        url += f'/{version}'
+
+    resp = requests.get(
+        url,
+        headers = {'Authorization': 'token %s' % Config.GITHUB_RELEASES_OAUTH}
+    )
+    if resp.status_code != 200:
+        raise ValueError('github api failed')
+
+    data = resp.json()
+    return data
+
+
+
+

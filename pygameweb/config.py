@@ -76,3 +76,8 @@ class Config(object):
     COMMENT_MODEL = os.getenv(CONFIG_PREFIX + 'COMMENT_MODEL', 'comment_spam_model.pkl')
     """For the comment spam classifier model file.
     """
+
+    GITHUB_RELEASES_OAUTH = os.getenv(CONFIG_PREFIX + 'GITHUB_RELEASES_OAUTH', None)
+    """ For syncing github releases to pygame_org.
+    """
+
