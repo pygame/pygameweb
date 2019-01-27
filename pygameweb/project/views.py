@@ -308,7 +308,10 @@ def new_project():
             description=form.description.data,
             uri=form.uri.data,
             datetimeon=now,
-            user=user
+            user=user,
+            youtube_trailer=form.youtube_trailer.data,
+            github_repo=form.github_repo.data,
+            patreon=form.patreon.data,
         )
 
         tags = [t.lstrip().rstrip() for t in form.tags.data.split(',')]
@@ -370,6 +373,9 @@ def edit_project(project_id):
         project.description = form.description.data
         project.uri = form.uri.data
         project.datetimeon = datetime.datetime.now()
+        project.youtube_trailer = form.youtube_trailer.data
+        project.github_repo = form.github_repo.data
+        project.patreon = form.patreon.data
 
         for tag in (current_session
                     .query(Tags)
