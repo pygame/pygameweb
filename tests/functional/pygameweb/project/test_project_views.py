@@ -77,6 +77,9 @@ def project(session, user):
         uri='http://some.example.com/',
         datetimeon=datetime.datetime(2017, 1, 5),
         image='1.png',
+        youtube_trailer='https://www.youtube.com/watch?v=8UnvMe1Neok',
+        github_repo='https://github.com/pygame/pygameweb/',
+        patreon='https://www.patreon.com/pygame',
         user=user
     )
 
@@ -303,10 +306,18 @@ def test_project_new(project_client, session, user):
            b'\x00\x00IEND\xaeB`\x82')
 
     image = (BytesIO(png), 'helloworld.png')
-    data = dict(image=image, title='title', version='1.0.2',
-                tags='tags', summary='summary',
-                description='description of project',
-                uri='http://example.com/')
+    data = dict(
+        image=image,
+        title='title',
+        version='1.0.2',
+        tags='tags',
+        summary='summary',
+        description='description of project',
+        uri='http://example.com/',
+        youtube_trailer='https://www.youtube.com/watch?v=8UnvMe1Neok',
+        github_repo='https://github.com/pygame/pygameweb/',
+        patreon='https://www.patreon.com/pygame',
+    )
 
     with mock.patch('pygameweb.project.views.save_image') as save_image:
         resp = project_client.post('/members/projects/new',
@@ -320,6 +331,10 @@ def test_project_new(project_client, session, user):
                 f'frontend/www/shots/{project.id}.png')
         resp = project_client.get(f'/project/{project.id}/')
         assert project.description.encode('utf8') in resp.data
+
+        project.youtube_trailer == data['youtube_trailer']
+        project.github_repo == data['github_repo']
+        project.patreon == data['patreon']
 
     assert resp.status_code == 200
     assert project.title == 'title'
@@ -401,6 +416,7 @@ def test_project_new(project_client, session, user):
 
     resp = project_client.get('/members/projects')
     assert resp.status_code == 200
+
 
 
 def test_new_project_comment(project_client, session, project, project2, user):

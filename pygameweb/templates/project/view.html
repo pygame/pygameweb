@@ -82,6 +82,27 @@
         {% for value, count, size in project.tag_counts %}
           <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
         {% endfor %}
+        {% if project.youtube_trailer %}
+          {# Make the youtube embed responsive. #}
+          <style>
+            .embed-container {
+              position: relative;
+              padding-bottom: 56.25%;
+              height: 0;
+              overflow: hidden;
+              max-width: 100%;
+              margin-top: 20px;
+            }
+            .embed-container iframe, .embed-container object, .embed-container embed {
+              position: absolute; top: 0; left: 0;
+              width: 100%;
+              height: 100%;
+            }
+          </style>
+          <div class="embed-container">
+            <iframe src="{{ project.youtube_trailer_embed }}" allowfullscreen="" frameborder="0"></iframe>
+          </div>
+        {% endif %}
       </div>
     </div>
 
@@ -103,6 +124,14 @@
           {% if release.macuri %}
             <dt>Mac</dt>
             <dd><a href="{{ release.macuri }}">{{ release.macuri }}</a></dd>
+          {% endif %}
+          {% if project.github_repo %}
+            <dt>Github repo</dt>
+            <dd><a href="{{ project.github_repo }}">{{ project.github_repo }}</a></dd>
+          {% endif %}
+          {% if project.patreon %}
+            <dt>Support this project on Patreon</dt>
+            <dd><a href="{{ project.patreon }}">{{ project.patreon }}</a></dd>
           {% endif %}
         {% endif %}
       </dl>

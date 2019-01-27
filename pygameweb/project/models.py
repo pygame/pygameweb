@@ -3,10 +3,11 @@
 from math import sqrt
 from pathlib import Path
 from email.utils import formatdate
+from urllib.parse import urlparse, parse_qs, urlencode
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
-                        String, Text, inspect, func, and_)
-from sqlalchemy.orm import relationship
+                        String, Text, inspect, func, and_, or_, CheckConstraint)
+from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql.functions import count
 
 from pyquery import PyQuery as pq
@@ -33,6 +34,44 @@ class Project(Base):
     uri = Column(String(255))
     datetimeon = Column(DateTime)
     image = Column(String(80))
+
+    github_repo = Column(Text)
+    """ URL to the github repo for this project.
+    """
+    _github_repo_constraint = CheckConstraint(
+        or_(
+            github_repo is None,
+            github_repo == '',
+            github_repo.startswith('https://github.com/')
+        ),
+        name="project_github_repo_constraint"
+    )
+
+
+    youtube_trailer = Column(Text)
+    """ URL to the youtube trailer for this project.
+    """
+    _youtube_trailer_constraint = CheckConstraint(
+        or_(
+            youtube_trailer is None,
+            youtube_trailer == '',
+            youtube_trailer.startswith('https://www.youtube.com/watch?v=')
+        ),
+        name="project_youtube_trailer_constraint"
+    )
+
+    patreon = Column(Text)
+    """ URL to the patreon.
+    """
+    _patreon_constraint = CheckConstraint(
+        or_(
+            patreon is None,
+            patreon == '',
+            patreon.startswith('https://www.patreon.com/')
+        ),
+        name="project_patreon_constraint"
+    )
+
 
     def __repr__(self):
         return "<Project with title=%r>" % self.title
@@ -74,6 +113,22 @@ class Project(Base):
                       .order_by(cnt.desc())).all()
         return [(tag, cnt, (int(10 + min(24, sqrt(cnt) * 24 / 5))))
                 for tag, cnt in tag_counts]
+
+    @property
+    def youtube_trailer_embed(self):
+        if not self.youtube_trailer:
+            return
+        video_key = parse_qs(urlparse(self.youtube_trailer).query).get('v')[0]
+        bad_chars = ['?', ';', '&', '..', '/']
+        if any(bad in video_key for bad in bad_chars):
+            raise ValueError('problem')
+        return f'http://www.youtube.com/embed/{video_key}'
+
+    __table_args__ = (
+        _github_repo_constraint,
+        _youtube_trailer_constraint,
+        _patreon_constraint,
+    )
 
 
 def top_tags(session, limit=30):
@@ -155,6 +210,13 @@ class Release(Base):
     winuri = Column(String(255))
     macuri = Column(String(255))
     version = Column(String(80))
+
+    from_external = Column(String(255))
+    """ is this release sucked in from an external source.
+
+        If it is 'github' then it comes from a github release.
+        If it is None, then it is user entered.
+    """
 
     project = relationship(Project, backref='releases')
 

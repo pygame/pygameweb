@@ -80,6 +80,8 @@ setup(
                 'pygameweb.tasks.worker:work',
             'pygameweb_release_version_correct='
                 'pygameweb.builds.update_version_from_git:release_version_correct',
+            'pygameweb_github_releases='
+                'pygameweb.project.gh_releases:sync_github_releases',
         ],
     },
 )
