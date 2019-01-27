@@ -37,21 +37,21 @@ def sync_project(session, project):
     for release in releases_added:
         session.add(release)
 
-    #TODO: deal with gh_update, pg_delete
-    # for gh_release in gh_update:
-    #     release = session. get Release     gh_release   ...
-    #     release.version = gh_release.title
-    #     release. changes = gh_release. xx
-    #     session.add(release)
+    for gh_release in gh_update:
+        releases = [
+            r for r in project.releases
+            if r.version == gh_release['title']
+        ]
+        if releases:
+            release = releases[0]
 
-    # for pg_release in pg_delete:
-    #     release = session. get Release   pg_release   ...
-    #     release.delete()
-    #     session.add(release)
+            release.version = gh_release['title']
+            release.description = gh_release['body']
+            session.add(release)
 
-
-    # # assets[0].browser_download_url
-    # data['assets']
+    for pg_release in pg_delete:
+        pg_release.delete()
+        session.add(pg_release)
 
 
 def release_from_gh(session, project, gh_release_atom, gh_release_api):
@@ -169,9 +169,13 @@ def get_gh_releases_api(project, version=None):
     if version is not None:
         url += f'/{version}'
 
+    if Config.GITHUB_RELEASES_OAUTH is None:
+        headers = {}
+    else:
+        headers = {'Authorization': 'token %s' % Config.GITHUB_RELEASES_OAUTH}
     resp = requests.get(
         url,
-        headers = {'Authorization': 'token %s' % Config.GITHUB_RELEASES_OAUTH}
+        headers = headers
     )
     if resp.status_code != 200:
         raise ValueError('github api failed')

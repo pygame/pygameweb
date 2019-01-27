@@ -67,6 +67,8 @@ def test_releases_to_sync_update():
 
 
 #TODO: test a draft release.
+#TODO: test sync_project deletes and updates releases properly.
+
 
 
 def test_get_repo_from_url():
