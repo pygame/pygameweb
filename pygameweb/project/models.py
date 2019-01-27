@@ -3,6 +3,7 @@
 from math import sqrt
 from pathlib import Path
 from email.utils import formatdate
+from urllib.parse import urlparse, parse_qs, urlencode
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
                         String, Text, inspect, func, and_, or_, CheckConstraint)
@@ -50,7 +51,7 @@ class Project(Base):
     youtube_trailer = Column(Text)
     """ URL to the youtube trailer for this project.
     """
-    _youtube_trailer = CheckConstraint(
+    _youtube_trailer_constraint = CheckConstraint(
         or_(
             youtube_trailer is None,
             youtube_trailer == '',
@@ -62,7 +63,7 @@ class Project(Base):
     patreon = Column(Text)
     """ URL to the patreon.
     """
-    _patreon = CheckConstraint(
+    _patreon_constraint = CheckConstraint(
         or_(
             patreon is None,
             patreon == '',
@@ -113,9 +114,20 @@ class Project(Base):
         return [(tag, cnt, (int(10 + min(24, sqrt(cnt) * 24 / 5))))
                 for tag, cnt in tag_counts]
 
+    @property
+    def youtube_trailer_embed(self):
+        if not self.youtube_trailer:
+            return
+        video_key = parse_qs(urlparse(self.youtube_trailer).query).get('v')[0]
+        bad_chars = ['?', ';', '&', '..', '/']
+        if any(bad in video_key for bad in bad_chars):
+            raise ValueError('problem')
+        return f'http://www.youtube.com/embed/{video_key}'
 
     __table_args__ = (
         _github_repo_constraint,
+        _youtube_trailer_constraint,
+        _patreon_constraint,
     )
 
 
