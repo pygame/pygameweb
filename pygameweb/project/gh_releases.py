@@ -8,8 +8,33 @@ import dateutil.parser
 from pygameweb.project.models import Project, Release
 from pygameweb.config import Config
 
+def sync_github_releases():
+    """ to the pygame website releases.
+    """
+    from pygameweb.config import Config
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+
+    a_connection = engine.connect()
+    a_transaction = a_connection.begin()
+    session = sessionmaker(bind=a_connection)()
+
+    projects = (session
+        .query(Project)
+        .filter(Project.github_repo.isnot(None))
+    )
+    for project in projects:
+        sync_project(session, project)
+
+    session.commit()
+    a_transaction.commit()
+
+
 def sync_project(session, project):
     if not project.github_repo:
+        return
+    if project.user is not None and project.user.disabled:
         return
     gh_releases = get_gh_releases_feed(project)
     releases = project.releases
@@ -80,13 +105,9 @@ def release_from_gh(session, project, gh_release_atom, gh_release_api):
         srcuri=srcuri,
         winuri=winuri,
         macuri=macuri,
-        version=gh_release_atom['title']
+        version=gh_release_atom['title'],
+        project=project
     )
-
-    project = (session
-               .query(Project)
-               .filter(Project.title == 'title')
-               .first())
     return release
 
 

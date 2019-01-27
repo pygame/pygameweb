@@ -68,7 +68,7 @@ def test_releases_to_sync_update():
 
 #TODO: test a draft release.
 #TODO: test sync_project deletes and updates releases properly.
-
+#TODO: mock out real gh request.
 
 
 def test_get_repo_from_url():
@@ -372,6 +372,8 @@ def test_sync_project(session, project):
 
     sync_project(session, project)
 
+
+#TODO: test that for disabled users it does not update the releases.
 
 def test_release_from_gh(session, project, gh_release_atom, gh_release_api):
     """
