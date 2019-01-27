@@ -35,7 +35,7 @@ class Project(Base):
     image = Column(String(80))
 
     github_repo = Column(Text)
-    """ The url to the github repo for this project.
+    """ URL to the github repo for this project.
     """
     _github_repo_constraint = CheckConstraint(
         or_(
@@ -48,7 +48,7 @@ class Project(Base):
 
 
     youtube_trailer = Column(Text)
-    """ The url to the youtube trailer for this project.
+    """ URL to the youtube trailer for this project.
     """
     _youtube_trailer = CheckConstraint(
         or_(
@@ -58,6 +58,19 @@ class Project(Base):
         ),
         name="project_youtube_trailer_constraint"
     )
+
+    patreon = Column(Text)
+    """ URL to the patreon.
+    """
+    _patreon = CheckConstraint(
+        or_(
+            patreon is None,
+            patreon == '',
+            patreon.startswith('https://www.patreon.com/')
+        ),
+        name="project_patreon_constraint"
+    )
+
 
     def __repr__(self):
         return "<Project with title=%r>" % self.title
