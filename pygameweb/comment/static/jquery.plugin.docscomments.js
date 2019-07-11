@@ -119,9 +119,12 @@ $(document).ready(function () {
 
 
     var searchButtonHtml = [
-        '<form action="https://github.com/search" method="get" class="addcomment"><input type="hidden" value="',
-        '" name="q"><input type="hidden" name="type" value="Code"><input type="submit" value="Search examples for ',
-        '"></form>'
+        '<form action="https://github.com/search" method="get" class="addcomment">',
+        '<input type="hidden" value="" name="q">',
+        '<input type="hidden" name="type" value="Code">',
+        '<input type="hidden" name="l" value="Python" />',
+        '<input type="submit" value="Search examples for">',
+        '</form>'
     ];
 
     // Add "search internet for source code" buttons.
