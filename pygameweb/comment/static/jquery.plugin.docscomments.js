@@ -136,8 +136,8 @@ $(document).ready(function () {
 
 
     var $newsAlert = $('<span></span>');
-    $newsAlert.load('/news-alert-view/1', function() {
-        if($newsAlert.children().length > 1) {
+    $newsAlert.load('/news-alert-view/1', function(html, a) {
+        if($newsAlert.find('#docs-header').length) {
             $("    <style>" +
               "    #docs-header {" +
               "        position: fixed;" +
@@ -163,7 +163,6 @@ $(document).ready(function () {
               "      padding-top: 55px;" +
               "    }" +
               "    </style>").appendTo("head");
-
             $newsAlert.appendTo('body');
         }
     });
