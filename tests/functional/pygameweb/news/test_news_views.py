@@ -36,12 +36,33 @@ def news(session):
     session.commit()
     return [new1, new2]
 
+
+@pytest.fixture
+def news_alert(session):
+    from pygameweb.news.models import NewsAlert
+    import datetime
+    new1 = NewsAlert(
+        title='title1',
+        description='description alert',
+        summary='short summary',
+        datetimeon=datetime.datetime(2018, 3, 7, 10, 11)
+    )
+    new2 = NewsAlert(
+        title='title2',
+        description='description2 alert',
+        summary='short summary2',
+        datetimeon=datetime.datetime(2018, 3, 7, 10, 12)
+    )
+    session.add(new1)
+    session.add(new2)
+    session.commit()
+    return [new1, new2]
+
 def test_news_model(news_client, session, news):
     assert news[0].slug == '2018/3/title1'
     assert news[1].slug == '2018/3/title2'
 
-
-def test_news_view(news_client, session, news):
+def test_news_view(news_client, session, news, news_alert):
     """ is shown as the default.
     """
     resp = news_client.get('/news')
@@ -53,6 +74,9 @@ def test_news_view(news_client, session, news):
 
     assert news_client.get('/news.html').status_code == 200
 
+    resp = news_client.get(f'/news-alert-view/{news_alert[0].id}')
+    assert resp.status_code == 200
+    assert news_alert[0].description_html.encode('utf8') in resp.data
 
 
 @pytest.mark.parametrize("feed_url", [

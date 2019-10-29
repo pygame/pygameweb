@@ -5,12 +5,12 @@ from email.utils import formatdate
 
 from flask import (
     Blueprint, render_template, request,
-    make_response, redirect, url_for
+    make_response, redirect, url_for, abort
 )
 from flask_security import current_user, login_required, roles_required
 from flask_sqlalchemy_session import current_session
 
-from pygameweb.news.models import News
+from pygameweb.news.models import News, NewsAlert
 from pygameweb.news.forms import NewsForm
 
 
@@ -30,6 +30,22 @@ def news_for(slug, news_id=None):
         newsq = newsq.filter(News.slug == slug)
     if news_id is not None:
         newsq = newsq.filter(News.id == news_id)
+
+    news = newsq.first()
+    if news is None:
+        abort(404)
+
+    return news
+
+def news_alert_for(slug, news_alert_id=None):
+    """ gets a NewsAlert for the given 'slug'.
+    """
+    newsq = current_session.query(NewsAlert)
+
+    if slug is not None:
+        newsq = newsq.filter(NewsAlert.slug == slug)
+    if news_alert_id is not None:
+        newsq = newsq.filter(NewsAlert.id == news_alert_id)
 
     news = newsq.first()
     if news is None:
@@ -140,6 +156,16 @@ def view_news_id(news_id):
                            slug=None,
                            news_id=news_id,
                            news_for=news_for)
+
+
+@news_blueprint.route('/news-alert-view/<int:news_alert_id>', methods=['GET'])
+def view_news_alert_id(news_alert_id):
+    """
+    """
+    return render_template('news/viewalert.html',
+                           slug=None,
+                           news_alert_id=news_alert_id,
+                           news_alert_for=news_alert_for)
 
 
 @news_blueprint.route('/news/<path:slug>/edit', methods=['GET', 'POST'])
