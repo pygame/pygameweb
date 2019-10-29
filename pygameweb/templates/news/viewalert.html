@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{%- block html %}
+	{% cache 60*5, current_user.id, news_alert_id | string() if news_alert_id else '', slug if slug else '' %}
+	  {% set news = news_alert_for(slug, news_alert_id) -%}
+	  {{ news.description_html|safe }}
+	{% endcache %}
+{%- endblock html %}
