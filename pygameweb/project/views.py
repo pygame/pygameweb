@@ -10,11 +10,16 @@ from flask_sqlalchemy_session import current_session
 from werkzeug.utils import secure_filename
 from flask_security import current_user, login_required, roles_required
 
-from pygameweb.project.models import Project, Release, Tags, top_tags, recent_releases
-from pygameweb.project.forms import (FirstReleaseForm,
-                                     ReleaseForm,
-                                     ProjectForm,
-                                     ProjectCommentForm)
+from pygameweb.project.models import (
+    Project, Release, Tags, top_tags, recent_releases
+)
+from pygameweb.project.forms import (
+    FirstReleaseForm,
+    ReleaseForm,
+    ProjectForm,
+    ProjectCommentForm,
+    ReleaseDeleteForm,
+)
 from pygameweb.comment.models import CommentPost, CommentAuthor, CommentThread
 from pygameweb.sanitize import sanitize_html
 from pygameweb.comment.classifier import classify_comment
@@ -111,7 +116,6 @@ def view(project_id, title=None):
                            commentform=ProjectCommentForm(),
                            comments_for=comments_for)
 
-
 # project-pyChessClock-1695-2948.html
 @project_blueprint.route('/project-<path:title>-<int:project_id>'
                          '-<int:release_id>.html',
@@ -121,7 +125,7 @@ def view(project_id, title=None):
 @project_blueprint.route('/project/<int:project_id>/<int:release_id>',
                          methods=['GET'])
 def release(project_id, release_id, title=None):
-    """ of the wiki page.
+    """ of the release page.
     """
     return render_template('project/view.html',
                            project_for=project_for,
@@ -470,9 +474,10 @@ def edit_release(project_id, release_id):
                            release_id=release_id)
 
 
-@project_blueprint.route('/members/projects/<int:project_id>/'
-                         'releases/delete/<int:release_id>',
-                         methods=['GET', 'POST'])
+@project_blueprint.route(
+    '/members/projects/<int:project_id>/releases/delete/<int:release_id>',
+    methods=['GET', 'POST']
+)
 @login_required
 @roles_required('members')
 def delete_release(project_id, release_id):
@@ -481,8 +486,36 @@ def delete_release(project_id, release_id):
     on post, delete the release.
     on get, show a form for posting to delete it.
     """
-    raise NotImplementedError()
+    project = project_for(project_id)
+    if project.user.id != current_user.id:
+        abort(404)
+    if release_id is not None:
+        arelease = release_for(release_id)
+        if arelease.project.user.id != current_user.id:
+            abort(404)
 
+    if request.method == 'GET' and release_id is not None:
+        form = ReleaseDeleteForm(obj=arelease)
+    else:
+        form = ReleaseDeleteForm()
+
+    if form.validate_on_submit():
+        (current_session
+            .query(Release)
+            .filter(Release.id == release_id)
+            .delete()
+        )
+        current_session.commit()
+        return redirect(url_for('project.releases', project_id=project.id))
+
+    return render_template(
+        'project/deleterelease.html',
+        form=form,
+        project_for=project_for,
+        release_for=release_for,
+        project_id=project_id,
+        release_id=release_id
+    )
 
 def feed_recent_releases():
     """ of projects to the rss and atom robots.

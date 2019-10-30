@@ -31,6 +31,10 @@ class ReleaseForm(FlaskForm):
     macuri = URLField('Mac URL', validators=[Optional(), URL()])
 
 
+class ReleaseDeleteForm(FlaskForm):
+    """ is for deleting a form.
+    """
+
 class FirstReleaseForm(ProjectForm, ReleaseForm):
     """Is for when the first release is being made.
     """

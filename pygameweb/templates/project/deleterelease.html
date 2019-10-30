@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block content %}
+    {% set release = release_for(release_id) if release_id else None %}
+    {% set project = project_for(project_id) %}
+
+	<h1>Delete Release</h1>
+
+    <h2>{{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}</h2>
+
+    <form class="form" method="post" action="{{ url_for('project.delete_release', project_id=project_id, release_id=release_id) }}">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_errors(form, hiddens="only") }}
+        <button class="btn btn-lg btn-primary" type="submit">Delete</button>
+    </form>
+
+{% endblock %}
