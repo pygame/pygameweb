@@ -118,11 +118,13 @@ class Project(Base):
     def youtube_trailer_embed(self):
         if not self.youtube_trailer:
             return
-        video_key = parse_qs(urlparse(self.youtube_trailer).query).get('v')[0]
+        video_key = parse_qs(urlparse(self.youtube_trailer).query).get('v')
+        if not video_key:
+            return
         bad_chars = ['?', ';', '&', '..', '/']
-        if any(bad in video_key for bad in bad_chars):
+        if any(bad in video_key[0] for bad in bad_chars):
             raise ValueError('problem')
-        return f'http://www.youtube.com/embed/{video_key}'
+        return f'http://www.youtube.com/embed/{video_key[0]}'
 
     __table_args__ = (
         _github_repo_constraint,
