@@ -109,8 +109,8 @@ def add_views_front(app):
     from pygameweb.builds.views import add_builds
     from pygameweb.comment.views import add_comment
 
-    app.errorhandler(HTTPException)(http_error_handler)
-    app.errorhandler(Exception)(error_handler)
+    # app.errorhandler(HTTPException)(http_error_handler)
+    # app.errorhandler(Exception)(error_handler)
 
     add_wiki_blueprint(app)
     add_project_blueprint(app)
