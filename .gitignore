@@ -2,6 +2,7 @@ __pycache__
 .idea
 .coverage*
 anenv
+venv/
 coverage.xml
 docs/_build/
 junit.xml
