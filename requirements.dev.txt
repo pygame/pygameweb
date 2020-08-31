@@ -8,7 +8,7 @@ pylint==1.8.2
 pytest==3.4.0
 pytest-cache==1.0
 pytest-cov==2.5.1
-pytest-flask==0.10.0
+pytest-flask==0.15.0
 pytest-forked==0.2
 pytest-mccabe==0.1
 pytest-mock==1.7.0
