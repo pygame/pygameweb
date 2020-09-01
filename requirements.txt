@@ -25,6 +25,7 @@ pyquery==1.4.0
 Pygments==2.4.2
 pq==1.5
 psutil==5.4.3
+pyyaml==5.3.1
 scikit-learn==0.19.1
 Sphinx==1.8.4
 Werkzeug==0.14.1
