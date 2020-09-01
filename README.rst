@@ -140,6 +140,11 @@ the site in production)::
 
     export APP_DEBUG=1
 
+Now add the database fixtures to populate it with sample users. After that, you should be able to
+login as admin with email ``admin@example.com`` and  password ``password``::
+    
+    pygameweb_fixtures
+    
 Then run::
 
     pygameweb_front
