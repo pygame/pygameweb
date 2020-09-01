@@ -33,8 +33,8 @@ def populate_db(make_app=create_app):
     """
     app = make_app('pygameweb.config.Config')
     # Avoid accidentally running this in production
-    if app.config['ENV'] == 'production':
-        raise RuntimeError('Please enable development mode. '
+    if not app.debug:
+        raise RuntimeError('Please enable debug. ' +
                            'Are you running in production?')
     with app.app_context():
         _user_fixtures()

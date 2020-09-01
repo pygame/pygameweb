@@ -10,7 +10,7 @@ def test_populate_db(app, session):
     assert session.query(Group).count() == 0
     assert session.query(User).count() == 0
 
-    app.config['ENV'] = 'development'
+    app.config['DEBUG'] = True
     populate_db(make_app=lambda x: app)
     assert session.query(Group).count() == 5
     assert session.query(User).count() == 5
@@ -23,7 +23,7 @@ def test_populate_db(app, session):
 def test_populate_db_production(app, session):
     """ Ensures the populate_db won't work in production.
     """
-    app.config['ENV'] = 'production'
+    app.config['DEBUG'] = False
     with pytest.raises(RuntimeError):
         populate_db(make_app=lambda x: app)
 
