@@ -258,9 +258,6 @@ def test_project_index(project_client, session, user, project, project2):
     assert resp.status_code == 404, 'when the release is not there either'
 
 
-
-
-
 def test_tags(project_client, session, project, project2):
     """ shows a list of projects for that tag.
     """
@@ -288,17 +285,33 @@ def test_tags(project_client, session, project, project2):
     assert project_client.get('/tags').status_code == 200
 
 
-def test_project_new(project_client, session, user):
-    """ adds a new project for the user.
+def test_new_project_page(project_client, user):
+    """ tests the page to create a new project.
     """
-
-    from io import BytesIO
-    from pygameweb.project.models import Project, Tags
-
     resp = project_client.get('/members/projects/new')
     assert resp.status_code == 200
-    assert b'New Project' in resp.data
-    assert b'Windows URL' in resp.data
+
+    # Ensures the presence of the input labels
+    input_labels = [
+        b'New Project',
+        b'Tags',
+        b'image',
+        b'Summary',
+        b'Description',
+        b'Home URL',
+        b'version',
+        b'Windows URL',
+        b'Mac URL'
+    ]
+    for label in input_labels:
+        assert (label in resp.data), f'label {label} not present in page.'
+
+
+def test_add_new_project(project_client, session, user):
+    """ adds a new project for the user.
+    """
+    from io import BytesIO
+    from pygameweb.project.models import Project, Tags
 
     png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00'
            b'\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT'
@@ -417,6 +430,119 @@ def test_project_new(project_client, session, user):
     resp = project_client.get('/members/projects')
     assert resp.status_code == 200
 
+
+def test_add_new_project_without_image(project_client, session, user):
+    """ adds a new project for the user without an image.
+    """
+    from pygameweb.project.models import Project, Tags
+
+    data = dict(
+        title='title',
+        version='1.0.2',
+        tags='tags',
+        summary='summary',
+        description='description of project',
+        uri='http://example.com/',
+        youtube_trailer='https://www.youtube.com/watch?v=8UnvMe1Neok',
+        github_repo='https://github.com/pygame/pygameweb/',
+        patreon='https://www.patreon.com/pygame',
+    )
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post('/members/projects/new',
+                                   data=data,
+                                   follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'title')
+                   .first())
+        assert not save_image.called, 'no image sent or saved'
+
+        resp = project_client.get(f'/project/{project.id}/')
+        assert project.description.encode('utf8') in resp.data
+
+        project.youtube_trailer == data['youtube_trailer']
+        project.github_repo == data['github_repo']
+        project.patreon == data['patreon']
+
+    assert resp.status_code == 200
+    assert project.title == 'title'
+    assert project.releases[0].version == '1.0.2', 'a release was added too'
+
+    url = f'/members/projects/edit/{project.id}'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+    data = dict(title='titlechanged',
+                tags='tag1, tag2, tag3', summary='summary',
+                description='description', uri='http://example.com/')
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post(f'/members/projects/edit/{project.id}',
+                                   data=data,
+                                   follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'titlechanged')
+                   .first())
+        assert not save_image.called, 'no image sent or saved'
+
+    data = dict(title='titlechangedagain',
+                tags='tag1, tag2, tag3', summary='summary',
+                description='description', uri='http://example.com/')
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post(f'/members/projects/edit/{project.id}',
+                                   data=data,
+                                   follow_redirects=True)
+        project = (session
+                   .query(Project)
+                   .filter(Project.title == 'titlechangedagain')
+                   .first())
+        assert not save_image.called, 'no image sent or saved'
+
+        tags = (session
+                .query(Tags)
+                .filter(Tags.project_id == project.id)
+                .all())
+        assert len(tags) == 3
+        assert [tag.value for tag in tags] == ['tag1', 'tag2', 'tag3']
+
+    url = f'/members/projects/{project.id}/releases/new'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+    data = dict(description='updated description',
+                version='2.0.0',
+                srcuri='http://example.com/')
+
+    release = project.releases[0]
+    url = f'/members/projects/{project.id}/releases/edit/{release.id}'
+    resp = project_client.post(url, data=data, follow_redirects=True)
+    assert resp.status_code == 200
+
+    session.refresh(project)
+    session.refresh(project.releases[0])
+    assert data['description'] == project.releases[0].description
+    assert project.releases[0].version == '2.0.0', 'edited a release version'
+    assert len(project.releases) == 1
+
+    data = dict(description='new release',
+                version='3.0.0',
+                srcuri='http://example.com/')
+    url = f'/members/projects/{project.id}/releases/new'
+    resp = project_client.post(url, data=data, follow_redirects=True)
+    assert resp.status_code == 200
+    session.refresh(project)
+    assert len(project.releases) == 2
+    assert project.releases[1].version == '3.0.0', 'we added a release version'
+
+    url = f'/members/projects/{project.id}/releases'
+    resp = project_client.get(url)
+    assert resp.status_code == 200
+
+    resp = project_client.get('/members/projects')
+    assert resp.status_code == 200
 
 
 def test_new_project_comment(project_client, session, project, project2, user):
