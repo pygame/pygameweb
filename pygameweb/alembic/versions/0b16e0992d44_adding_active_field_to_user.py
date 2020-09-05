@@ -21,7 +21,8 @@ def upgrade():
     op.add_column('users', sa.Column('active', sa.Boolean(), nullable=True))
     op.drop_column('users', 'passwd')
     op.execute("INSERT into groups values (10, 'newbie', 'Newbie', 10)")
-    op.execute("INSERT into users_groups values (95, 1)")
+    # NOTE: Commented out due to issue #38
+    # op.execute("INSERT into users_groups values (95, 1)")
     op.execute("UPDATE users set active=True where id=95")
     # ### end Alembic commands ###
 
