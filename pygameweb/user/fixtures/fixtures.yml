@@ -1,0 +1,152 @@
+# Define roles
+groups:
+  - id: 1
+    name: newbie
+    title: Newbie
+    orders: 1
+    description: null
+
+  - id: 2
+    name: commenter
+    title: Commenter
+    orders: 11
+    description: null
+
+  - id: 3
+    name: moderator
+    title: Moderator
+    orders: 3
+    description: null
+
+  - id: 4
+    name: members
+    title: Members
+    orders: 4
+    description: null
+    
+  - id: 5
+    name: admin
+    title: Admin
+    orders: 5
+    description: null
+
+
+# Define an admin, newbie, member, moderator and a blcoked user
+# password is 'password' for all users
+users:
+  - id: 1
+    name: admin
+    email: admin@example.com
+    password: $2b$12$0hsnVl3JrOLMKZ1UgTWMqe7fKoj5ybZytIdNdN7FRk9SeRNclqbzK
+    title: Superuser
+    disabled: 0
+    super: 1
+    roles:
+      - admin
+      - members
+      - moderator
+    active: 1
+    confirmed_at: !!timestamp 2020-01-01
+    last_login_at: !!timestamp 2020-01-01
+    current_login_at: null
+    last_login_ip: null
+    current_login_ip: null
+    login_count: null
+    registered_at: !!timestamp 2020-01-01 00:00:00
+    registered_ip: 127.0.0.1
+    twitter_user: null
+    github_user: null
+    bitbucket_user: null
+    blog_url: null
+
+  - id: 2
+    name: newbie
+    email: newbie@example.com
+    password: $2b$12$0hsnVl3JrOLMKZ1UgTWMqe7fKoj5ybZytIdNdN7FRk9SeRNclqbzK
+    title: Newbie User
+    disabled: 0
+    super: 0
+    active: 1
+    roles:
+      - newbie
+    confirmed_at: !!timestamp 2020-01-01
+    last_login_at: !!timestamp 2020-01-01
+    current_login_at: null
+    last_login_ip: null
+    current_login_ip: null
+    login_count: null
+    registered_at: !!timestamp 2020-01-01 00:00:00
+    registered_ip: 127.0.0.1
+    twitter_user: null
+    github_user: null
+    bitbucket_user: null
+    blog_url: null
+
+  - id: 3
+    name: user
+    email: user@example.com
+    password: $2b$12$0hsnVl3JrOLMKZ1UgTWMqe7fKoj5ybZytIdNdN7FRk9SeRNclqbzK
+    title: Regular User
+    disabled: 0
+    super: 0
+    active: 1
+    roles:
+      - members
+    confirmed_at: !!timestamp 2020-01-01
+    last_login_at: !!timestamp 2020-01-01
+    current_login_at: null
+    last_login_ip: null
+    current_login_ip: null
+    login_count: null
+    registered_at: !!timestamp 2020-01-01 00:00:00
+    registered_ip: 127.0.0.1
+    twitter_user: null
+    github_user: null
+    bitbucket_user: null
+    blog_url: null
+
+  - id: 4
+    name: moderator
+    email: moderator@example.com
+    password: $2b$12$0hsnVl3JrOLMKZ1UgTWMqe7fKoj5ybZytIdNdN7FRk9SeRNclqbzK
+    title: Moderator User
+    disabled: 0
+    super: 0
+    active: 1
+    roles:
+      - moderator
+    confirmed_at: !!timestamp 2020-01-01
+    last_login_at: !!timestamp 2020-01-01
+    current_login_at: null
+    last_login_ip: null
+    current_login_ip: null
+    login_count: null
+    registered_at: !!timestamp 2020-01-01 00:00:00
+    registered_ip: 127.0.0.1
+    twitter_user: null
+    github_user: null
+    bitbucket_user: null
+    blog_url: null
+
+  - id: 5
+    name: blocked_user
+    email: blocked_user@example.com
+    password: $2b$12$0hsnVl3JrOLMKZ1UgTWMqe7fKoj5ybZytIdNdN7FRk9SeRNclqbzK
+    title: Blocked User
+    disabled: 1
+    super: 0
+    active: 1
+    roles:
+      - members
+    confirmed_at: !!timestamp 2020-01-01
+    last_login_at: !!timestamp 2020-01-01
+    current_login_at: null
+    last_login_ip: null
+    current_login_ip: null
+    login_count: null
+    registered_at: !!timestamp 2020-01-01 00:00:00
+    registered_ip: 127.0.0.1
+    twitter_user: null
+    github_user: null
+    bitbucket_user: null
+    blog_url: null
