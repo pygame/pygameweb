@@ -27,5 +27,5 @@ pq==1.5
 psutil==5.4.3
 scikit-learn==0.19.1
 Sphinx==1.8.4
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 WTForms==2.1
