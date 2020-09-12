@@ -34,10 +34,11 @@ Set up the required packages::
     pip install -e .
 
 
-For now yuicompressor is needed for css compression::
+For now yuicompressor is needed for css compression, and
+imagamagick and optipng are needed for creating and optimizing image thumbnails::
 
-    brew install yuicompressor node optipng
-    apt-get install yui-compressor nodejs optipng
+    brew install yuicompressor node optipng imagemagick
+    apt-get install yui-compressor nodejs optipng imagemagick
 
 
 Environment setup
