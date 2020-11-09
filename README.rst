@@ -33,6 +33,7 @@ Set up the required packages::
     pip install -r requirements.dev.txt
     pip install -e .
 
+If you would get some error related to *pip's conflic checker update* after execute **pip install -r requirements.dev.txt**, add the flag **--use-feature=2020-resolver** to the end of the command.
 
 For now yuicompressor is needed for css compression, and
 imagamagick and optipng are needed for creating and optimizing image thumbnails::
@@ -44,8 +45,13 @@ imagamagick and optipng are needed for creating and optimizing image thumbnails:
 Environment setup
 =================
 
-cp example.env .env
+Define a **.env** file based on the **example.env** file.
 
+::
+
+    cp example.env .env
+
+If you get some errors while executing the tests, just define the **APP_SECRET_KEY** variable on the **.env** file. You can define any value, like **"a"** or **"s3cret-stuff-blah"**.
 
 Tool setup
 ==========
