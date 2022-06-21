@@ -16,7 +16,7 @@ Flask-Security-Fork==2.0.1
 Flask-SQLAlchemy-Session==1.1
 Flask-WTF==0.14.2
 ghdiff==0.4
-numpy==1.14.0
+numpy==1.22.0
 pandas==0.22.0
 psycopg2==2.7.4
 python-dotenv==0.9.1
