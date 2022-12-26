@@ -19,5 +19,5 @@ pytest-watch==4.1.0
 pytest-xdist==1.22.1
 sqlalchemy_pytest_fixtures==0.3.0
 twine==1.13.0
-wheel==0.35.1
+wheel==0.38.1
 -r requirements.txt
