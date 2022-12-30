@@ -70,7 +70,7 @@ One database for testing, and another one for running the app.
 We use alembic for db migrations. http://alembic.readthedocs.org/en/latest/
 
 
-Set up the postgresql database::
+Set up the `postgresql` database:
 
     createdb pygame
     psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
