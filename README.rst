@@ -97,7 +97,7 @@ Then you will need to apply the change to your db (and commit the version file):
     alembic upgrade head
 
 
-testing with pytest
+Testing with pytest
 ===================
 
 http://docs.pytest.org/en/latest/
