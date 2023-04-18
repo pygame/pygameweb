@@ -28,5 +28,5 @@ psutil==5.4.3
 pyyaml==5.3.1
 scikit-learn==0.19.1
 Sphinx==1.8.4
-Werkzeug==0.14.1
+Werkzeug==2.2.3
 WTForms==2.1
