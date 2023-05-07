@@ -12,7 +12,8 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {%- endblock metas %}
     {% block styles -%}
-      <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="{{bootstrap_find_resource('css/bootstrap.css', cdn='bootstrap')}}" rel="stylesheet" />
       <style>
       .dont-break-out {
         overflow-wrap: break-word;
@@ -25,6 +26,347 @@
         -webkit-hyphens: auto;
         hyphens: auto;
       }
+
+/* Body */
+.dark-theme {
+  background-color: #222;
+  color: rgb(221, 221, 221);
+}
+
+/* Navbar */
+.dark-theme .navbar {
+  background-color: #333;
+  border-color: #080808;
+  color: #eee;
+  margin-bottom: 0;
+}
+
+.dark-theme .navbar-collapse {
+  border-color: #080808;
+}
+
+/* Navbar header */
+.dark-theme .navbar-header {
+  color: #eee;
+}
+
+
+/* Buttons */
+/* General Button Styling */
+.dark-theme .btn {
+  background-color: #343a40;
+  border-color: #6c757d;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+/* Primary Button Styling */
+.dark-theme .btn-primary {
+  color: rgb(47, 253, 47);  
+  border-color: rgb(47, 253, 47);
+  transition: background-color 0.3s ease;
+}
+
+/* Hover State Styling */
+.dark-theme .btn:hover,
+.dark-theme .btn:focus {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+/* Active State Styling */
+.dark-theme .btn:active,
+.dark-theme .btn.active {
+  background-color: #32CD32;
+  border-color: #32CD32;
+  box-shadow: none;
+}
+
+/* Disabled State Styling */
+.dark-theme .btn:disabled,
+.dark-theme .btn[disabled] {
+  opacity: 0.65;
+}
+
+
+/* List groups */
+.dark-theme .list-group {
+  background-color: #333;
+  border-color: #080808;
+  color: #eee;
+  margin-bottom: 20px;
+}
+
+.dark-theme .list-group-item {
+  background-color: #333;
+  border-color: #080808;
+  color: #eee;
+}
+
+.dark-theme .list-group-item:hover,
+.dark-theme .list-group-item:focus {
+  background-color: #080808;
+  border-color: #080808;
+  color: #eee;
+}
+
+/* Panels */
+.dark-theme .panel {
+  background-color: #f8f8f8;
+  border-color: #e7e7e7;
+  color: #333;
+}
+
+.dark-theme .panel-heading {
+  background-color: #e7e7e7;
+  border-color: #d3d3d3;
+  color: #333;
+}
+
+.dark-theme .panel-heading a {
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: 'Press Start 2P', "Helvetica Neue",Helvetica,Arial,sans-serif;  
+}
+
+@media screen and (min-width: 768px) {
+  .dark-theme .panel-heading a {
+    
+    font-size: 30px;
+    line-height: 1;    
+  }
+}
+
+.dark-theme .h1, .dark-theme .h2, .dark-theme .h3, .dark-theme .h4, .dark-theme .h5, .dark-theme .h6, 
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme h5, .dark-theme h6 {
+  text-transform: uppercase;
+  font-family: 'Press Start 2P';
+}
+.dark-theme .h1, .dark-theme h1 {
+  text-shadow: -1px -1px 0 #0D2,
+               1px -1px 0 #000,
+               -1px 1px 0 #000,
+               1px 1px 0 #000;
+}
+
+.dark-theme .panel-default {
+  border-color: #080808;
+  background-color: #222;
+  color: #eee;
+}
+
+.dark-theme .panel-default > .panel-heading {
+  border-color: #080808;
+  background-color: #080808;
+  color: #eee;
+}
+
+.dark-theme .panel-default > .panel-heading + .panel-body {
+  border-top-color: #080808;
+}
+
+.dark-theme .panel-body {
+  color: #eee;
+}
+
+
+
+
+/* Forms */
+.dark-theme .form-control {
+  background-color: #fff;
+  border-color: #ccc;
+  color: #555;
+}
+
+.dark-theme .form-control:focus {
+  border-color: #6bbf59;
+  outline: 0;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.dark-theme .form-group {
+  margin-bottom: 15px;
+}
+
+.dark-theme .form-label {
+  color: #ccc;
+}
+
+.dark-theme .form-group.has-error .form-control {
+  border-color: #a94442;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ebccd1;
+}
+
+.dark-theme .form-group.has-error .help-block {
+  color: #a94442;
+}
+
+/* Containers */
+.dark-theme .container,
+.dark-theme .container-fluid {
+  background-color: #222;
+  color: #eee;
+}
+
+
+/* Badges */
+.dark-theme .badge {
+  background-color: #555;
+  color: #fff;
+}
+
+/* Footer */
+.dark-theme footer {
+  background-color: #222;
+  color: #eee;
+  padding: 10px;
+}
+
+
+/* Dropdowns */
+.dark-theme .dropdown-menu {
+  background-color: #222;
+  border-color: #080808;
+  color: #eee;
+}
+
+.dark-theme .dropdown-menu > li > a {
+  color: #eee;
+}
+
+.dark-theme .dropdown-menu > li > a:hover,
+.dark-theme .dropdown-menu > li > a:focus {
+  background-color: #080808;
+  color: #eee;
+}
+
+.dark-theme .dropdown-menu > li > a:focus {
+  outline: none;
+}
+
+.dark-theme .dropdown-menu > .active > a,
+.dark-theme .dropdown-menu > .active > a:hover,
+.dark-theme .dropdown-menu > .active > a:focus {
+  background-color: #080808;
+  color: #eee;
+}
+
+.dark-theme .dropdown-header {
+  color: #aaa;
+}
+
+.dark-theme .dropdown-backdrop {
+  background-color: #000;
+  opacity: 0.5;
+}
+
+.dark-theme .open > .dropdown-toggle {
+  background-color: #080808;
+  color: #eee;
+  border-color: #080808;
+}
+
+.dark-theme .open > .dropdown-toggle:hover,
+.dark-theme .open > .dropdown-toggle:focus,
+.dark-theme .open > .dropdown-toggle:active {
+  background-color: #080808;
+  color: rgb(133, 255, 133);
+  border-color: #080808;
+}
+
+.dark-theme .navbar-default .navbar-nav>li>a {
+  color: #fff;
+}
+.dark-theme .navbar-default .navbar-nav>li>a:hover,
+.dark-theme .navbar-default .navbar-nav>li>a:focus {
+  color: rgb(133, 255, 133);
+}
+
+/* Navbar Dropdown */
+.dark-theme .navbar-default .navbar-nav>.open>a, 
+.dark-theme .navbar-default .navbar-nav>.open>a:focus, 
+.dark-theme .navbar-default .navbar-nav>.open>a:hover {
+  color: rgb(133, 255, 133);
+  background-color: #080808;
+}
+
+.dark-theme pre {
+  background-color: #000;
+  color: #eee;
+}
+
+
+
+/* Modals */
+.dark-theme .modal-content {
+  background-color: #292b2c;
+  color: #fff;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.dark-theme .modal-header {
+  background-color: #222;
+  border-bottom: 1px solid #080808;
+  color: #fff;
+}
+
+.dark-theme .modal-title {
+  color: #fff;
+}
+
+.dark-theme .modal-body {
+  color: #fff;
+}
+
+.dark-theme .modal-footer {
+  background-color: #222;
+  border-top: 1px solid #080808;
+}
+
+
+
+
+/* Modal Header */
+.dark-theme button.close,
+.dark-theme .modal-header .close {
+  color: #fff;
+  opacity: 1;
+  text-shadow: none;
+}
+
+.dark-theme button.close:hover,
+.dark-theme .modal-header .close:hover,
+.dark-theme button.close:focus,
+.dark-theme .modal-header .close:focus {
+  color: #fff;
+  opacity: 0.5;
+  text-shadow: none;
+}
+
+.dark-theme .modal-header .close:hover span,
+.dark-theme .modal-header .close:focus span {
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.dark-theme a {
+  color: rgb(47, 253, 47);  
+}
+
+.dark-theme a:hover,
+.dark-theme a:focus,
+.dark-theme a:active {
+  color: rgb(133, 255, 133);
+}
+
+
       </style>
     {%- endblock styles %}
 
@@ -36,7 +378,7 @@
 
     {%- endblock head %}
   </head>
-  <body{% block body_attribs %}{% endblock body_attribs %}>
+  <body class="dark-theme" {% block body_attribs %}{% endblock body_attribs %}>
 
     <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
 
