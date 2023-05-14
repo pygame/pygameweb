@@ -54,14 +54,7 @@ def test_wiki_code():
     from pygameweb.wiki.wiki import _wiki_code
     code = _wiki_code('<code class="python">def my_code(x): return x + 1</code>')
 
-    should_be = (
-        '<pre style="line-height: 125%"><span></span>'
-        '<span style="color: #008000; font-weight: bold">def</span> '
-        '<span style="color: #0000FF">my_code</span>(x): '
-        '<span style="color: #008000; font-weight: bold">return</span> '
-        'x <span style="color: #666666">+</span> '
-        '<span style="color: #666666">1</span>\n</pre>'
-    )
+    should_be = '<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">my_code</span>(x): <span style="color: #008000; font-weight: bold">return</span> x <span style="color: #666666">+</span> <span style="color: #666666">1</span>\n</pre></div>\n'
     assert should_be in code, 'because code should be annotated'
     assert '<html' not in code
 
