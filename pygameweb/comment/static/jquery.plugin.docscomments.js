@@ -130,7 +130,7 @@ $(document).ready(function () {
         if (typeof link === "undefined") {
             return;
         }
-        var searchButton = $(searchButtonHtml[0] + link + '+language%3APython' + searchButtonHtml[1] + link + searchButtonHtml[2]);
+        var searchButton = $(searchButtonHtml[0] + link + ' language:Python' + searchButtonHtml[1] + link + searchButtonHtml[2]);
         $(el).next().append(searchButton);
     });
 
