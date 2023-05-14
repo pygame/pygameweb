@@ -1,12 +1,12 @@
 {% cache 60*5 %}<?xml version="1.0" encoding="utf-8"?>
 <!-- generator="pygameweb 0.0.1" -->
-<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+<feed xmlns="http://www.w3.org/2005/Atom">
     <title>pygame news</title>
     <tagline></tagline>
     <link rel="alternate" type="text/html" href="https://www.pygame.org"/>
     <id>https://www.pygame.org</id>
     <modified>{{ news[0].datetimeon.isoformat() }}</modified>
-    <generator>pygameweb 0.0.1</generator>
+    <generator>pygameweb 0.0.2</generator>
     {% for new in news -%}
     <entry>
         <title>{{ new.title }}</title>
