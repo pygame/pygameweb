@@ -1,5 +1,5 @@
-pygame.org website |build-status| |coverage-status|
-===================================================
+pygame.org website |coverage-status|
+====================================
 
 Pieces of the pygame website (https://www.pygame.org/) will be open sourced here.
 
@@ -10,20 +10,8 @@ It's a community website where people can post projects, comment on them,
 but also write things in there themselves on wiki pages.
 
 
-Contributing
-============
-
-Please discuss contributions first to avoid disapointment and rework.
-
-Please see `contribution-guide.org <http://www.contribution-guide.org/>`_ and
-`Python Code of Conduct <https://www.python.org/psf/codeofconduct/>`_ for
-details on what we expect from contributors. Thanks!
-
-The stack is something like: python 3.6, postgresql 9.6, Flask, py.test, sqlalchemy, alembic, gulp, ansible, node.
-
-
-Quickstart
-==========
+Quick-Start
+===========
 
 Set up the required packages::
 
@@ -33,13 +21,13 @@ Set up the required packages::
     pip install -r requirements.dev.txt
     pip install -e .
 
-If you would get some error related to *pip's conflic checker update* after execute **pip install -r requirements.dev.txt**, add the flag **--use-feature=2020-resolver** to the end of the command.
+If you would get some error related to *pip's conflict checker update* after execute **pip install -r requirements.dev.txt**, add the flag **--use-feature=2020-resolver** to the end of the command.
 
 For now yuicompressor is needed for css compression, and
-imagamagick and optipng are needed for creating and optimizing image thumbnails::
-
-    brew install yuicompressor node optipng imagemagick
-    apt-get install yui-compressor nodejs optipng imagemagick
+imagamagick and optipng are needed for creating and optimizing image thumbnails,
+additionally postgresql is the database of choice::
+    brew install yuicompressor node optipng imagemagick postgresql
+    sudo apt-get install yui-compressor nodejs optipng imagemagick postgresql postgresql-client libpq-dev
 
 
 Environment setup
@@ -51,7 +39,8 @@ Define a **.env** file based on the **example.env** file.
 
     cp example.env .env
 
-If you get some errors while executing the tests, just define the **APP_SECRET_KEY** variable on the **.env** file. You can define any value, like **"a"** or **"s3cret-stuff-blah"**.
+Define the **APP_SECRET_KEY** variable in the **.env** file or the tests won't work. 
+You can define any value, like **"a"** or **"s3cret-stuff-blah"**.
 
 Tool setup
 ==========
@@ -72,15 +61,15 @@ We use alembic for db migrations. http://alembic.readthedocs.org/en/latest/
 
 Set up the `postgresql` database:
 
-    createdb pygame
-    psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
-    psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
+    sudo -u postgres createdb pygame
+    sudo -u postgres psql pygame -c "CREATE USER pygame WITH PASSWORD 'password';"
+    sudo -u postgres psql pygame -c "GRANT ALL PRIVILEGES ON DATABASE pygame to pygame;"
 
 We also create a database for running tests::
 
-    createdb pygame_test
-    psql pygame -c "CREATE USER pygame_test WITH PASSWORD 'password';"
-    psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;"
+    sudo -u postgres createdb pygame_test
+    sudo -u postgres psql pygame -c "CREATE USER pygame_test WITH PASSWORD 'password';"
+    sudo -u postgres psql pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;"
 
 
 To upgrade to latest model changes do::
@@ -235,14 +224,9 @@ pygameweb.news.views
 With with a @cache decorator, and/or markup in a template.
 
 
-
-.. |build-status| image:: https://travis-ci.org/pygame/pygameweb.svg?branch=master
-   :target: https://travis-ci.org/pygame/pygameweb
-   :alt: Build status
-.. |coverage-status| image:: https://coveralls.io/repos/github/pygame/pygameweb/badge.svg?branch=master
-   :target: https://coveralls.io/github/pygame/pygameweb?branch=master
+.. |coverage-status| image:: https://coveralls.io/repos/github/pygame/pygameweb/badge.svg?branch=main
+   :target: https://coveralls.io/github/pygame/pygameweb?branch=main
    :alt: Test coverage percentage
-
 
 
 
@@ -251,8 +235,8 @@ Releases
 
 Step by step release instructions below.
 
-- Commits to `master` branch do a dev  deploy to pypi.
-- Commits to `mastertest` branch do a dev deploy to pypi.
+- Commits to `main` branch do a dev deploy to pypi.
+- Commits to `maintest` branch do a dev deploy to pypi.
 - Commits to a tag do a real deploy to pypi.
 
 
@@ -291,9 +275,9 @@ You can start drafting the release notes in there before the tag.
 https://help.github.com/articles/creating-releases/
 
 You can make the release notes with the help of the changes since last release.
-https://github.com/pygame/pygameweb/compare/0.0.1...master
+https://github.com/pygame/pygameweb/compare/0.0.1...main
 
-git log 0.0.1...master
+git log 0.0.1...main
 
 Tagging a release
 -----------------
@@ -304,7 +288,7 @@ git tag -a 0.0.2
 git push origin 0.0.2
 ```
 Note: do not tag pre releases
-(these are made on commits to `master`/`mastertest`).
+(these are made on commits to `main`/`maintest`).
 
 After the tag is pushed, then you can do the release
 in github from your draft release.
@@ -318,4 +302,16 @@ If we were at 0.0.2 before, now we want to be at 0.0.3.dev
 vi pygameweb/__init__.py __version__ = '0.0.3.dev'
 ```
 
-Merge the release branch into master, and push that up.
+Merge the release branch into main, and push that up.
+
+
+Contributing
+============
+
+Please discuss contributions first to avoid disappointment and rework.
+
+Please see `contribution-guide.org <http://www.contribution-guide.org/>`_ and
+`Python Code of Conduct <https://www.python.org/psf/codeofconduct/>`_ for
+details on what we expect from contributors. Thanks!
+
+The stack? python 3.6, postgresql 9.6, Flask, py.test, sqlalchemy, alembic, gulp, ansible, node.
