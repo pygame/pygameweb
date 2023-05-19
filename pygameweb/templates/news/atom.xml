@@ -1,24 +1,29 @@
 {% cache 60*5 %}<?xml version="1.0" encoding="utf-8"?>
-<!-- generator="pygameweb 0.0.1" -->
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>pygame news</title>
-    <tagline></tagline>
-    <link rel="alternate" type="text/html" href="https://www.pygame.org"/>
-    <id>https://www.pygame.org</id>
-    <modified>{{ news[0].datetimeon.isoformat() }}</modified>
-    <generator>pygameweb 0.0.2</generator>
+    <subtitle>The latest from the pygame project.</subtitle>
+    <link rel="alternate" type="text/html" href="https://www.pygame.org/"/>
+    <link href="https://www.pygame.org/feed/news.php?format=ATOM" rel="self"/>
+    <id>https://www.pygame.org/</id>
+    <updated>{{ news[0].datetimeon.isoformat('T') + 'Z' }}</updated>
+    <author>
+        <name>pygame.org</name>
+        <email>pygame@pygame.org</email>
+    </author>
+
     {% for new in news -%}
     <entry>
         <title>{{ new.title }}</title>
         <link rel="alternate" type="text/html" href="{{ url_for('news.view', slug=new.slug, _external=True) }}"/>
-        <created>{{ new.datetimeon.isoformat() }}</created>
-        <issued>{{ new.datetimeon.isoformat() }}</issued>
-        <modified>{{ new.datetimeon.isoformat() }}</modified>
+        <updated>{{ new.datetimeon.isoformat('T') + 'Z' }}</updated>
         <id>{{ url_for('news.view_news_id', news_id=new.id, _external=True) }}</id>
         <author>
             <name>pygame.org</name>
         </author>
-        <summary>{{ new.description_html }}</summary>
+        <summary type="html">{{ new.description_html }}</summary>
+        <category term="python"/>
+        <category term="pygame"/>
+        <category term="gamedev"/>
     </entry>
     {% endfor -%}
 </feed>{% endcache %}
