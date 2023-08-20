@@ -366,6 +366,37 @@
   color: rgb(133, 255, 133);
 }
 
+/**
+ *  Underline on hover.
+ *  - .underline-on-hover part that is hovered.
+ *  - .underline-on-hover-underline is the underlined part.
+ */
+.underline-on-hover:hover .underline-on-hover-underline::before {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+.underline-on-hover-underline {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 3px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.underline-on-hover-underline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #337ab7;
+  transform: scaleX(0);
+  transform-origin: bottom left;
+  transition: transform 0.8s ease-in-out;
+}
+.dark-theme .underline-on-hover-underline::before {
+  background-color: rgb(47, 253, 47);
+}
 
       </style>
     {%- endblock styles %}

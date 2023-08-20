@@ -1,7 +1,15 @@
 {% extends "base.html" %}
-<h1>Project</h1>
 
 {% block content %}
+    <style>
+      .dark-theme .media, .dark-theme .media-body {
+        overflow:initial;
+      }
+      .dark-theme .media-heading {
+        line-height: 1.4;
+      }
+    </style>
+
     <h1>{{ tag }}</h1>
 
     <div class="row">
