@@ -1,16 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}{% cache 60*5, project_id | string(), release_id | string() if release_id else '', 'title' %}
-    {% set project = project_for(project_id) %}
-    {% set release = release_for(release_id) if release_id else None %}
-    {{ project.title }}{% if release and release.version %} - {{ release.version }}{% endif %}
-{% endcache %}{% endblock title %}
+{% block title %}{% cache 60*5, project_id | string(), release_id | string() if release_id else '', 'title' -%}
+{%     set project = project_for(project_id) -%}
+{%     set release = release_for(release_id) if release_id else None -%}
+{{     project.title }}{% if release and release.version %} - {{ release.version }}{% endif -%}
+{% endcache -%}{% endblock title -%}
 
 {%- block metas %}
   {% cache 60*5, 'twitter_card', project_id | string(), release_id | string() if release_id else '' %}
     {{ super() }}
     {% set project = project_for(project_id) -%}
     {% set release = release_for(release_id) if release_id else None -%}
+      <meta name="description" content="{{ project.summary_html_text }}" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@pygame_org" />
       <meta name="twitter:creator" content="@pygame_org" />
