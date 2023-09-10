@@ -20,3 +20,8 @@ nmig/
 *.sublime-workspace
 readme.txt
 scripts
+.pytest_cache/
+notes.md
+pygame.sql
+.python-version
+.vscode/
