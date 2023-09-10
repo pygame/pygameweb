@@ -1,0 +1,60 @@
+name: pygameweb Test
+
+on:
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Set up Python 3.6
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.6.15
+        - name: Install dependencies
+          run: |
+              # sudo apt-get -qq update
+              sudo apt-get install -y yui-compressor optipng
+              pip install --upgrade pip
+              pip install wheel
+              pip install -r requirements.dev.txt
+              # pip install coveralls
+              pip install -e .
+        - name: Create database
+          env:
+              POSTGRES_PORT: 5432
+              POSTGRES_HOST: localhost
+              PGPASSWORD: postgres
+          run: |
+              cp example.env .env
+              psql -h $POSTGRES_HOST -p $POSTGRES_PORT -c 'create database pygame_test;' -U postgres
+              psql -h $POSTGRES_HOST -p $POSTGRES_PORT pygame_test -c "CREATE USER pygame_test WITH PASSWORD 'password';" -U postgres
+              psql -h $POSTGRES_HOST -p $POSTGRES_PORT pygame_test -c "GRANT ALL PRIVILEGES ON DATABASE pygame_test to pygame_test;" -U postgres
+        - name: Run tests
+          env:
+              APP_SECRET_KEY: a
+          run: pytest
+        # - name: Upload coverage report
+        #   uses: coverallsapp/github-action@v2
+        #   with:
+        #       github-token: ${{ secrets.GITHUB_TOKEN }}
+        #       file: cov.info
