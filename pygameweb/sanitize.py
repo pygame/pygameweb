@@ -1,4 +1,4 @@
-import feedparser
+import feedparser.sanitizer
 def sanitize_html(html, force_https=True):
     """ santise_html(html) returns some sanitized html.
           It can be used to try and avoid basic html insertion attacks.
@@ -8,7 +8,7 @@ def sanitize_html(html, force_https=True):
         >>> sanitize_html("<script>alert('what')</script>")
         ''
     """
-    clean_html = feedparser._sanitizeHTML(html, "utf-8", "text/html")
+    clean_html = feedparser.sanitizer._sanitize_html(html, "utf-8", "text/html")
     if force_https:
         return clean_html.replace('src="http://', 'src="https://')
     else:
