@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block title %}{% cache 60*5, 'news_title', news_id | string() if news_id else '' -%}
+{%- set news = news_for(slug, news_id) -%}
+{{ news.title_html }} &mdash; {{ news.datetimeon.strftime('%-d %b, %Y') }}
+{%- endcache -%}{%- endblock title -%}
+
+
 {%- block feeds %}
     <link rel="alternate" type="application/atom+xml" title="pygame.org news (ATOM feed)" href="http://www.pygame.org/feed/news.php?format=ATOM"/>
     <link rel="alternate" type="application/rss+xml" title="pygame.org news (RSS 2.0 feed)" href="http://www.pygame.org/feed/news.php?format=RSS2.0" />
@@ -9,6 +15,7 @@
   {% cache 60*5, 'news_twitter_card', news_id | string() if news_id else '', slug if slug else '' %}
     {{ super() }}
     {% set news = news_for(slug, news_id) -%}
+      <meta property="description" content="{{ news.summary }}" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@pygame_org" />
       <meta name="twitter:creator" content="@pygame_org" />

@@ -104,19 +104,16 @@ def test_news_feeds(news_client, session, news, feed_url):
     assert parsed['entries'][1]['link'] == 'http://localhost/news/2018/3/title1'
 
 
-
 def test_news_slug(news_client, session, news):
     """ returns the right news for the given news id. But not all news.
     """
-
     url = f'/news/{news[0].slug}'
     resp = news_client.get(url)
     assert resp.status_code == 200
     assert news[0].title.encode('utf8') in resp.data
+    assert ('<title>' + news[0].title_html).encode('utf8') in resp.data
+
     assert news[1].title.encode('utf8') not in resp.data
-
-
-
 
 
 def a_user(app, session, news_client, name, email,
