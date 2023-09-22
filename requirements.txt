@@ -73,7 +73,7 @@ psycopg2==2.8.6
 ptyprocess==0.5.2
 py==1.11.0
 pycparser==2.18
-Pygments==2.10.0
+Pygments==2.14.0
 pylint==1.8.2
 pyparsing==2.4.7
 pyquery==1.4.0
