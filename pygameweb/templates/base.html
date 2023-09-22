@@ -2,7 +2,13 @@
 {% import "bootstrap/utils.html" as util -%}
 {% block doc -%}
 <!DOCTYPE html>
-<html{% block html_attribs %}{% endblock html_attribs %}>
+<html{% block html_attribs %}{% endblock html_attribs %} lang="
+{%- if g.lang -%}
+  {{g.lang}}
+{%- else -%}
+  en
+{%- endif -%}
+">
 {%- block html %}
   <head>
     {%- block head %}
