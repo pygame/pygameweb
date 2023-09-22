@@ -55,7 +55,7 @@ MarkupSafe==2.0.1
 mccabe==0.6.1
 mock==2.0.0
 mypy==0.560
-numpy==1.14.0
+numpy==1.19.5
 packaging==21.2
 pandas==0.22.0
 parso==0.1.1
