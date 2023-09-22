@@ -2,7 +2,7 @@ alabaster==0.7.12
 alembic==0.9.8
 apipkg==1.4
 argh==0.26.2
-astroid==1.6.1
+astroid
 attrs==17.4.0
 Babel==2.9.1
 bcrypt==3.1.4
@@ -47,14 +47,14 @@ isort==4.3.4
 itsdangerous==0.24
 jedi==0.11.1
 Jinja2==3.0.3
-lazy-object-proxy==1.3.1
+lazy-object-proxy==1.4.3
 limits==1.3
 lxml==4.9.1
 Mako==1.0.7
 MarkupSafe==2.0.1
 mccabe==0.6.1
 mock==2.0.0
-mypy==0.971
+mypy
 numpy==1.19.5
 packaging==21.2
 pandas==1.1.5
@@ -65,7 +65,7 @@ pbr==3.1.1
 pep8==1.7.1
 pexpect==4.4.0
 pickleshare==0.7.4
-pluggy==0.6.0
+pluggy==0.12
 pq==1.5
 prompt-toolkit==1.0.15
 psutil==5.4.3
@@ -74,13 +74,13 @@ ptyprocess==0.5.2
 py==1.11.0
 pycparser==2.18
 Pygments==2.14.0
-pylint==1.8.2
+pylint==2.0.1
 pyparsing==2.4.7
 pyquery==1.4.0
-pytest==3.4.0
+pytest==5.2
 pytest-cache==1.0
 pytest-cov==2.5.1
-pytest-flask==0.10.0
+pytest-flask==1.2.0
 pytest-forked==0.2
 pytest-mccabe==0.1
 pytest-mock==1.7.0
@@ -111,7 +111,7 @@ sphinxcontrib-serializinghtml==1.1.5
 sphinxcontrib-websupport==1.0.1
 SQLAlchemy==1.3.0
 traitlets==4.3.2
-typed-ast==1.5.5
+typed-ast
 Unidecode==1.0.22
 urllib3==1.26.7
 uWSGI==2.0.22
@@ -119,5 +119,5 @@ visitor==0.1.3
 watchdog==0.8.3
 wcwidth==0.1.7
 Werkzeug==0.14.1
-wrapt==1.10.11
+wrapt==1.11.2
 WTForms==2.1
