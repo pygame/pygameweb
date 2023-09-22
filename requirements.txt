@@ -21,7 +21,7 @@ docopt==0.6.2
 docutils==0.17.1
 dominate==2.3.1
 execnet==1.5.0
-feedparser==5.2.1
+feedparser==6.0.10
 Flask==0.12.2
 Flask-Admin==1.5.0
 Flask-Bootstrap==3.3.7.1
