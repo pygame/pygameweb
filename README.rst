@@ -21,8 +21,6 @@ Set up the required packages::
     pip install -r requirements.dev.txt
     pip install -e .
 
-If you would get some error related to *pip's conflict checker update* after execute **pip install -r requirements.dev.txt**, add the flag **--use-feature=2020-resolver** to the end of the command.
-
 For now yuicompressor is needed for css compression, and
 imagamagick and optipng are needed for creating and optimizing image thumbnails,
 additionally postgresql is the database of choice::
