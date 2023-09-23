@@ -66,7 +66,8 @@ class BootstrapRendererNew(BootstrapRendererOld):
                                title=node.title.text,
                                href=node.title.get_url())
                 a_tag.add(tags.img(src='/images/logo_lofi.png',
-                                   style='max-width:100px;margin-top: 10px;'))
+                                   style='max-width:100px;margin-top: 10px;',
+                                   alt='pygame logo'))
                 header.add(a_tag)
             else:
                 header.add(tags.span(node.title, _class='navbar-brand'))
