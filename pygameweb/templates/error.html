@@ -1,61 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ code }} - pygame.org</title>
+{% extends "base.html" %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+{% block title -%}
+  {% cache 60*5, 'error_page_title', code|string, message, sub -%}
+  Error, {{ code }}, {{ message }}
+  {% endcache -%}
+{% endblock -%}
 
-    <style>
-        * {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            text-align: center;
-            color: #111;
-        }
+{% block content %}
+  {% cache 60*5, 'error_page', code|string, message, sub %}
+    <section class="error">
+      <h1>{{ code }}</h1>
+      <h2>{{ message }}</h2>
+      <h3>{{ sub }}</h3>
 
-        h1 {
-            margin-top: 128px;
-            font-size: 10em;
-            margin-bottom: 16px;
-        }
+      <p><a href="/">Home</a> - <a href="/docs">Docs</a> - <a
+          target="_blank" href="https://github.com/pygame/pygameweb/issues/new"
+      >Help Fix This</a></p>
+    </section>
+  {% endcache %}
+{% endblock %}
 
-        h2 {
-            font-size: 1.9em;
-            font-weight: 400;
-
-            padding: 0 64px;
-        }
-
-        h3 {
-            font-weight: 400;
-        }
-
-        p {
-            font-size: 1.2em;
-            color: #444;
-        }
-
-        a {
-            color: #337ab7;
-            text-decoration: none;
-        }
-
-        img {
-            height: 100px;
-        }
-    </style>
-
-</head>
-<body{% block body_attribs %}{% endblock body_attribs %}>
-
-<div id="container">
-    <img src="https://www.pygame.org/docs/pygame_logo.gif">
-    <h1>{{ code }}</h1>
-    <h2>{{ message }}</h2>
-    <h3>{{ sub }}</h3>
-    <p><a href="/">Home</a> - <a href="/docs">Docs</a> - <a
-        target="_blank" href="https://github.com/pygame/pygameweb/issues/new"
-    >Report This</a></p>
-</div>
-
-</body>
-</html>
+{% block body_attribs %}{{ super() }}{% endblock body_attribs %}

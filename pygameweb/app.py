@@ -69,19 +69,23 @@ def upgrade_https_urls(app):
     def inject_url_for_image():
         return {'url_for_security': _url_for_security}
 
+def add_error_handlers(app):
+    """ Add error handlers to the app, like for a 404 not found. """
+    def error_handler(error):
+        message = error.description
+        if '  ' in message:
+            message, sub = message.split('  ', 1)
+        else:
+            sub = ''
+        return render_template('error.html', code=error.code, message=message, sub=sub), error.code
 
-def http_error_handler(error):
-    message = error.description
-    if '  ' in message:
-        message, sub = message.split('  ', 1)
-    else:
-        sub = ''
-    return render_template('error.html', code=error.code, message=message, sub=sub), error.code
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return error_handler(error)
 
-
-def error_handler(_):
-    message = 'Internal Server Error'
-    return render_template('error.html', code=500, message=message, sub=''), 500
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return error_handler(error)
 
 
 def add_views_front(app):
@@ -89,9 +93,6 @@ def add_views_front(app):
 
     Kept separate from create_app so we can test individual views.
     """
-    # We catch HTTPException to handle all HTTP error codes
-    from werkzeug.exceptions import HTTPException
-
     # add_user_blueprint does some monkey patching, so it needs to be first.
     from pygameweb.user.views import add_user_blueprint
     add_user_blueprint(app)
@@ -109,9 +110,7 @@ def add_views_front(app):
     from pygameweb.builds.views import add_builds
     from pygameweb.comment.views import add_comment
 
-    # app.errorhandler(HTTPException)(http_error_handler)
-    # app.errorhandler(Exception)(error_handler)
-
+    add_error_handlers(app)
     add_wiki_blueprint(app)
     add_project_blueprint(app)
     add_thumb_blueprint(app)
