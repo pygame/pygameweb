@@ -50,7 +50,7 @@ def recent_comments(forum):
 @login_required
 @roles_required('moderator')
 def mark_comment(comment_post_id, action):
-    """ with comment_post_id as deleted or spam.
+    """ with comment_post_id as deleted, spam or approved.
     """
     comment = (current_session
                .query(CommentPost)
@@ -63,6 +63,9 @@ def mark_comment(comment_post_id, action):
         flash('Comment marked deleted.')
     elif action == 'spam':
         comment.is_spam = True
+        flash('Comment marked spam.')
+    elif action == 'approve':
+        comment.is_approved = True
         flash('Comment marked spam.')
     else:
         abort(404)
