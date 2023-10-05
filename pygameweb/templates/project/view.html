@@ -83,7 +83,8 @@
         {% for value, count, size in project.tag_counts %}
           <a href='/tags/{{value}}' class="btn btn-default" role="button">{{value}} <span class="badge">{{ count }}</span></a>
         {% endfor %}
-        {% if project.youtube_trailer %}
+        
+        {% if project.youtube_trailer and project.youtube_trailer_embed %}
           {# Make the youtube embed responsive. #}
           <style>
             .embed-container {
