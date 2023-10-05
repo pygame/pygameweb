@@ -30,7 +30,7 @@
                         0 kb
                     {% endif %}
                 </td>
-                <td>{{ version.datetimeon }}</td>
+                <td>{{ version.datetimeon.strftime('%Y-%m-%d %H:%M') }}</td>
                 <td>
                     <input name="oldid" value="{{ version.id }}" type="radio" {% if loop.index == 2 %}checked{%endif%}>
                     <input name="newid" value="{{ version.id }}" type="radio" {% if version.latest == 1 %}checked{%endif%}>

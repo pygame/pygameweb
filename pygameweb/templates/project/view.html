@@ -171,7 +171,9 @@
       <tbody>
       {% for comment in project.comments %}
         <tr>
-          <th align="left">{{ comment.datetimeon }} - {{ comment.user.title }} - nickname: ({{ comment.user.title }}) - {{ comment.rating }}/5</th>
+          <th align="left">
+            {{ comment.datetimeon.strftime('%Y-%m-%d %H:%M') }} - {{ comment.user.title }} - nickname: ({{ comment.user.title }}) - {{ comment.rating }}/5
+          </th>
         </tr>
         <tr>
           <td>

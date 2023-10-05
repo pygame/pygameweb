@@ -13,7 +13,7 @@
   {% set parent_id = post.id if (post and not top_level) else '' %}
 
   {% if not top_level %}
-    <button data-toggle="collapse" data-target="#comment_post{{ post.id }}_{{ top_level }}">reply</button>
+    <button class="btn btn-sm" data-toggle="collapse" data-target="#comment_post{{ post.id }}_{{ top_level }}">reply</button>
   {% endif %}
 
   <div id="comment_post{{ post.id }}_{{ top_level }}" class="{% if not top_level %}collapse{% endif %} row form-group">
@@ -34,7 +34,7 @@
   <div class="media-body">
     {# set how_old = post.created_at - now() #}
     {% set how_old = post.created_at %}
-    <h4 class="media-heading">{{ post.author.name }} {{ how_old }}</h4>
+    <h4 class="media-heading">{{ post.author.name }} {{ how_old.strftime('%Y-%m-%d %H:%M') }}</h4>
     {{ post.message_html | safe }}
     {{ post_reply_part(post, comment_url, comment_form, False) }}
     {{ post_children(post, comment_url, comment_form) }}
