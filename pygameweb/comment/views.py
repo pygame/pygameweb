@@ -76,7 +76,7 @@ def mark_comment(comment_post_id, action):
     current_session.add(comment)
     current_session.commit()
 
-    return redirect('/comments/' + comment.forum)
+    return redirect('/comments/' + comment.thread.forum)
 
 
 def add_comment(app):
