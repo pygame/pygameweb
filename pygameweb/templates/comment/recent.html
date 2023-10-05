@@ -29,7 +29,6 @@
 <table class="table table-condensed custom-table">
   <thead>
     <tr>
-      <th>approved?</th>
       <th>name</th>
       <th>message</th>
       <th>created_at</th>
@@ -40,13 +39,6 @@
     {% for post in posts if ((not post.is_spam) and (not post.is_deleted)) %}
       <tr>
         <td>
-          {% if post.is_approved %}
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-          {% else %}
-            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-          {% endif %}
-        </td>
-        <td>
           {{ post.author.name }}
         <a href="{{ post.thread.link_path }}">{{ post.thread.link_path }}</a>
         </td>
@@ -54,10 +46,15 @@
         <td>{{ post.created_at }}</td>
         <td>
           {{ mark_post_button(post, 'spam', 'Spam') }}
-          <br/>
           {{ mark_post_button(post, 'delete', 'Delete') }}
-          <br/>
-          {{ mark_post_button(post, 'approve', 'Approve') }}
+
+          {% if post.is_approved is none %}
+            {{ mark_post_button(post, 'approve', 'Approve') }}
+          {% elif post.is_approved %}
+            {{ mark_post_button(post, 'unapprove', 'UnApprove') }}
+          {% else %}
+            {{ mark_post_button(post, 'approve', 'Approve') }}
+          {% endif %}
         </td>
       </tr>
     {% endfor %}

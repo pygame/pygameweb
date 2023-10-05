@@ -66,7 +66,10 @@ def mark_comment(comment_post_id, action):
         flash('Comment marked spam.')
     elif action == 'approve':
         comment.is_approved = True
-        flash('Comment marked spam.')
+        flash('Comment approved.')
+    elif action == 'unapprove':
+        comment.is_approved = False
+        flash('Comment unapproved.')
     else:
         abort(404)
 
