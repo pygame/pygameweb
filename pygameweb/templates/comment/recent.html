@@ -18,6 +18,11 @@
   width: 15%;
 }
 
+{% if current_user.is_authenticated and current_user.has_role('moderator') %}
+  .custom-table th:nth-child(4), .custom-table td:nth-child(4) {
+    width: 15%;
+  }
+{% endif %}
 
 </style>
 {%set posts = comments_for(forum) %}
