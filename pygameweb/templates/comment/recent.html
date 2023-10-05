@@ -10,6 +10,13 @@
   width: 100%;
 }
 
+.custom-table th:first-child, .custom-table td:first-child {
+  width: 15%;
+}
+
+.custom-table th:nth-child(3), .custom-table td:nth-child(3) {
+  width: 15%;
+}
 
 
 </style>
@@ -32,7 +39,9 @@
       <th>name</th>
       <th>message</th>
       <th>created_at</th>
-      <th></th>
+      {% if current_user.is_authenticated and current_user.has_role('moderator') %}
+        <th></th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -40,22 +49,27 @@
       <tr>
         <td>
           {{ post.author.name }}
-        <a href="{{ post.thread.link_path }}">{{ post.thread.link_path }}</a>
+          <br />
+          <a href="{{ post.thread.link_path }}">{{ post.thread.link_path }}</a>
         </td>
         <td>{{ post.message_html | safe }}</td>
-        <td>{{ post.created_at }}</td>
         <td>
-          {{ mark_post_button(post, 'spam', 'Spam') }}
-          {{ mark_post_button(post, 'delete', 'Delete') }}
-
-          {% if post.is_approved is none %}
-            {{ mark_post_button(post, 'approve', 'Approve') }}
-          {% elif post.is_approved %}
-            {{ mark_post_button(post, 'unapprove', 'UnApprove') }}
-          {% else %}
-            {{ mark_post_button(post, 'approve', 'Approve') }}
-          {% endif %}
+          {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}
         </td>
+        {% if current_user.is_authenticated and current_user.has_role('moderator') %}
+          <td>
+            {{ mark_post_button(post, 'spam', 'Spam') }}
+            {{ mark_post_button(post, 'delete', 'Delete') }}
+
+            {% if post.is_approved is none %}
+              {{ mark_post_button(post, 'approve', 'Approve') }}
+            {% elif post.is_approved %}
+              {{ mark_post_button(post, 'unapprove', 'UnApprove') }}
+            {% else %}
+              {{ mark_post_button(post, 'approve', 'Approve') }}
+            {% endif %}
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
   </tbody>
