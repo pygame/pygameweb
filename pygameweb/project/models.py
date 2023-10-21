@@ -6,7 +6,8 @@ from email.utils import formatdate
 from urllib.parse import urlparse, parse_qs, urlencode
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer,
-                        String, Text, inspect, func, and_, or_, CheckConstraint)
+                        String, Text, Boolean,
+                        inspect, func, and_, or_, CheckConstraint)
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql.functions import count
 
@@ -72,6 +73,14 @@ class Project(Base):
         name="project_patreon_constraint"
     )
 
+    is_deleted = Column(Boolean)
+    """ Is this project deleted. """
+
+    is_approved = Column(Boolean)
+    """ Is this project approved. """
+
+    is_spam = Column(Boolean)
+    """ Is this project spam. """
 
     def __repr__(self):
         return "<Project with title=%r>" % self.title
@@ -157,6 +166,14 @@ class Tags(Base):
     value = Column('value', String(32), index=True)
     project = relationship(Project, backref='tags')
 
+    is_deleted = Column(Boolean)
+    """ Is this tag deleted. """
+
+    is_approved = Column(Boolean)
+    """ Is this tag approved. """
+
+    is_spam = Column(Boolean)
+    """ Is this tag spam. """
 
 class Projectcomment(Base):
     __tablename__ = 'projectcomment'
@@ -176,6 +193,15 @@ class Projectcomment(Base):
 
     project = relationship(Project, backref='comments')
     user = relationship(User, backref='projectcomments')
+
+    is_deleted = Column(Boolean)
+    """ Is this release deleted. """
+
+    is_approved = Column(Boolean)
+    """ Is this release approved. """
+
+    is_spam = Column(Boolean)
+    """ Is this release spam. """
 
 
 def recent_releases(session):
@@ -221,6 +247,15 @@ class Release(Base):
     """
 
     project = relationship(Project, backref='releases')
+
+    is_deleted = Column(Boolean)
+    """ Is this release deleted. """
+
+    is_approved = Column(Boolean)
+    """ Is this release approved. """
+
+    is_spam = Column(Boolean)
+    """ Is this release spam. """
 
     @property
     def datetimeon_2882(self):

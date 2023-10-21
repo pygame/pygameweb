@@ -42,6 +42,15 @@ class Wiki(Base):
                       nullable=True)
     user = relationship(User)
 
+    is_deleted = Column(Boolean)
+    """ Is this wiki deleted. """
+
+    is_approved = Column(Boolean)
+    """ Is this wiki approved. """
+
+    is_spam = Column(Boolean)
+    """ Is this wiki spam. """
+
     @classmethod
     def content_for_link(cls, session, link):
         """ returns the page content for the link.
