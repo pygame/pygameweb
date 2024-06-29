@@ -21,18 +21,23 @@ def project_client(app, session, client):
 
 
 def a_user(app, session, project_client, name, email,
-           logged_in, disabled, active):
+           logged_in, disabled, active, newbie):
     """ gives us a user who is a member.
     """
     from pygameweb.user.models import User, Group
     from flask_security.utils import encrypt_password
     group = Group(name='members', title='Member')
+    newbie_group = Group(name='newbie', title='Newbie')
+    roles = [group]
+    if newbie:
+        roles.append(newbie_group)
+
     user = User(name=name,
                 email=email,
                 password=encrypt_password('password'),
                 disabled=disabled,
                 active=active,
-                roles=[group])
+                roles=roles)
     session.add(user)
     session.commit()
 
@@ -50,7 +55,8 @@ def user(app, session, project_client):
     return a_user(app, session, project_client, 'joe', 'asdf@example.com',
                   logged_in=True,
                   disabled=0,
-                  active=True)
+                  active=True,
+                  newbie=False)
 
 
 @pytest.fixture
@@ -62,8 +68,18 @@ def user_banned(app, session, project_client):
                   'asdf2@example.com',
                   logged_in=False,
                   disabled=1,
-                  active=False)
+                  active=False,
+                  newbie=False)
 
+@pytest.fixture
+def user_newbie(app, session, project_client):
+    """ gives us a user who is a member.
+    """
+    return a_user(app, session, project_client, 'joe newbie', 'asdf.newbie@example.com',
+                  logged_in=True,
+                  disabled=0,
+                  active=True,
+                  newbie=True)
 
 @pytest.fixture
 def project(session, user):
@@ -309,6 +325,13 @@ def test_new_project_page(project_client, user):
         assert (label in resp.data), f'label {label} not present in page.'
 
 
+def test_new_project_page_newbie(project_client, user_newbie):
+    """ tests the page to create a new project.
+    """
+    resp = project_client.get('/members/projects/new')
+    assert resp.status_code == 404
+
+
 def test_add_new_project(config, project_client, session, user):
     """ adds a new project for the user.
     """
@@ -431,6 +454,39 @@ def test_add_new_project(config, project_client, session, user):
 
     resp = project_client.get('/members/projects')
     assert resp.status_code == 200
+
+
+def test_add_new_project_newbie(config, project_client, session, user_newbie):
+    """ adds a new project for the user if they are a newbie should not work.
+    """
+    from io import BytesIO
+    from pygameweb.project.models import Project, Tags
+
+    png = (b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00'
+           b'\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT'
+           b'\x08\x99c```\x00\x00\x00\x04\x00\x01\xa3\n\x15\xe3\x00\x00'
+           b'\x00\x00IEND\xaeB`\x82')
+
+    image = (BytesIO(png), 'helloworld.png')
+    data = dict(
+        image=image,
+        title='title',
+        version='1.0.2',
+        tags='tags',
+        summary='summary',
+        description='description of project',
+        uri='http://example.com/',
+        youtube_trailer='https://www.youtube.com/watch?v=8UnvMe1Neok',
+        github_repo='https://github.com/pygame/pygameweb/',
+        patreon='https://www.patreon.com/pygame',
+    )
+
+    with mock.patch('pygameweb.project.views.save_image') as save_image:
+        resp = project_client.post('/members/projects/new',
+                                   data=data,
+                                   follow_redirects=True)
+
+    assert resp.status_code == 404
 
 
 def test_add_new_project_without_image(project_client, session, user):
@@ -560,6 +616,17 @@ def test_new_project_comment(project_client, session, project, project2, user):
         assert resp.status_code == 200
         assert (b'Gidday matey.' in
                 resp.data), 'because the comment should be there.'
+
+def test_new_project_comment_newbie(project_client, session, project, project2, user_newbie):
+    """ Newbie can not post.
+    """
+    with mock.patch('pygameweb.project.views.classify_comment'):
+
+        url = f'/project/{project.id}/comment'
+        data = {'message':
+                '<p>Gidday matey. Keeping busy are ya? This. Is. Awesome.</p>'}
+        resp = project_client.post(url, data=data, follow_redirects=True)
+        assert resp.status_code == 404
 
 @pytest.mark.parametrize("feed_url", [
     '/feed/releases.php?format=ATOM',
