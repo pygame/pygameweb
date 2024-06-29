@@ -45,6 +45,17 @@ def member(session, user):
     session.commit()
     return group
 
+@pytest.fixture
+def newbie(session, user):
+    """
+    """
+    from pygameweb.user.models import Group
+    group = Group(name='newbie', title='Newbie')
+    user.roles.append(group)
+    session.add(group)
+    session.commit()
+    return group
+
 
 @pytest.fixture
 def admin(session, user):
@@ -217,6 +228,18 @@ def test_wiki_new_page(wiki_client, session, member, user):
     resp = wiki_client.get('/wiki/blabla?action=history')
     assert resp.status_code == 200
     assert b'I have changed.' in resp.data
+
+
+def test_wiki_new_page_newbie(wiki_client, session, member, newbie, user):
+    """ is editable when we go there.
+    """
+    from pygameweb.wiki.models import Wiki
+
+    resp = wiki_client.get('/wiki/blabla')
+    assert resp.status_code == 404, 'now there is no blabla page.'
+
+    resp = wiki_client.get('/wiki/blabla/edit')
+    assert resp.status_code == 404
 
 
 def test_wiki_index(wiki_client, session):

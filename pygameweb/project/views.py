@@ -230,6 +230,9 @@ def all_tags():
 def new_comment(project_id):
     """ Post a comment on this project.
     """
+    if current_user.has_role('newbie'):
+        abort(404)
+
     form = ProjectCommentForm()
 
     if form.validate_on_submit():
@@ -299,6 +302,9 @@ def save_image(form_field, image_path):
 def new_project():
     """ This adds both a project, and a release.
     """
+    if current_user.has_role('newbie'):
+        abort(404)
+
     form = FirstReleaseForm()
 
     if form.validate_on_submit():
@@ -361,6 +367,9 @@ def new_project():
 def edit_project(project_id):
     project = project_for(project_id)
     if project.user.id != current_user.id:
+        abort(404)
+
+    if current_user.has_role('newbie'):
         abort(404)
 
     if request.method == 'GET':
@@ -437,6 +446,9 @@ def edit_release(project_id, release_id):
         if release.project.user.id != current_user.id:
             abort(404)
 
+    if current_user.has_role('newbie'):
+        abort(404)
+
     if request.method == 'GET' and release_id is not None:
         form = ReleaseForm(obj=release)
     else:
@@ -486,6 +498,9 @@ def delete_release(project_id, release_id):
     on post, delete the release.
     on get, show a form for posting to delete it.
     """
+    if current_user.has_role('newbie'):
+        abort(404)
+
     project = project_for(project_id)
     if project.user.id != current_user.id:
         abort(404)

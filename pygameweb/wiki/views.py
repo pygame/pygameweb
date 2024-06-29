@@ -184,6 +184,8 @@ def recent():
 def edit(link):
     """ the wiki page.
     """
+    if current_user.has_role('newbie'):
+        abort(404)
 
     # TODO: we need to add users_id, parents, and keywords
     page = Wiki.for_link(current_session, link)
