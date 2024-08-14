@@ -16,7 +16,7 @@ colorama==0.3.9
 coverage==4.5.1
 cssselect==1.0.3
 decorator==4.2.1
-dnspython==1.15.0
+dnspython==2.6.1
 docopt==0.6.2
 docutils==0.17.1
 dominate==2.3.1
